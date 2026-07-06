@@ -1,0 +1,20 @@
+<div class="suggerimento-form">
+
+  <h2>Invia un suggerimento</h2>
+
+  <div *ngIf="errore" class="errore-msg">{{ errore }}</div>
+  <div *ngIf="successo" class="success-msg">Suggerimento inviato!</div>
+
+  <form (ngSubmit)="inviaSuggerimento()">
+  <label for="titolo">Titolo</label>
+  <input id="titolo" name="titolo" [(ngModel)]="titolo" placeholder="Titolo" />
+
+  <label for="contenuto">Descrizione</label>
+  <textarea id="contenuto" name="contenuto" [(ngModel)]="contenuto" rows="5" placeholder="Descrivi la tua richiesta"></textarea>
+    
+    <div class="btn-row">
+      <button class="btn-invia" type="submit">Invia</button>
+      <button class="btn-annulla" type="button" (click)="annulla()">Annulla</button>
+    </div>
+  </form>
+</div>

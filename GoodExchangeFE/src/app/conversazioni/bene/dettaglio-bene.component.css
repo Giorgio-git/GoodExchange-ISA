@@ -1,0 +1,255 @@
+.recensione-mittente {
+	font-weight: 600;
+	color: #2a4d7c;
+	margin-bottom: 0.3em;
+	font-size: 1.04em;
+	border-bottom: 1px solid #e3eaf3;
+	padding-bottom: 0.25em;
+}
+.recensione-voto {
+	font-size: 1.08em;
+	font-weight: 500;
+	color: #34495e;
+	margin-bottom: 0.18em;
+	margin-top: 0.35em;
+	display: block;
+}
+.recensione-titolo {
+	font-weight: 500;
+	color: #2a4d7c;
+	margin-bottom: 0.12em;
+	margin-top: 0.25em;
+	font-size: 1.01em;
+}
+.recensione-testo {
+	color: #3a4656;
+	margin-bottom: 0.1em;
+	font-size: 1.01em;
+	line-height: 1.5;
+}
+.recensione-data {
+	color: #7b8a99;
+	font-size: 0.96em;
+	margin-bottom: 0.18em;
+}
+/* Recensioni: layout semplice, mittente in alto, bordo e sfondo */
+.recensione-item {
+	background: #f8fafc;
+	border: 1px solid #dbe6f3;
+	border-radius: 10px;
+	padding: 1.1rem 1.3rem 1rem 1.3rem;
+	margin-bottom: 1.2rem;
+}
+.recensione-mittente {
+	font-weight: 600;
+	color: #2a4d7c;
+	margin-bottom: 0.3em;
+	font-size: 1.04em;
+}
+.recensione-voto {
+	font-size: 1.1em;
+	font-weight: 500;
+	color: #34495e;
+	margin-bottom: 0.2em;
+	display: block;
+}
+.recensione-titolo {
+	font-weight: 500;
+	color: #2a4d7c;
+	margin-bottom: 0.15em;
+	margin-top: 0.3em;
+}
+.recensione-testo {
+	color: #34495e;
+	margin-bottom: 0.1em;
+}
+.recensione-data {
+	color: #7b8a99;
+	font-size: 0.97em;
+	margin-bottom: 0.2em;
+}
+.btn-primary {
+	background: #1976d2;
+	color: #fff;
+	border: none;
+	border-radius: 6px;
+	padding: 6px 16px;
+	margin-right: 8px;
+	cursor: pointer;
+	transition: background 0.2s;
+}
+.btn-primary:hover {
+	background: #1565c0;
+}
+.btn-danger {
+	background: #d32f2f;
+	color: #fff;
+	border: none;
+	border-radius: 6px;
+	padding: 6px 16px;
+	cursor: pointer;
+	transition: background 0.2s;
+}
+.btn-danger:hover {
+	background: #b71c1c;
+}
+.errore {
+	color: #d32f2f;
+	margin-bottom: 12px;
+	font-weight: 500;
+}
+/* Bottone richiedi prestito in basso */
+.richiedi-prestito-bar {
+	position: sticky;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	background: #f7f7fa;
+	padding: 1.2em 0;
+	display: flex;
+	justify-content: center;
+	box-shadow: 0 -2px 8px rgba(0,0,0,0.06);
+	z-index: 10;
+}
+.richiedi-prestito-btn {
+	background: #27ae60;
+	color: #fff;
+	border: none;
+	border-radius: 6px;
+	padding: 0.8em 2em;
+	font-size: 1.1em;
+	font-weight: 600;
+	cursor: pointer;
+	transition: background 0.2s;
+	box-shadow: 0 2px 8px rgba(39,174,96,0.08);
+}
+.richiedi-prestito-btn:disabled {
+	background: #b2bec3;
+	color: #fff;
+	cursor: not-allowed;
+	opacity: 0.7;
+}
+.richiedi-prestito-btn:hover:not(:disabled) {
+	background: #219150;
+}
+.dettaglio-bene-container {
+	max-width: 500px;
+	margin: 2rem auto;
+	background: #fff;
+	border-radius: 12px;
+	box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+	padding: 2rem;
+}
+.bene-title {
+	font-size: 2rem;
+	margin-bottom: 1rem;
+	text-align: center;
+}
+.bene-foto-wrapper {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin-bottom: 1.5rem;
+}
+.bene-foto {
+	max-width: 300px;
+	max-height: 200px;
+	border-radius: 8px;
+	box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+}
+.bene-foto-placeholder {
+	width: 300px;
+	height: 200px;
+	background: #eee;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: #888;
+	border-radius: 8px;
+}
+.bene-info {
+	margin-bottom: 1.5rem;
+}
+.bene-info p {
+	margin: 0.5rem 0;
+	font-size: 1.1rem;
+}
+.bene-actions {
+	display: flex;
+	gap: 1rem;
+	justify-content: center;
+}
+.btn {
+	padding: 0.5rem 1.2rem;
+	border-radius: 6px;
+	border: none;
+	font-size: 1rem;
+	cursor: pointer;
+}
+.btn-primary {
+	background: #1976d2;
+	color: #fff;
+}
+.btn-danger {
+	background: #d32f2f;
+	color: #fff;
+}
+.loading-message {
+	text-align: center;
+	margin: 2rem 0;
+}
+.spinner {
+	font-size: 2rem;
+	margin-bottom: 1rem;
+}
+
+/* Stile base per il form di modifica bene */
+.edit-bene-form {
+  background: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  padding: 2rem;
+  max-width: 480px;
+  margin: 2rem auto;
+}
+.edit-bene-form h3 {
+  margin-bottom: 1.5rem;
+  font-size: 1.3rem;
+  color: #2c3e50;
+}
+.edit-bene-form .form-group {
+  margin-bottom: 1.2rem;
+}
+.edit-bene-form label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 0.4rem;
+  color: #34495e;
+}
+.edit-bene-form input,
+.edit-bene-form textarea,
+.edit-bene-form select {
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #ced4da;
+  font-size: 1rem;
+  background: #fff;
+  box-sizing: border-box;
+}
+.edit-bene-form textarea {
+  min-height: 70px;
+  resize: vertical;
+}
+.edit-bene-form .error-message {
+  color: #c0392b;
+  margin-bottom: 0.8rem;
+}
+.edit-bene-form .success-message {
+  color: #27ae60;
+  margin-bottom: 0.8rem;
+}
+.edit-bene-form button {
+  margin-right: 0.7rem;
+  margin-top: 0.5rem;
+}

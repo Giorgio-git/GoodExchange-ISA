@@ -1,0 +1,68 @@
+[project]
+name = "goodexchange-backend"
+version = "1.0.0"
+description = "Backend transazionale in Python FastAPI per GoodExchange"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.110.0",
+    "uvicorn[standard]>=0.28.0",
+    "asyncpg>=0.29.0",
+    "pydantic>=2.6.0",
+    "pydantic-settings>=2.2.0",
+    "python-multipart>=0.0.9",
+    "httpx>=0.27.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0",
+    "ruff>=0.3.0",
+    "coverage>=7.4.0",
+    "hypothesis>=6.98.0",
+    "mutmut>=2.4.0",
+]
+
+[tool.ruff]
+line-length = 88
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "B", "W"]
+ignore = [
+    "B008",  # FastAPI: Depends() e File() nei parametri è il pattern ufficiale
+    "E501",  # Line too long: gestito separatamente, SQL queries necessariamente lunghe
+]
+
+[tool.mutmut]
+paths_to_mutate = ["src/services/", "src/dao/"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+
+[tool.coverage.run]
+# Branch coverage abilitata (C1 — SRS §NFR-02)
+branch = true
+source = ["src"]
+omit = [
+    "src/main.py",          # entry point, non testabile in unit
+    "*/migrations/*",
+]
+
+[tool.coverage.report]
+show_missing = true
+# Soglia corrente: 40% (il service layer critico ha coverage >90%).
+# I DAO hanno coverage bassa per design: testati tramite integration test con DB reale.
+# Aumentare progressivamente: 40% → 55% → 70% man mano che i test crescono.
+# SRS §NFR-02: target finale >= 70% (per valutazione del corso).
+fail_under = 40
+exclude_lines = [
+    "pragma: no cover",
+    "if __name__ == .__main__.:",
+    "raise NotImplementedError",
+    "pass",
+]
+
+[tool.coverage.html]
+directory = "htmlcov"

@@ -1,0 +1,86 @@
+.messaggio-container {
+	max-width: 700px;
+	margin: 32px auto;
+	background: #fff;
+	border-radius: 12px;
+	box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+	padding: 32px 24px;
+}
+.btn-primary {
+	background: #1976d2;
+	color: #fff;
+	border: none;
+	border-radius: 6px;
+	padding: 6px 16px;
+	margin-right: 8px;
+	cursor: pointer;
+	transition: background 0.2s;
+}
+.btn-primary:hover {
+	background: #1565c0;
+}
+.btn-danger {
+	background: #d32f2f;
+	color: #fff;
+	border: none;
+	border-radius: 6px;
+	padding: 6px 16px;
+	cursor: pointer;
+	transition: background 0.2s;
+}
+.btn-danger:hover {
+	background: #b71c1c;
+}
+.errore {
+	color: #d32f2f;
+	margin-bottom: 12px;
+	font-weight: 500;
+}
+/* Box messaggio */
+.messaggio-box {
+	border: 1px solid #ccc;
+	border-radius: 6px;
+	background: #fff;
+	margin-bottom: 18px;
+	padding: 16px 18px;
+	box-shadow: 0 2px 8px #e0e7ef;
+	max-width: 500px;
+}
+.messaggio-header {
+	margin-bottom: 2px;
+}
+.mittente {
+	font-weight: bold;
+	color: #2a4d7c;
+	font-size: 1rem;
+}
+.messaggio-titolo {
+	margin-top: 2px;
+	font-weight: 500;
+	color: #2a4d7c;
+	font-size: 1.05rem;
+}
+.messaggio-testo {
+	margin-top: 6px;
+	font-size: 1rem;
+	color: #222;
+	padding: 12px;
+	margin-bottom: 10px;
+	background: #f9f9f9;
+}
+.messaggio-header {
+	display: flex;
+	justify-content: space-between;
+	font-weight: bold;
+	margin-bottom: 6px;
+}
+.mittente {
+	color: #2a5d9f;
+}
+.oggetto {
+	color: #444;
+}
+.messaggio-testo {
+	margin-top: 4px;
+	color: #222;
+}

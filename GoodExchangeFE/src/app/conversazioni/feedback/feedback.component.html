@@ -1,0 +1,30 @@
+<div class="feedback-form-container">
+
+	<h3>Lascia un feedback</h3>
+
+	<form #form="ngForm" (ngSubmit)="inviaFeedback()">
+
+		<div class="form-group">
+			<label for="voto">Voto</label>
+			<select id="voto" [(ngModel)]="voto" name="voto">
+				<option *ngFor="let v of [1,2,3,4,5]" [value]="v">{{v}}</option>
+			</select>
+		</div>
+
+		<div class="form-group">
+			<label for="titolo">Titolo</label>
+			<input id="titolo" [(ngModel)]="titolo" name="titolo" maxlength="50" required />
+		</div>
+
+		<div class="form-group">
+			<label for="descrizione">Descrizione</label>
+			<textarea id="descrizione" [(ngModel)]="descrizione" name="descrizione" rows="4" required></textarea>
+		</div>
+
+		<button type="submit" [disabled]="form.invalid">Invia feedback</button>
+		<button type="button" routerLink="/prestiti" style="margin-left:1rem;">Annulla</button>
+
+		<div *ngIf="messaggio" class="feedback-message">{{ messaggio }}</div>
+	</form>
+
+</div>

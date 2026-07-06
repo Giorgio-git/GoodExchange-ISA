@@ -1,0 +1,39 @@
+<div class="create-bene-container">
+	<h2>Aggiungi un nuovo bene</h2>
+	<form (ngSubmit)="submit()" class="bene-form">
+		<div>
+			<label>Nome *</label>
+			<input [(ngModel)]="nome" name="nome" required />
+		</div>
+		<div>
+			<label>Descrizione</label>
+			<textarea [(ngModel)]="descrizione" name="descrizione"></textarea>
+		</div>
+		<div>
+			<label>Categoria *</label>
+			<select [(ngModel)]="id_categoria" name="id_categoria" required>
+				<option [value]="null">Seleziona categoria</option>
+				<option *ngFor="let cat of categorie" [value]="cat.id">{{ cat.nome }}</option>
+			</select>
+		</div>
+		<div>
+			<label>Peso (Kg)</label>
+			<input type="number" [(ngModel)]="peso" name="peso" min="0" required/>
+		</div>
+		
+		<div>
+			<label>Stato</label>
+			<select [(ngModel)]="stato" name="stato">
+				<option [value]="true">Disponibile</option>
+				<option [value]="false">Occupato</option>
+			</select>
+		</div>
+		<div>
+			<label>Immagine</label>
+			<input type="file" (change)="onFileChange($event)" accept="image/*" />
+		</div>
+	<button type="submit">Aggiungi Bene</button>
+	</form>
+	<div *ngIf="error" class="error">{{ error }}</div>
+	<div *ngIf="success" class="success">{{ success }}</div>
+</div>

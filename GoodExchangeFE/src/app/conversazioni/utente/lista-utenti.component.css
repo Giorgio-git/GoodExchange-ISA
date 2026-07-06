@@ -1,0 +1,131 @@
+.lista-utenti-container {
+  max-width: 900px;
+  margin: 32px auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  padding: 32px 24px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px;
+  font-size: 1rem;
+}
+th, td {
+  padding: 12px 8px;
+  text-align: left;
+}
+th {
+  background: #e3f2fd;
+  color: #1976d2;
+  font-weight: 600;
+  border-bottom: 2px solid #bbdefb;
+}
+tr:nth-child(even) {
+  background: #f5faff;
+}
+tr:hover {
+  background: #e6f7ff;
+}
+.btn-primary {
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 16px;
+  margin-right: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-primary:hover {
+  background: #1565c0;
+}
+.btn-danger {
+  background: #d32f2f;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 16px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-danger:hover {
+  background: #b71c1c;
+}
+.btn-warning {
+  background: #ffc107;
+  color: #333;
+  border: none;
+  border-radius: 6px;
+  padding: 0.3rem 0.8rem;
+  cursor: pointer;
+  font-size: 0.95rem;
+  margin-left: 0.5rem;
+  transition: background 0.2s;
+}
+.btn-warning:disabled {
+  background: #ffe8a1;
+  color: #aaa;
+  cursor: not-allowed;
+}
+
+.lista-utenti-container {
+  margin: 2rem auto;
+  max-width: 100vw;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  padding: 2rem;
+  overflow-x: auto;
+}
+.tabella-utenti {
+  min-width: 1200px;
+  width: max-content;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+.tabella-utenti {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+.tabella-utenti th, .tabella-utenti td {
+  border: 1px solid #eee;
+  padding: 0.5rem 0.7rem;
+  text-align: left;
+}
+.tabella-utenti th {
+  background: #f5f5f5;
+  font-weight: 600;
+}
+.tabella-utenti tr:nth-child(even) {
+  background: #fafafa;
+}
+.btn-link {
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  text-decoration: underline;
+  font-size: 1rem;
+  margin-right: 0.5rem;
+}
+.btn-link:hover {
+  color: #0056b3;
+}
+.btn-danger {
+  background: #d32f2f;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.3rem 0.8rem;
+  cursor: pointer;
+  font-size: 0.95rem;
+  margin-left: 0.5rem;
+  transition: background 0.2s;
+}
+.btn-danger:hover {
+  background: #b71c1c;
+}

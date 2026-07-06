@@ -1,0 +1,136 @@
+<!-- Tabella Admin -->
+<div *ngIf="isAdmin">
+	<h2>Gestione Prestiti (Admin)</h2>
+	<table class="prestiti-table" style="margin-bottom:2.5rem;">
+		<thead>
+			<tr>
+				<th>ID</th>
+				<th>Nome oggetto</th>
+				<th>Proprietario</th>
+				<th>Beneficiario</th>
+				<th>Periodo</th>
+				<th>Stato</th>
+				<th>Azioni</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr *ngFor="let p of tuttiIPrestiti">
+				<td>{{ p.id }}</td>
+				<td>{{ p.bene_nome }}</td>
+				<td>{{ p.proprietario_username || p.id_proprietario }}</td>
+				<td>{{ p.beneficiario_username || p.id_beneficiario }}</td>
+			<td>{{ p.data_inizio.slice(0,10) }} - {{ p.data_fine.slice(0,10) }}</td>
+				<td>
+					<select [ngModel]="p.stato" (ngModelChange)="cambiaStatoPrestitoAdmin(p, $event)">
+						<option *ngFor="let stato of statiPossibili" [value]="stato">{{ stato }}</option>
+					</select>
+				</td>
+				<td>
+					<a [routerLink]="['/prestiti', p.id]" style="color:#1976d2; text-decoration:underline;">Dettaglio</a>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	<div *ngIf="erroreStato" class="error">{{ erroreStato }}</div>
+	<div *ngIf="successoStato" class="success">{{ successoStato }}</div>
+</div>
+
+
+<!-- Liste utenti -->
+<div class="lista-prestiti-container" *ngIf="!isAdmin">
+
+	<div class="tab-bar">
+		<button [class.active]="tabSelezionato === 'richiesti'" (click)="selezionaTab('richiesti')">Richiesti</button>
+		<button [class.active]="tabSelezionato === 'concessi'" (click)="selezionaTab('concessi')">Concessi</button>
+	</div>
+
+	<!-- Tabella richiesti -->
+	<div *ngIf="tabSelezionato === 'richiesti'">
+		<div class="filtri-bar">
+			<label for="statoFiltroRichiesti">Stato:</label>
+			<select id="statoFiltroRichiesti" [(ngModel)]="statoFiltroRichiesti">
+				<option value="">Tutti</option>
+				<option *ngFor="let stato of statiPossibili" [value]="stato">{{ stato }}</option>
+			</select>
+			<input type="text" [(ngModel)]="ricercaNomeRichiesti" placeholder="Cerca per nome oggetto..." />
+		</div>
+		<table class="prestiti-table" *ngIf="!loading">
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>Nome oggetto</th>
+					<th>Proprietario</th>
+					<th>Stato</th>
+					<th>Periodo</th>
+        			<th>Azioni</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr *ngFor="let prestito of getPrestitiRichiestiFiltrati()">
+					<td>{{ prestito.id }}</td>
+					<td>{{ prestito.bene_nome }}</td>
+					<td>{{ prestito.proprietario_username }}</td>
+					<td>{{ prestito.stato }}</td>
+					<td>{{ prestito.data_inizio.slice(0,10) }} - {{ prestito.data_fine.slice(0,10) }}</td>
+				<td>
+					<a *ngIf="prestito.stato === 'completato' || prestito.stato === 'annullato'" [routerLink]="['/recensione', prestito.id]" class="recensisci-link">
+						Recensisci oggetto
+					</a>
+					<a *ngIf="prestito.stato === 'completato'" [routerLink]="['/feedback', prestito.id, prestito.id_proprietario]" class="feedback-link">
+						Lascia feedback
+					</a>
+					<a [routerLink]="['/prestiti', prestito.id]" class="visualizza-link">
+						Visualizza
+					</a>
+				</td>
+				</tr>
+			</tbody>
+		</table>
+		<div *ngIf="!loading && getPrestitiRichiestiFiltrati().length === 0" class="empty-message">
+			Nessun prestito richiesto trovato.
+		</div>
+	</div>
+
+	<!-- Tabella concessi -->
+	<div *ngIf="tabSelezionato === 'concessi'">
+		<div class="filtri-bar">
+			<label for="statoFiltroConcessi">Stato:</label>
+			<select id="statoFiltroConcessi" [(ngModel)]="statoFiltroConcessi">
+				<option value="">Tutti</option>
+				<option *ngFor="let stato of statiPossibili" [value]="stato">{{ stato }}</option>
+			</select>
+			<input type="text" [(ngModel)]="ricercaNomeConcessi" placeholder="Cerca per nome oggetto..." />
+		</div>
+		<table class="prestiti-table" *ngIf="!loading">
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>Nome oggetto</th>
+					<th>Beneficiario</th>
+					<th>Stato</th>
+					<th>Periodo</th>
+					<th>Azioni</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr *ngFor="let prestito of getPrestitiConcessiFiltrati()">
+					<td>{{ prestito.id }}</td>
+					<td>{{ prestito.bene_nome }}</td>
+					<td>{{ prestito.beneficiario_username }}</td>
+					<td>{{ prestito.stato }}</td>
+					<td>{{ prestito.data_inizio.slice(0,10) }} - {{ prestito.data_fine.slice(0,10) }}</td>
+					<td>
+						<a *ngIf="prestito.stato === 'completato'" [routerLink]="['/feedback', prestito.id, prestito.id_beneficiario]" class="feedback-link">Lascia feedback</a>
+						<a (click)="vaiADettaglio(prestito.id)" class="visualizza-link">Visualizza</a>
+					</td>
+				</tr>
+
+			</tbody>
+		</table>
+		<div *ngIf="!loading && getPrestitiConcessiFiltrati().length === 0" class="empty-message">
+			Nessun prestito concesso trovato.
+		</div>
+	</div>
+</div>
+
+

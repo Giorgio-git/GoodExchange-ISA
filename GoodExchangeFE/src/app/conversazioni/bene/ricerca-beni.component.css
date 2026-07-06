@@ -1,0 +1,218 @@
+/* Titolo e didascalia ricerca-beni */
+.ricerca-beni-header {
+  margin-bottom: 1.2rem;
+  text-align: center;
+}
+.ricerca-beni-titolo {
+  font-size: 1.6rem;
+  color: #1976d2;
+  font-weight: 700;
+  margin-bottom: 0.3rem;
+}
+.ricerca-beni-didascalia {
+  font-size: 1.04rem;
+  color: #444;
+  margin-bottom: 0.2rem;
+}
+/* Form ricerca-beni: campi affiancati orizzontalmente */
+.ricerca-beni-flex-form {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  gap: 1.2rem;
+  margin-bottom: 1.2rem;
+  flex-wrap: wrap;
+  width: 100%;
+}
+.ricerca-beni-fields {
+  display: flex;
+  flex-direction: row;
+  gap: 1.2rem;
+  flex-wrap: wrap;
+  flex: 1 1 0%;
+  min-width: 0;
+}
+.form-row {
+  display: flex;
+  flex-direction: column;
+  min-width: 110px;
+  flex: 1 1 120px;
+  max-width: 180px;
+}
+.form-row {
+  display: flex;
+  flex-direction: column;
+  min-width: 110px;
+}
+.form-row label {
+  font-weight: 500;
+  color: #1976d2;
+  margin-bottom: 0.2rem;
+}
+.form-row input {
+  padding: 0.4rem 0.7rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+.ricerca-beni-flex-form .btn-primary {
+  height: 38px;
+  align-self: flex-end;
+  margin-left: 0.5rem;
+}
+
+/* Stili form di ricerca */
+.ricerca-form {
+  margin-bottom: 1rem;
+}
+.form-row {
+  display: flex;
+  gap: 0.5rem;
+}
+input {
+  padding: 0.4rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+button {
+  padding: 0.4rem 1rem;
+  border-radius: 4px;
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+button:disabled {
+  background: #aaa;
+  cursor: not-allowed;
+}
+.loading-message {
+  color: #1976d2;
+  text-align: center;
+}
+.error {
+  color: #d32f2f;
+}
+
+/* CARD BENI: stile identico a lista-beni */
+.beni-list-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+.beni-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 25px;
+  margin-top: 30px;
+}
+.bene-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  border: 2px solid #e9ecef;
+  transition: all 0.3s ease;
+  color: inherit;
+  position: relative;
+  cursor: pointer;
+}
+.bene-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+  border-color: #667eea;
+}
+.stato-badge {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+.stato-disponibile {
+  background: #d4edda;
+  color: #155724;
+}
+.stato-occupato {
+  background: #fff3cd;
+  color: #856404;
+}
+.stato-bloccato {
+  background: #f8d7da;
+  color: #721c24;
+}
+.bene-nome {
+  margin: 40px 0 15px 0;
+  font-size: 1.4rem;
+  color: #333;
+  font-weight: bold;
+}
+.bene-categoria,
+.bene-peso,
+.bene-descrizione,
+.bene-proprietario {
+  margin: 8px 0;
+  color: #6c757d;
+  font-size: 0.95rem;
+}
+.bene-foto {
+  width: 200px;
+  height: 150px;
+  object-fit: contain;
+  border-radius: 8px;
+  margin: 15px 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  display: block;
+}
+.bene-azioni {
+  margin-top: 20px;
+  text-align: center;
+}
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+}
+.btn-primary {
+  background: #667eea;
+  color: white;
+}
+.btn-primary:hover:not(:disabled) {
+  background: #5a6fd8;
+  transform: translateY(-2px);
+}
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+.no-beni {
+  text-align: center;
+  padding: 60px 20px;
+}
+.empty-state {
+  max-width: 400px;
+  margin: 0 auto;
+}
+.empty-icon {
+  font-size: 4rem;
+  opacity: 0.5;
+}
+@media (max-width: 768px) {
+  .beni-grid {
+    grid-template-columns: 1fr;
+  }
+  .bene-nome {
+    font-size: 1.1rem;
+  }
+}

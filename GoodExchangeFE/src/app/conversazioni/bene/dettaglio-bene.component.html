@@ -1,0 +1,112 @@
+	<!-- Bottone torna indietro -->
+	<div class="top-bar">
+		<button class="btn btn-link" (click)="goBack()">&larr; Torna indietro</button>
+	</div>
+	<!-- Bene non trovato -->
+	<div *ngIf="notFound" class="notfound-message">
+		<h2>Bene non trovato</h2>
+		<p>Il bene richiesto non esiste o è stato rimosso.</p>
+	</div>
+
+
+
+	<!-- CARD BENE -->
+	<div class="dettaglio-bene-container" *ngIf="bene">
+		<h2 class="bene-title">{{ bene.nome }}</h2>
+		<div class="bene-foto-wrapper">
+			<img *ngIf="urlImmagine" [src]="urlImmagine" alt="Immagine bene" class="bene-foto">
+			<div *ngIf="!urlImmagine" class="bene-foto-placeholder">Nessuna immagine disponibile per questo bene.</div>
+			<div *ngIf="isProprietario && !urlImmagine" class="bene-foto-upload">
+				<label for="fileUpload">Carica immagine:</label>
+				<input id="fileUpload" type="file" (change)="onFileSelected($event)" accept="image/*">
+			</div>
+		</div>
+		<div class="bene-info">
+			<p *ngIf="isAdmin || isProprietario"><strong>ID Bene:</strong> {{ bene.id }}</p>
+			<p *ngIf="proprietario"><strong>Proprietario:</strong> 
+				<a [routerLink]="['/conversazioni/utente', proprietario.id]" class="proprietario-link">
+					{{ proprietario.username }}
+				</a>
+			</p>
+			<p><strong>Categoria:</strong> {{ categoria?.nome || 'Categoria sconosciuta' }}</p>
+			<p><strong>Descrizione:</strong> {{ bene.descrizione }}</p>
+			<p><strong>Peso:</strong> {{ bene.peso }} kg</p>
+			<p class="bene-crediti"><strong>Crediti necessari per il prestito:</strong> {{ categoria?.crediti ?? 'N/A' }}</p>
+			<p><strong>Stato:</strong> {{ bene.stato ? 'Disponibile' : 'Occupato' }}</p>
+			<p *ngIf="bene.indirizzo_completo"><strong>Indirizzo:</strong> {{ bene.indirizzo_completo }}</p>
+		
+		</div>
+
+
+
+	<div class="bene-actions">
+		<!-- Azioni solo per admin o proprietario -->
+		<button *ngIf="isProprietario" class="btn btn-primary" (click)="toggleEditForm()">Modifica bene</button>
+
+		<!-- Bottone richiedi prestito -->
+		<div class="richiedi-prestito-bar">
+			<button
+				*ngIf="!isProprietario && !isAdmin && bene && categoria && loggedUser"
+				class="btn btn-success richiedi-prestito-btn"
+				[disabled]="loggedUser.cauzione < categoria.crediti"
+				[title]="loggedUser.cauzione < categoria.crediti ? 'Servono ' + categoria.crediti + ' €' : 'Richiedi il prestito'"
+				(click)="vaiACreaPrestito()"
+			>
+				Richiedi prestito ({{ categoria.crediti }} crediti)
+			</button>
+		</div>
+	</div>
+
+	<!-- Form di modifica bene -->
+	<form *ngIf="showEditForm && isProprietario" (ngSubmit)="salvaModifiche()" class="edit-bene-form">
+		<h3>Modifica bene</h3>
+		<div class="form-group">
+			<label for="nome">Nome</label>
+			<input id="nome" name="nome" [(ngModel)]="editBene.nome" required class="form-control" />
+		</div>
+		<div class="form-group">
+			<label for="descrizione">Descrizione</label>
+			<textarea id="descrizione" name="descrizione" [(ngModel)]="editBene.descrizione" required class="form-control"></textarea>
+		</div>
+		<div class="form-group">
+			<label for="peso">Peso (kg)</label>
+			<input id="peso" name="peso" type="number" [(ngModel)]="editBene.peso" required class="form-control" min="0.01" step="0.01" />
+		</div>
+		<div class="form-group">
+			<label for="categoria">Categoria</label>
+			<select id="categoria" name="id_categoria" [(ngModel)]="editBene.id_categoria" required class="form-control">
+				<option *ngFor="let cat of categorieList" [value]="cat.id">{{ cat.nome }}</option>
+			</select>
+		</div>
+
+		<div *ngIf="editError" class="error-message">{{ editError }}</div>
+		<div *ngIf="editSuccess" class="success-message">{{ editSuccess }}</div>
+		<button type="submit" class="btn btn-success">Salva modifiche</button>
+		<button type="button" class="btn btn-secondary" (click)="toggleEditForm()">Annulla</button>
+	</form>
+
+	<!-- Sezione recensioni del bene -->
+	<div class="recensioni-bene-container" *ngIf="recensioni && recensioni.length > 0">
+		<h3>Recensioni su questo bene</h3>
+		<div *ngFor="let recensione of recensioni">
+			<div class="recensione-item">
+				<div class="recensione-header">
+					<div class="recensione-beneficiario">{{ mittenti[recensione.id_beneficiario].username }}</div>
+					<div class="recensione-voto">Voto: {{ recensione.voto }} ★</div>
+				</div>
+				<div class="recensione-messaggi" *ngIf="recensione.messaggi && recensione.messaggi.length > 0">
+					<div *ngFor="let msg of recensione.messaggi">
+						<div class="messaggio-item">
+							<strong>{{ msg.titolo }}</strong>
+							<p>{{ msg.contenuto }}</p>
+						</div>
+					</div>
+				</div>
+			</div>
+			<hr />
+		</div>
+	</div>
+
+	<div *ngIf="recensioni && recensioni.length === 0">
+		<p>Nessuna recensione disponibile per questo bene.</p>
+	</div>

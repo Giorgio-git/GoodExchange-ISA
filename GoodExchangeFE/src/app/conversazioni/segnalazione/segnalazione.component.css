@@ -1,0 +1,57 @@
+/* Stile per il form di segnalazione */
+.segnalazione-form {
+	max-width: 420px;
+	margin: 2rem auto;
+	padding: 2rem 1.5rem;
+	background: #f8f9fa;
+	border-radius: 12px;
+	box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+}
+
+.segnalazione-form h3 {
+	margin-bottom: 1.2rem;
+	color: #b02a37;
+	font-weight: 600;
+}
+
+.segnalazione-form label {
+	font-weight: 500;
+	margin-bottom: 0.3rem;
+	display: block;
+}
+
+.segnalazione-form input,
+.segnalazione-form textarea {
+	width: 100%;
+	padding: 0.5rem;
+	margin-bottom: 1rem;
+	border: 1px solid #ccc;
+	border-radius: 6px;
+	font-size: 1rem;
+	background: #fff;
+}
+
+.segnalazione-form button {
+	background: #b02a37;
+	color: #fff;
+	border: none;
+	padding: 0.6rem 1.2rem;
+	border-radius: 6px;
+	font-size: 1rem;
+	cursor: pointer;
+	transition: background 0.2s;
+}
+.segnalazione-form button:hover {
+	background: #7a1c25;
+}
+
+.success-message {
+	color: #2a7b4f;
+	margin-top: 1rem;
+	font-weight: 500;
+}
+.error-message {
+	color: #b02a37;
+	margin-top: 1rem;
+	font-weight: 500;
+}

@@ -1,0 +1,65 @@
+<!-- Container principale della home page -->
+<div class="home-container">
+  
+  <!-- HERO SECTION - Benvenuto personalizzato -->
+  <section class="hero-section">
+    <div class="hero-content">
+      <!-- Messaggio per utenti non loggati -->
+      <ng-container *ngIf="!loggedUser">
+        <h1 class="hero-title">Benvenuto in GoodExchange</h1>
+        <p class="hero-subtitle">
+          La piattaforma smart e sostenibile per condividere, prestare e prendere in prestito oggetti nella tua zona.
+        </p>
+        <div class="hero-actions">
+          <a routerLink="/beni" class="btn btn-primary">Esplora i beni</a>
+          <a routerLink="/signup" class="btn btn-secondary">Crea un account</a>
+        </div>
+      </ng-container>
+
+      <!-- Messaggio per amministratori -->
+      <ng-container *ngIf="isAdmin">
+        <span class="hero-badge badge badge-info">Pannello Amministratore</span>
+        <h1 class="hero-title">Benvenuto, {{ loggedUser?.nome }}</h1>
+        <p class="hero-subtitle">
+          Gestisci gli utenti, monitora le segnalazioni e supervisiona i prestiti della piattaforma.
+        </p>
+      </ng-container>
+
+      <!-- Messaggio per clienti loggati -->
+      <ng-container *ngIf="isClient">
+        <span class="hero-badge badge badge-success">Utente Attivo</span>
+        <h1 class="hero-title">Ciao, {{ loggedUser?.nome }}!</h1>
+        <p class="hero-subtitle">
+          Scopri i nuovi beni disponibili nella tua zona o proponi qualcosa da prestare alla community.
+        </p>
+        <div class="hero-actions">
+          <a [routerLink]="['/bene/nuovo']" class="btn btn-primary">➕ Proponi un bene</a>
+          <a [routerLink]="['/ricerca-beni']" class="btn btn-secondary">📍 Cerca vicino a te</a>
+        </div>
+      </ng-container>
+    </div>
+  </section>
+
+  <!-- Banner suggerimento per utenti loggati -->
+  <div *ngIf="loggedUser && !isAdmin" class="suggerimento-card card">
+    <div class="suggerimento-info">
+      <div class="suggerimento-icon">💡</div>
+      <div>
+        <h4 class="suggerimento-title">Hai un'idea per migliorare GoodExchange?</h4>
+        <p class="suggerimento-text">Esprimi la tua richiesta o proponi una nuova funzionalità agli sviluppatori.</p>
+      </div>
+    </div>
+    <button class="btn btn-secondary suggerimento-btn" (click)="vaiASuggerimento()">Invia suggerimento</button>
+  </div>
+
+  <!-- SEZIONE BENI IN EVIDENZA -->
+  <section class="beni-section">
+    <div class="section-header">
+      <h2 class="section-title" *ngIf="loggedUser">Beni in evidenza</h2>
+      <h2 class="section-title" *ngIf="!loggedUser">Scopri i nostri beni</h2>
+      <a routerLink="/beni" class="btn btn-secondary btn-sm">Vedi tutti &rarr;</a>
+    </div>
+    <app-lista-beni></app-lista-beni>
+  </section>
+
+</div>

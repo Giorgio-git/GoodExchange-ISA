@@ -1,0 +1,73 @@
+.suggerimento-form {
+  max-width: 500px;
+  margin: 0 auto;
+  background: #fffbe6;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.suggerimento-form form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.suggerimento-form label {
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+.suggerimento-form input,
+.suggerimento-form textarea {
+  width: 100%;
+  border-radius: 6px;
+  border: 1px solid #ffe082;
+  padding: 8px 10px;
+  font-size: 1rem;
+  margin-bottom: 8px;
+  box-sizing: border-box;
+}
+.btn-invia {
+  background: #ff4e50;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 22px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-invia:hover {
+  background: #f9d423;
+  color: #222;
+}
+.btn-row {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+.btn-annulla {
+  background: #eee;
+  color: #444;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 22px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s;
+}
+.btn-annulla:hover {
+  background: #e0e0e0;
+  color: #111;
+}
+.success-msg {
+  color: #2e7d32;
+  font-weight: bold;
+}
+.errore-msg {
+  color: #c62828;
+  font-weight: bold;
+}

@@ -1,0 +1,65 @@
+<div class="crea-prestito-container" *ngIf="bene">
+
+	<h2>Richiedi prestito: {{ bene.nome }}</h2>
+
+	<!-- Informazioni sul bene -->
+	<div class="bene-info">
+		<img *ngIf="urlImmagine" [src]="urlImmagine" alt="Foto bene" class="bene-img">
+		<div class="bene-details">
+			<p><strong>Nome:</strong> {{ bene.nome }}</p>
+			<p><strong>Descrizione:</strong> {{ bene.descrizione }}</p>
+		</div>
+	</div>
+
+	<!-- Sezione calendario e disponibilità -->
+	<div class="calendario-section">
+		<h3>Seleziona periodo</h3>
+		<mat-form-field appearance="outline">
+			<mat-label>Periodo prestito</mat-label>
+			<!-- Input per selezione intervallo date, collega il picker e filtra le date disponibili -->
+			<!-- La proprietà [rangePicker] collega il date range input al date range picker 
+			     mentre la proprietà [dateFilter] applica il filtro sulle date disponibili -->
+			<mat-date-range-input [rangePicker]="picker" [dateFilter]="dateFilter">
+				<!-- Campo per la data di inizio intervallo. 
+						 matStartDate: indica che è l'inizio intervallo per il date range
+						 placeholder: testo guida
+						 [(ngModel)]: binding bidirezionale con la variabile dataInizio
+						 name: nome del campo per i form Angular -->
+				<input matStartDate placeholder="Data inizio" [(ngModel)]="dataInizio" name="dataInizio" required>
+				<!-- Campo per la data di fine intervallo.
+						 matEndDate: indica che è la fine intervallo per il date range
+						 placeholder: testo guida
+						 [(ngModel)]: binding bidirezionale con la variabile dataFine
+						 name: nome del campo per i form Angular -->
+				<input matEndDate placeholder="Data fine" [(ngModel)]="dataFine" name="dataFine" required>
+			</mat-date-range-input>
+			<!-- Bottone icona per aprire il selettore calendario, associato al picker -->
+			<mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+			<!-- Componente vero e proprio del selettore intervallo date, referenziato come #picker -->
+			<mat-date-range-picker #picker></mat-date-range-picker>
+		</mat-form-field>
+
+		<div class="selezione-info">
+			<span *ngIf="!dataInizio">Seleziona la data di inizio</span>
+			<span *ngIf="dataInizio && !dataFine">Data inizio: {{ dataInizio | date:'dd/MM/yyyy' }}. Ora seleziona la data di fine.</span>
+			<span *ngIf="dataInizio && dataFine">Periodo selezionato: {{ dataInizio | date:'dd/MM/yyyy' }} - {{ dataFine | date:'dd/MM/yyyy' }}</span>
+		</div>
+		<button (click)="verificaDisponibilita()" class="btn-verifica" [disabled]="!dataInizio || !dataFine">Verifica disponibilità</button>
+		<span *ngIf="disponibilita === true" class="disponibile">Disponibile!</span>
+		<span *ngIf="disponibilita === false" class="non-disponibile">Non disponibile</span>
+	</div>
+
+	<!-- Messaggio al proprietario -->
+	<div class="messaggio-section">
+		<h3>Messaggio al proprietario</h3>
+		<form (ngSubmit)="richiediPrestito()" #msgForm="ngForm" class="messaggio-form">
+			<label for="titolo">Titolo</label>
+			<input id="titolo" name="titolo" [(ngModel)]="titoloMessaggio" required>
+			<label for="contenuto">Contenuto</label>
+			<textarea id="contenuto" name="contenuto" [(ngModel)]="contenutoMessaggio" required></textarea>
+			<button type="submit" class="btn-invia">Richiedi prestito</button>
+		</form>
+		<div class="error" *ngIf="errore">{{ errore }}</div>
+		<div class="success" *ngIf="successo">{{ successo }}</div>
+	</div>
+</div>

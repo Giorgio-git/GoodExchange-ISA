@@ -1,0 +1,69 @@
+
+<div class="ricerca-beni-header">
+  <h2 class="ricerca-beni-titolo">Ricerca beni per indirizzo</h2>
+  <p class="ricerca-beni-didascalia">In questa sezione puoi cercare tutti gli oggetti disponibili specificando uno o più dati dell'indirizzo (regione, provincia, città, via, civico).</p>
+</div>
+<form #form="ngForm" (ngSubmit)="cercaBeni($event)" class="ricerca-beni-flex-form">
+  <div class="ricerca-beni-fields">
+    <div class="form-row"><label>Regione:</label><input name="regione" [(ngModel)]="regione" class="form-control" /></div>
+    <div class="form-row"><label>Provincia:</label><input name="provincia" [(ngModel)]="provincia" class="form-control" /></div>
+    <div class="form-row"><label>Città:</label><input name="citta" [(ngModel)]="citta" class="form-control" /></div>
+    <div class="form-row"><label>Via:</label><input name="via" [(ngModel)]="via" class="form-control" /></div>
+    <div class="form-row"><label>Civico:</label><input name="civico" [(ngModel)]="civico" class="form-control" /></div>
+  </div>
+  <button type="submit" class="btn btn-primary" [disabled]="form.invalid">Cerca</button>
+</form>
+
+<!-- Stato caricamento/errore -->
+<div *ngIf="error" class="error">{{ error }}</div>
+
+<div *ngIf="beni.length === 0" class="no-beni">
+  <div class="empty-state">
+    <span class="empty-icon">📦</span>
+    <h3>Nessun bene trovato</h3>
+  </div>
+</div>
+
+<div *ngIf="beni.length > 0" class="beni-list-container">
+  <div class="beni-grid">
+    <a *ngFor="let bene of beni" class="bene-card" [routerLink]="['/beni', bene.id]">
+      <!-- Badge stato, tramite ngClass aggiungo una o più classi CSS in base al valore dello stato -->
+      <!-- Badge stato -->
+			<div class="stato-badge" [ngClass]="bene.stato ? 'stato-disponibile' : 'stato-occupato'">
+				{{ bene.stato ? 'disponibile' : 'occupato' }}
+			</div>
+
+			<!-- Immagine bene -->
+			<img *ngIf="immaginiBeni[bene.id!]" [src]="immaginiBeni[bene.id!]" alt="Foto bene" class="bene-foto" style="max-width: 250px; display: block; margin: 0 auto 15px auto; border-radius: 8px;" />
+
+			<!-- Nome bene -->
+			<h3 class="bene-nome">{{ bene.nome }}</h3>
+
+			<!-- Categoria (la ricavo usando i servizi dell'entità categoria)  -->
+			<p class="bene-categoria">Categoria: {{ getNomeCategoria(bene.id_categoria) }}</p>
+
+      <!-- Proprietario e località -->
+      <div *ngIf="utenti[bene.id_proprietario] as proprietario">
+        <p class="bene-proprietario">Proprietario: {{ proprietario.username }}</p>
+        <span class="localita">
+          Regione: {{ proprietario.regione || '-' }} | Provincia: {{ proprietario.provincia || '-' }} | Città: {{ proprietario.citta || '-' }}
+        </span>
+        <span *ngIf="proprietario.via">Via: {{ proprietario.via }}</span>
+        <span *ngIf="proprietario.civico"> | Civico: {{ proprietario.civico }}</span>
+      </div>
+      <div *ngIf="!utenti[bene.id_proprietario]">
+        <p class="bene-proprietario">Proprietario: ...</p>
+        <span class="localita">Località: ...</span>
+      </div>
+
+      <!-- Azioni -->
+      <div class="bene-azioni">
+        <!-- Modifica solo per il proprietario -->
+        <button *ngIf="isClient && loggedUser && bene.id_proprietario === loggedUser.id" class="btn btn-primary">Modifica</button>
+        <!-- Solo visualizzazione per admin -->
+        <span *ngIf="isAdmin">Solo visualizzazione</span>
+        <!-- Utente non loggato: nessuna azione -->
+      </div>
+    </a>
+  </div>
+</div>

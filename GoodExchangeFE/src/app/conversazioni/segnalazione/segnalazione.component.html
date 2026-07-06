@@ -1,0 +1,23 @@
+<div class="segnalazione-form">
+
+  <h3>Segnala utente</h3>
+
+  <!-- Form di segnalazione -->
+  <form #segnalazioneForm="ngForm" (ngSubmit)="inviaSegnalazione()">
+    
+    <div class="form-group">
+      <label for="titolo">Titolo</label>
+      <input id="titolo" [(ngModel)]="titolo" name="titolo" required />
+    </div>
+
+    <div class="form-group">
+      <label for="contenuto">Descrizione</label>
+      <textarea id="contenuto" [(ngModel)]="contenuto" name="contenuto" rows="4" required></textarea>
+    </div>
+
+    <button type="submit" [disabled]="!segnalazioneForm.valid">Invia segnalazione</button>
+  </form>
+
+  <div *ngIf="messaggioSuccesso" class="success-msg">{{ messaggioSuccesso }}</div>
+  <div *ngIf="messaggioErrore" class="error-msg">{{ messaggioErrore }}</div>
+</div>

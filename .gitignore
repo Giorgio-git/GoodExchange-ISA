@@ -1,0 +1,37 @@
+# Node.js (backend originale Express.js)
+node_modules/
+GoodExchangeBE/node_modules/
+
+# Python / uv
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+*.egg-info/
+dist/
+build/
+
+# Coverage
+.coverage
+htmlcov/
+.coverage.*
+coverage.xml
+
+# IDE / OS
+.DS_Store
+.idea/
+.vscode/
+*.swp
+Thumbs.db
+
+# Test artifacts
+.pytest_cache/
+.hypothesis/
+
+# Secrets / env
+.env
+.env.local
+.env.production
+
+# Appunti del corso (file pesante, non necessario nel repo)
+Appunti_Completi_Ingegneria_Software.md

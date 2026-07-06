@@ -1,0 +1,23 @@
+<div class="categorie-admin-container">
+	<h2>Lista categorie</h2>
+	<table class="categorie-table">
+		<thead>
+			<tr>
+				<th>ID</th>
+				<th>Nome</th>
+				<th>Crediti</th>
+				<th>Descrizione</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr *ngFor="let cat of categorie">
+				<td>{{ cat.id }}</td>
+				<td>{{ cat.nome }}</td>
+				<td>{{ cat.crediti }}</td>
+				<td>{{ cat.descrizione }}</td>
+			</tr>
+		</tbody>
+	</table>
+		<button (click)="vaiACreaCategoria()">Aggiungi nuova categoria</button>
+
+</div>

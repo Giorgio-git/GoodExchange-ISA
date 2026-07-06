@@ -1,0 +1,43 @@
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { Messaggio } from '../modelli/messaggio.model';
+
+@Injectable({ providedIn: 'root' })
+export class MessaggioService {
+	private apiUrl = 'http://localhost:3000/api/messaggi';
+
+	constructor(private http: HttpClient) {}
+
+	getMessaggiByDestinatario(id_destinatario: number): Observable<Messaggio[]> {
+		return this.http.get<Messaggio[]>(`${this.apiUrl}/destinatario/${id_destinatario}`);
+	}
+
+	getMessaggiByMittente(id_mittente: number): Observable<Messaggio[]> {
+		return this.http.get<Messaggio[]>(`${this.apiUrl}/mittente/${id_mittente}`);
+	}
+
+	getMessaggiByTipo(tipo: string, id_riferito?: number): Observable<Messaggio[]> {
+		let url = `${this.apiUrl}/tipo/${tipo}`;
+		if (id_riferito !== undefined) {
+			url += `?id_riferito=${id_riferito}`;
+		}
+		return this.http.get<Messaggio[]>(url);
+	}
+
+	getMessaggioById(id: number): Observable<Messaggio> {
+		return this.http.get<Messaggio>(`${this.apiUrl}/${id}`);
+	}
+
+	creaMessaggio(messaggio: Partial<Messaggio>): Observable<{ id: number }> {
+		return this.http.post<{ id: number }>(`${this.apiUrl}`, messaggio);
+	}
+
+	aggiornaMessaggio(id: number, messaggio: Partial<Messaggio>): Observable<{ success: boolean }> {
+		return this.http.put<{ success: boolean }>(`${this.apiUrl}/${id}`, messaggio);
+	}
+
+	eliminaMessaggio(id: number): Observable<{ success: boolean }> {
+		return this.http.delete<{ success: boolean }>(`${this.apiUrl}/${id}`);
+	}
+}

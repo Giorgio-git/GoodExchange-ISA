@@ -1,0 +1,244 @@
+/* ==========================================================================
+   LAYOUT PRINCIPALE DELL'APPLICAZIONE (APP.COMPONENT.CSS)
+   ========================================================================== */
+
+.app-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--color-slate-50);
+}
+
+/* ===== HEADER ===== */
+.app-header {
+  height: 64px;
+  background-color: #ffffff;
+  border-bottom: 1px solid var(--color-slate-200);
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  box-shadow: var(--shadow-sm);
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+}
+
+.app-title-link {
+  text-decoration: none;
+}
+
+.app-title {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--color-slate-900);
+  margin: 0;
+  letter-spacing: -0.03em;
+}
+
+.app-title:hover {
+  color: var(--color-primary);
+}
+
+/* ===== BARRA DI RICERCA ADMIN ===== */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.search-form {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.search-input {
+  width: 260px;
+  padding: 0.45rem 0.8rem;
+  font-size: 0.85rem;
+  border-radius: var(--radius-full);
+}
+
+.search-btn {
+  padding: 0.45rem 1rem;
+  font-size: 0.85rem;
+  border-radius: var(--radius-full);
+}
+
+/* ===== BODY CONTENITORE (SIDEBAR + MAIN CONTENT) ===== */
+.app-body {
+  display: flex;
+  flex: 1;
+  align-items: stretch;
+}
+
+/* ===== SIDEBAR ===== */
+.sidebar {
+  width: 250px;
+  background-color: #ffffff;
+  border-right: 1px solid var(--color-slate-200);
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem 0;
+  flex-shrink: 0;
+}
+
+.sidebar-section {
+  padding: 0 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.sidebar-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-slate-400);
+  margin: 0 0 0.75rem 0.5rem;
+}
+
+.sidebar-subtitle {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-slate-400);
+  margin: 1rem 0 0.5rem 0.5rem;
+}
+
+.sidebar-divider {
+  height: 1px;
+  background-color: var(--color-slate-200);
+  margin: 0.75rem 0.5rem;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem 0.85rem;
+  color: var(--color-slate-600);
+  font-size: 0.92rem;
+  font-weight: 500;
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  transition: all var(--transition-fast);
+}
+
+.nav-item:hover {
+  background-color: var(--color-slate-100);
+  color: var(--color-slate-900);
+}
+
+.nav-item.active {
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.nav-icon {
+  font-size: 1.1rem;
+  width: 20px;
+  text-align: center;
+}
+
+.admin-item {
+  color: var(--color-slate-700);
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  padding: 1rem 1.25rem 0 1.25rem;
+  border-top: 1px solid var(--color-slate-200);
+}
+
+.logout-btn {
+  width: 100%;
+  justify-content: flex-start;
+  color: var(--color-danger);
+  background-color: transparent;
+  border: 1px solid var(--color-slate-200);
+}
+
+.logout-btn:hover {
+  background-color: var(--color-danger-bg);
+  color: var(--color-danger-text);
+  border-color: var(--color-danger-bg);
+}
+
+/* ===== MAIN CONTENT ===== */
+.main-content {
+  flex: 1;
+  padding: 2.5rem;
+  overflow-y: auto;
+}
+
+.content-wrapper {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* ===== FOOTER ===== */
+.app-footer {
+  background-color: #ffffff;
+  border-top: 1px solid var(--color-slate-200);
+  padding: 1.25rem 2rem;
+  text-align: center;
+}
+
+.footer-content p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--color-slate-500);
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 900px) {
+  .app-body {
+    flex-direction: column;
+  }
+  
+  .sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--color-slate-200);
+    padding: 1rem 0;
+  }
+  
+  .main-content {
+    padding: 1.5rem 1rem;
+  }
+  
+  .search-input {
+    width: 180px;
+  }
+}
+
+@media (max-width: 600px) {
+  .app-header {
+    flex-direction: column;
+    height: auto;
+    padding: 1rem;
+    gap: 0.75rem;
+  }
+  
+  .header-actions, .search-form {
+    width: 100%;
+  }
+  
+  .search-input {
+    flex: 1;
+  }
+}

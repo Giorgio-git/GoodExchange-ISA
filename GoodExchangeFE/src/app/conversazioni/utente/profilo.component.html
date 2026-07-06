@@ -1,0 +1,95 @@
+
+<div class="profilo-container">
+	<h2>Profilo utente</h2>
+
+	<!-- Se l'utente loggato sta visualizzando il proprio profilo (solo riepilogo crediti) -->
+	<div *ngIf="utente && utente.id === utenteEdit.id">
+
+		<div class="credits">
+			<div class="credits-item">
+				<div class="credits-label">Crediti accumulati</div>
+				<div class="credits-value">{{ crediti_accumulati }}</div>
+			</div>
+			<div class="credits-item">
+				<div class="credits-label">Valore beni</div>
+				<div class="credits-value">{{ crediti_valore_beni }}</div>
+			</div>
+			<div class="credits-item">
+				<div class="credits-label">Cauzione</div>
+				<div class="credits-value">{{ utente.cauzione }}</div>
+			</div>
+		</div>
+
+		
+		<div class="profilo-dati-blocchi">
+			<div class="profilo-dato"><span class="profilo-dato-label">Nome:</span> <span class="profilo-dato-value">{{ utenteEdit.nome }} {{ utenteEdit.cognome }}</span></div>
+			<div class="profilo-dato"><span class="profilo-dato-label">Username:</span> <span class="profilo-dato-value">{{ utenteEdit.username }}</span></div>
+			<div class="profilo-dato"><span class="profilo-dato-label">Città:</span> <span class="profilo-dato-value">{{ utenteEdit.citta }}</span></div>
+			<div class="profilo-dato"><span class="profilo-dato-label">Provincia:</span> <span class="profilo-dato-value">{{ utenteEdit.provincia }}</span></div>
+			<div class="profilo-dato"><span class="profilo-dato-label">Regione:</span> <span class="profilo-dato-value">{{ utenteEdit.regione }}</span></div>
+			<div class="profilo-dato"><span class="profilo-dato-label">Via:</span> <span class="profilo-dato-value">{{ utenteEdit.via }} {{ utenteEdit.civico }}</span></div>
+		</div>
+
+		<div >
+			<form (ngSubmit)="versaCauzione()" style="margin-top:0.5rem;">
+				<label for="versamento" style="font-size:0.95rem; color:#1976d2;">Versamento:</label>
+				<input id="versamento" name="versamento" type="number" min="1" [(ngModel)]="importoVersamento" style="width:70px; margin:0 0.5rem; border-radius:4px; border:1px solid #bbdefb; padding:2px 6px;">
+				<button type="submit" style="background:#1976d2; color:#fff; border:none; border-radius:4px; padding:2px 10px; font-size:0.95rem;">Aggiungi</button>
+			</form>
+			<div *ngIf="messaggioCauzione" style="margin-top:0.3rem; font-size:0.93rem; color:#2a7b4f;">{{ messaggioCauzione }}</div>
+		</div>
+
+	</div>
+
+	
+	
+		
+
+
+
+	<!-- Se si sta visualizzando il profilo di un altro utente (anche admin su altro utente) -->
+	<div *ngIf="utente && utente.id !== utenteEdit.id">
+		<div class="profilo-altro-container">
+			<h3>Dati principali utente</h3>
+			<div class="profilo-dati-blocchi">
+				<div class="profilo-dato"><span class="profilo-dato-label">Nome:</span> <span class="profilo-dato-value">{{ utenteEdit.nome }} {{ utenteEdit.cognome }}</span></div>
+				<div class="profilo-dato"><span class="profilo-dato-label">Username:</span> <span class="profilo-dato-value">{{ utenteEdit.username }}</span></div>
+				<div class="profilo-dato"><span class="profilo-dato-label">Città:</span> <span class="profilo-dato-value">{{ utenteEdit.citta }}</span></div>
+				<div class="profilo-dato"><span class="profilo-dato-label">Provincia:</span> <span class="profilo-dato-value">{{ utenteEdit.provincia }}</span></div>
+				<div class="profilo-dato"><span class="profilo-dato-label">Regione:</span> <span class="profilo-dato-value">{{ utenteEdit.regione }}</span></div>
+				<div class="profilo-dato"><span class="profilo-dato-label">Via:</span> <span class="profilo-dato-value">{{ utenteEdit.via }} {{ utenteEdit.civico }}</span></div>
+			</div>
+			<a class="btn btn-danger btn-mt-1-5" [routerLink]="['/conversazioni/utente', utenteEdit.id, 'segnala']">Segnala utente</a>
+
+			<!-- Bottone aggiungi/rimuovi ai preferiti -->
+			<button class="btn btn-primary btn-mt-1" (click)="aggiungiAiPreferiti()" *ngIf="utente && utente.id !== utenteEdit.id && !isPreferito">Aggiungi ai preferiti</button>
+			<button class="btn btn-danger btn-mt-1" (click)="rimuoviDaPreferiti()" *ngIf="utente && utente.id !== utenteEdit.id && isPreferito">Rimuovi dai preferiti</button>
+			<div *ngIf="messaggioPreferiti" class="messaggio-successo msg-mt-0-5">{{ messaggioPreferiti }}</div>
+
+		</div>
+	</div>
+
+
+	<!-- Feedback ricevuti -->
+	<div class="feedback-container feedback-mt-2">
+		<h4>Feedback ricevuti</h4>
+		<div *ngIf="feedbackRicevuti.length === 0" class="feedback-empty">Nessun feedback disponibile.</div>
+
+			<ul *ngIf="feedbackRicevuti.length > 0" class="feedback-list">
+			<li *ngFor="let fb of feedbackRicevuti">
+				<div class="feedback-voto">Voto: {{ fb.voto }}</div>
+				<div class="feedback-data">Data: {{ fb.data ? (fb.data | slice:0:10) : '-' }}</div>
+				<div *ngIf="fb.id !== undefined && messaggiFeedback[fb.id]">
+					<div class="feedback-titolo">{{ messaggiFeedback[fb.id]?.titolo }}</div>
+					<div class="feedback-descrizione">{{ messaggiFeedback[fb.id]?.contenuto }}</div>
+				</div>
+				<div *ngIf="fb.id !== undefined && !messaggiFeedback[fb.id]" class="feedback-empty">Nessun messaggio associato.</div>
+			</li>
+			</ul>
+	</div>
+
+
+	<div *ngIf="!utente" class="profilo-login-msg">
+		<p>Effettua il login per visualizzare e modificare il tuo profilo.</p>
+	</div>
+</div>

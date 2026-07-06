@@ -1,0 +1,55 @@
+<div class="lista-utenti-container">
+  <h2>Utenti della piattaforma</h2>
+  <div *ngIf="loading">Caricamento utenti...</div>
+  <div *ngIf="!loading && utenti.length === 0">Nessun altro utente trovato.</div>
+  <table *ngIf="!loading && utenti.length > 0" class="tabella-utenti">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nome</th>
+        <th>Cognome</th>
+        <th>Username</th>
+        <th>Codice Fiscale</th>
+        <th>Regione</th>
+        <th>Provincia</th>
+        <th>Città</th>
+        <th>Via</th>
+        <th>Civico</th>
+        <th>Ruolo</th>
+        <th>Stato</th>
+        <th>Crediti beni</th>
+        <th>Crediti accumulati</th>
+        <th>Cauzione</th>
+        <th>Azioni</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let utente of utenti">
+        <td>{{ utente.id }}</td>
+        <td>{{ utente.nome }}</td>
+        <td>{{ utente.cognome }}</td>
+        <td>{{ utente.username }}</td>
+        <td>{{ utente.codice_fiscale }}</td>
+        <td>{{ utente.regione }}</td>
+        <td>{{ utente.provincia }}</td>
+        <td>{{ utente.citta }}</td>
+        <td>{{ utente.via }}</td>
+        <td>{{ utente.civico }}</td>
+        <td>{{ utente.ruolo }}</td>
+        <td>{{ utente.stato }}</td>
+        <td>{{ utente.crediti_valore_beni }}</td>
+        <td>{{ utente.crediti_accumulati }}</td>
+        <td>{{ utente.cauzione }}</td>
+        <td>
+          <button class="btn btn-link" (click)="vaiAProfilo(utente.id)">Visualizza profilo</button>
+          <button class="btn btn-danger" (click)="cambiaStatoUtente(utente)">
+            {{ utente.stato === 'attivo' ? 'Blocca' : 'Attiva' }}
+          </button>
+          <button class="btn btn-warning" (click)="ritiraCauzione(utente)" [disabled]="utente.cauzione === 0">
+            Ritira cauzione
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

@@ -1,0 +1,118 @@
+<div class="app-layout">
+  <!-- HEADER PRINCIPALE -->
+  <header class="app-header">
+    <div class="header-brand">
+      <a routerLink="/home" class="app-title-link">
+        <h1 class="app-title">GoodExchange</h1>
+      </a>
+    </div>
+
+    <!-- Barra di ricerca utenti (solo admin) -->
+    <div class="header-actions" *ngIf="isAdmin">
+      <form (ngSubmit)="cercaUtenti()" class="search-form">
+        <input 
+          type="text" 
+          [(ngModel)]="searchUtenti" 
+          name="searchUtenti"
+          placeholder="Cerca utenti per nome o ID..."
+          class="form-control search-input">
+        <button type="submit" class="btn btn-secondary search-btn">Cerca</button>
+      </form>
+    </div>
+  </header>
+
+  <!-- BODY CONTENITORE: SIDEBAR + MAIN CONTENT -->
+  <div class="app-body">
+    <!-- MENU LATERALE (SIDEBAR) -->
+    <aside class="sidebar">
+      <!-- Sezione Account -->
+      <div class="sidebar-section">
+        <h3 class="sidebar-title">Account</h3>
+        
+        <!-- Utente NON loggato -->
+        <nav class="sidebar-nav" *ngIf="!isUtenteLogged">
+          <a routerLink="/login" routerLinkActive="active" class="nav-item">
+            <span class="nav-icon">🔑</span> Login
+          </a>
+          <a routerLink="/signup" routerLinkActive="active" class="nav-item">
+            <span class="nav-icon">📝</span> Registrati
+          </a>
+        </nav>
+
+        <!-- Utente Loggato -->
+        <nav class="sidebar-nav" *ngIf="isUtenteLogged">
+          <a routerLink="/profilo" routerLinkActive="active" class="nav-item">
+            <span class="nav-icon">👤</span> Il mio Profilo
+          </a>
+          <a routerLink="/preferiti" routerLinkActive="active" class="nav-item" *ngIf="!isAdmin">
+            <span class="nav-icon">⭐</span> Utenti preferiti
+          </a>
+          <a [routerLink]="['/beni']" [queryParams]="{ miei: true }" routerLinkActive="active" class="nav-item" *ngIf="!isAdmin">
+            <span class="nav-icon">📦</span> I miei beni
+          </a>
+          <a routerLink="/prestiti" routerLinkActive="active" class="nav-item" *ngIf="!isAdmin">
+            <span class="nav-icon">🤝</span> I miei prestiti
+          </a>
+        </nav>
+      </div>
+
+      <!-- Sezione Navigazione -->
+      <div class="sidebar-section">
+        <h3 class="sidebar-title">Esplora</h3>
+        <nav class="sidebar-nav">
+          <a routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-item">
+            <span class="nav-icon">🏠</span> Home
+          </a>
+          <a [routerLink]="['/beni']" [queryParams]="{}" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-item">
+            <span class="nav-icon">🔍</span> Tutti i beni
+          </a>
+          <a [routerLink]="['/ricerca-beni']" routerLinkActive="active" class="nav-item">
+            <span class="nav-icon">📍</span> Ricerca per località
+          </a>
+
+          <!-- Opzioni Admin -->
+          <ng-container *ngIf="isAdmin">
+            <div class="sidebar-divider"></div>
+            <div class="sidebar-subtitle">Amministrazione</div>
+            <a routerLink="/utenti" routerLinkActive="active" class="nav-item admin-item">
+              <span class="nav-icon">👥</span> Utenti
+            </a>
+            <a routerLink="/admin/categorie" routerLinkActive="active" class="nav-item admin-item">
+              <span class="nav-icon">🏷️</span> Categorie
+            </a>
+            <a routerLink="/admin/suggerimenti" routerLinkActive="active" class="nav-item admin-item">
+              <span class="nav-icon">💡</span> Suggerimenti
+            </a>
+            <a routerLink="/segnalazioni" routerLinkActive="active" class="nav-item admin-item">
+              <span class="nav-icon">⚠️</span> Segnalazioni
+            </a>
+            <a routerLink="/prestiti" routerLinkActive="active" class="nav-item admin-item">
+              <span class="nav-icon">📋</span> Prestiti Totali
+            </a>
+          </ng-container>
+        </nav>
+      </div>
+
+      <!-- Sezione Logout -->
+      <div class="sidebar-footer" *ngIf="isUtenteLogged">
+        <button (click)="logout()" class="btn btn-secondary logout-btn">
+          <span>🚪</span> Logout
+        </button>
+      </div>
+    </aside>
+
+    <!-- CONTENUTO PRINCIPALE -->
+    <main class="main-content">
+      <div class="content-wrapper">
+        <router-outlet></router-outlet>
+      </div>
+    </main>
+  </div>
+
+  <!-- FOOTER PRINCIPALE -->
+  <footer class="app-footer">
+    <div class="footer-content">
+      <p>&copy; 2026 GoodExchange. Ingegneria del Software Avanzata.</p>
+    </div>
+  </footer>
+</div>

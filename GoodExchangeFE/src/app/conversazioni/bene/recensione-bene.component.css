@@ -1,0 +1,76 @@
+.recensione-bene-container {
+	background: #f7faff;
+	border-radius: 10px;
+	box-shadow: 0 2px 8px #e0e7ef;
+	padding: 24px 18px 18px 18px;
+	max-width: 420px;
+	margin: 24px auto;
+}
+.recensione-bene-container h3 {
+	color: #2a4d7c;
+	font-size: 1.2rem;
+	margin-bottom: 18px;
+	text-align: center;
+}
+.star-rating {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-bottom: 16px;
+}
+.star-rating label {
+	font-weight: 500;
+	color: #2a4d7c;
+	margin-right: 8px;
+}
+.star-rating span {
+	font-size: 1.7rem;
+	transition: color 0.2s;
+}
+.star-rating .selected {
+	color: #fbc02d;
+	text-shadow: 0 1px 4px #e0e7ef;
+}
+.star-rating .pointer {
+	cursor: pointer;
+}
+.form-group {
+	margin-bottom: 14px;
+}
+.form-group label {
+	display: block;
+	font-weight: 500;
+	margin-bottom: 4px;
+	color: #2a4d7c;
+}
+.form-group input,
+.form-group textarea {
+	width: 100%;
+	padding: 7px 10px;
+	border-radius: 5px;
+	border: 1px solid #b6c2d2;
+	font-size: 1rem;
+	margin-bottom: 4px;
+	background: #fff;
+}
+.form-group textarea {
+	min-height: 60px;
+}
+button[type="submit"] {
+	background: #2a4d7c;
+	color: #fff;
+	border: none;
+	border-radius: 4px;
+	padding: 8px 16px;
+	font-weight: 500;
+	cursor: pointer;
+	margin-top: 8px;
+	box-shadow: 0 2px 8px #e0e7ef;
+	transition: background 0.2s;
+}
+button[type="submit"]:hover {
+	background: #1a355c;
+}
+.pointer {
+	cursor: pointer;
+}

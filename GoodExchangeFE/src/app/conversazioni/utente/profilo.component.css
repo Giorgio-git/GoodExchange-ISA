@@ -1,0 +1,354 @@
+.feedback-container {
+  margin-top: 2.5rem;
+}
+
+.feedback-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.feedback-list li {
+  background: #f5faff;
+  border: 1.5px solid #bbdefb;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(25, 118, 210, 0.07);
+  padding: 1.2rem 1.5rem 1.1rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  transition: box-shadow 0.2s, border-color 0.2s;
+}
+.feedback-list li:hover {
+  box-shadow: 0 4px 18px rgba(25, 118, 210, 0.13);
+  border-color: #1976d2;
+}
+.feedback-list li > span {
+  display: inline-block;
+  margin-right: 1.2rem;
+  font-size: 1.08rem;
+  color: #234;
+}
+.feedback-list li > span strong {
+  color: #1976d2;
+  font-weight: 600;
+}
+.feedback-list li .ml-1-5 {
+  margin-left: 0;
+}
+.feedback-list li .feedback-empty {
+  color: #b0b0b0;
+  font-style: italic;
+  margin-top: 0.2rem;
+}
+.feedback-list li .ml-1-5 {
+  margin-left: 0.7rem;
+}
+.feedback-list li .feedback-voto {
+  font-size: 1.18rem;
+  font-weight: 700;
+  color: #1565c0;
+  background: #e3f2fd;
+  border-radius: 6px;
+  padding: 0.2rem 0.7rem;
+  margin-right: 1.2rem;
+  display: inline-block;
+}
+.feedback-list li .feedback-data {
+  color: #1976d2;
+  font-size: 0.98rem;
+  margin-right: 1.2rem;
+}
+.feedback-list li .feedback-titolo {
+  font-weight: 600;
+  color: #1976d2;
+  margin-top: 0.2rem;
+}
+.feedback-list li .feedback-descrizione {
+  color: #234;
+  margin-top: 0.1rem;
+  font-size: 1.04rem;
+}
+
+@media (max-width: 700px) {
+  .feedback-list li {
+    padding: 0.8rem 0.7rem 0.8rem 0.7rem;
+    font-size: 0.98rem;
+  }
+  .feedback-list li .feedback-voto {
+    font-size: 1.05rem;
+    padding: 0.15rem 0.5rem;
+  }
+}
+/* Blocchi dati profilo utente */
+.profilo-dati-blocchi {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin-bottom: 1.5rem;
+  max-width: 350px;
+}
+.profilo-dato {
+  font-size: 1.01rem;
+  color: #234;
+  padding: 0.18rem 0.2rem;
+  border-bottom: 1px solid #e3eaf5;
+}
+.profilo-dato-label {
+  font-weight: 500;
+  color: #1976d2;
+  margin-right: 0.3rem;
+}
+.profilo-dato-value {
+  font-weight: 400;
+}
+
+/* Crediti, valore beni, cauzione: più piccoli e affiancati */
+.credits {
+  display: flex;
+  flex-direction: row !important;
+  gap: 1.2rem;
+  margin: 1.2rem 0 1.2rem 0;
+  justify-content: flex-start;
+  align-items: flex-end;
+}
+.credits-item {
+  background: #f5faff;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  text-align: center;
+  flex: 0 0 auto;
+  box-shadow: 0 1px 4px rgba(25, 118, 210, 0.07);
+  min-width: 90px;
+}
+.credits-label {
+  color: #1976d2;
+  font-size: 0.93rem;
+  font-weight: 500;
+  margin-bottom: 0.1rem;
+}
+.credits-value {
+  font-size: 1.08rem;
+  font-weight: 600;
+  color: #1565c0;
+}
+/* Spostamento CSS precedentemente inline dal template HTML */
+.btn-mt-1-5 {
+  margin-top: 1.5rem;
+}
+.btn-mt-1 {
+  margin-top: 1rem;
+}
+.msg-mt-0-5 {
+  margin-top: 0.5rem;
+  color: #2a7b4f;
+  font-weight: 500;
+}
+.feedback-mt-2 {
+  margin-top: 2rem;
+}
+.feedback-empty {
+  color: #888;
+}
+.ml-1-5 {
+  margin-left: 1.5rem;
+}
+.profilo-login-msg {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+/* Tema blu elegante e uniforme per la sezione profilo utente */
+.profilo-container {
+  max-width: 700px;
+  margin: 32px auto;
+  background: #f8fbff;
+  border-radius: 14px;
+  box-shadow: 0 2px 16px rgba(25, 118, 210, 0.10);
+  padding: 32px 24px;
+  font-family: 'Inter', 'Roboto', Arial, sans-serif;
+}
+
+.btn-primary {
+  background: linear-gradient(90deg, #1976d2 0%, #64b5f6 100%);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 20px;
+  margin-right: 8px;
+  font-size: 1.08rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.10);
+  transition: background 0.2s;
+}
+.btn-primary:hover {
+  background: linear-gradient(90deg, #1565c0 0%, #1976d2 100%);
+}
+.btn-danger {
+  background: #d32f2f;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 20px;
+  font-size: 1.08rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(211, 47, 47, 0.10);
+  transition: background 0.2s;
+}
+.btn-danger:hover {
+  background: #b71c1c;
+}
+.errore {
+  color: #d32f2f;
+  margin-bottom: 12px;
+  font-weight: 500;
+  text-align: center;
+}
+
+/* Stile base per il profilo utente, in linea con il resto del progetto GoodExchange */
+
+.profilo-container {
+  display: block;
+
+  .profilo-form {
+    background: #e3f2fd;
+    border-radius: 12px;
+    box-shadow: 0 1px 8px rgba(25, 118, 210, 0.07);
+    padding: 2rem 1.5rem 1.5rem 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  h2 {
+    color: #1976d2;
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  form {
+    background: #e3f2fd;
+    border-radius: 12px;
+    box-shadow: 0 1px 8px rgba(25, 118, 210, 0.07);
+    padding: 2rem 1.5rem 1.5rem 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .form-group {
+    margin-bottom: 2.2rem;
+    display: flex;
+    flex-direction: column;
+    background: #f5faff;
+    border: 1.5px solid #bbdefb;
+    border-radius: 12px;
+    padding: 1.2rem 1.4rem 0.8rem 1.4rem;
+    box-shadow: 0 2px 12px rgba(25, 118, 210, 0.08);
+    transition: box-shadow 0.25s, border-color 0.25s, background 0.25s;
+  }
+  .form-group:hover {
+    background: #e3f2fd;
+    box-shadow: 0 4px 18px rgba(25, 118, 210, 0.13);
+  }
+  .form-group:focus-within {
+    border-color: #1976d2;
+    box-shadow: 0 6px 24px rgba(25, 118, 210, 0.18);
+    background: #bbdefb;
+  }
+
+  label {
+    display: block;
+    font-weight: 500;
+    color: #1976d2;
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.5px;
+  }
+
+  input, select {
+    width: 100%;
+    padding: 0.7rem 1rem;
+    border: 1px solid #90caf9;
+    border-radius: 8px;
+    font-size: 1.05rem;
+    background: #f9f9f9;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    margin-bottom: 0.1rem;
+    box-shadow: 0 1px 2px rgba(25, 118, 210, 0.03);
+  }
+  input:focus, select:focus {
+    border-color: #1976d2;
+    outline: none;
+    box-shadow: 0 2px 8px rgba(25, 118, 210, 0.08);
+  }
+
+  .credits {
+    display: flex;
+    gap: 2rem;
+    margin: 2rem 0 1.5rem 0;
+    justify-content: space-between;
+  }
+  .credits-item {
+    background: #f5faff;
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    text-align: center;
+    flex: 1;
+    box-shadow: 0 1px 4px rgba(25, 118, 210, 0.07);
+  }
+  .credits-label {
+    color: #1976d2;
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-bottom: 0.3rem;
+  }
+  .credits-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1565c0;
+  }
+
+  button {
+    background: linear-gradient(90deg, #1976d2 0%, #64b5f6 100%);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 0.8rem 2rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(25, 118, 210, 0.08);
+    transition: background 0.2s;
+    margin-top: 1rem;
+  }
+  button:disabled {
+    background: #bbdefb;
+    cursor: not-allowed;
+  }
+  button:hover:not(:disabled) {
+    background: linear-gradient(90deg, #64b5f6 0%, #1976d2 100%);
+  }
+
+  .messaggio-successo {
+    margin-top: 1rem;
+    color: #1976d2;
+    font-weight: 500;
+    text-align: center;
+  }
+
+  @media (max-width: 700px) {
+    :host {
+      padding: 1rem 0.5rem;
+    }
+    .credits {
+      flex-direction: row !important;
+      gap: 0.7rem;
+    }
+    form {
+      padding: 1rem 0.5rem;
+    }
+  }
+}

@@ -1,0 +1,96 @@
+<div class="beni-list-wrapper">
+  <!-- TOOLBAR: FILTRO E RICERCA -->
+  <div class="beni-toolbar card">
+    <div class="toolbar-left">
+      <!-- FILTRO CATEGORIA -->
+      <div class="filtro-group">
+        <label for="categoriaFiltro" class="form-label">Categoria:</label>
+        <select id="categoriaFiltro" [(ngModel)]="categoriaFiltro" (change)="onCategoriaFiltroChange()" class="form-select filtro-select">
+          <option [ngValue]="null">Tutte le categorie</option>
+          <option *ngFor="let cat of categorie" [value]="cat.id">{{ cat.nome }}</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="toolbar-right">
+      <!-- BARRA DI RICERCA BENI -->
+      <form (ngSubmit)="onSearchBeni()" class="search-form">
+        <input 
+          type="text" 
+          [(ngModel)]="searchBeni" 
+          name="searchBeni"
+          placeholder="Cerca beni per nome o descrizione..."
+          class="form-control search-input">
+        <button type="submit" class="btn btn-primary">Cerca</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- PULSANTE AGGIUNGI BENE (SOLO IN VISTA "I MIEI BENI") -->
+  <div *ngIf="soloMiei && loggedUser" class="action-bar">
+    <a routerLink="/bene/nuovo" class="btn btn-success">
+      <span>➕</span> Aggiungi un nuovo bene
+    </a>
+  </div>
+
+  <!-- STATO VUOTO (NESSUN BENE TROVATO) -->
+  <div *ngIf="beni.length === 0" class="empty-state">
+    <span class="empty-icon">📦</span>
+    <h3>Nessun bene trovato</h3>
+    <p *ngIf="isClient && soloMiei">Non hai ancora inserito beni nel tuo catalogo.</p>
+    <p *ngIf="isClient && !soloMiei">Al momento non ci sono beni disponibili con questi filtri.</p>
+    <p *ngIf="!loggedUser">Al momento non ci sono beni disponibili.</p>
+    <p *ngIf="isAdmin">Nessun bene presente nel sistema.</p>
+  </div>
+
+  <!-- GRIGLIA DEI BENI -->
+  <div *ngIf="beni.length > 0" class="beni-grid">
+    <!-- BENE CARD -->
+    <a *ngFor="let bene of beni" class="bene-card card" [routerLink]="['/beni', bene.id!]">
+      
+      <!-- Badge di stato in alto a destra -->
+      <div class="card-badges">
+        <span class="badge" [ngClass]="bene.stato ? 'badge-success' : 'badge-warning'">
+          {{ bene.stato ? 'Disponibile' : 'Occupato' }}
+        </span>
+      </div>
+
+      <!-- Container Immagine -->
+      <div class="bene-image-container">
+        <img *ngIf="immaginiBeni[bene.id!]" [src]="immaginiBeni[bene.id!]" alt="Foto {{ bene.nome }}" class="bene-image" />
+        <div *ngIf="!immaginiBeni[bene.id!]" class="bene-image-placeholder">
+          <span>📦</span>
+        </div>
+      </div>
+
+      <!-- Dettagli Bene -->
+      <div class="bene-details">
+        <span class="bene-category">{{ getNomeCategoria(bene.id_categoria) }}</span>
+        <h3 class="bene-title">{{ bene.nome }}</h3>
+        
+        <div *ngIf="isAdmin" class="bene-admin-info">
+          <span class="text-muted">Proprietario ID: #{{ bene.id_proprietario }}</span>
+        </div>
+      </div>
+
+      <!-- Footer Card / Azioni -->
+      <div class="bene-footer">
+        <!-- Proprietario nella vista generale -->
+        <span *ngIf="isClient && loggedUser && bene.id_proprietario === loggedUser.id && !soloMiei" class="bene-tag-owner">
+          ⭐ Il tuo bene
+        </span>
+        
+        <!-- Bottone Modifica per proprietario nella vista "I MIEI BENI" -->
+        <button *ngIf="isClient && loggedUser && bene.id_proprietario === loggedUser.id && soloMiei" class="btn btn-secondary btn-sm btn-block">
+          Modifica
+        </button>
+
+        <!-- Utente generico o Admin -->
+        <span *ngIf="(!loggedUser || (loggedUser && bene.id_proprietario !== loggedUser.id) || isAdmin) && !soloMiei" class="bene-action-link">
+          Vedi dettagli &rarr;
+        </span>
+      </div>
+    </a>
+  </div>
+
+</div>

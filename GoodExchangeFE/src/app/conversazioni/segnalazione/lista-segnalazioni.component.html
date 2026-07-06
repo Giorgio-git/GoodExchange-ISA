@@ -1,0 +1,42 @@
+<div class="lista-segnalazioni-container">
+  <h2>Segnalazioni utenti</h2>
+  <div *ngIf="loading">Caricamento...</div>
+  <div *ngIf="errore" class="error-msg">{{ errore }}</div>
+  <table *ngIf="!loading && segnalazioni.length > 0" class="segnalazioni-table">
+    <thead>
+      <tr>
+  <th>ID</th>
+  <th>Segnalante</th>
+  <th>Segnalato</th>
+  <th>Data</th>
+  <th>Messaggio</th>
+  <th>Stato</th>
+  <th>Azione</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let s of segnalazioni">
+        <td>{{ s.id }}</td>
+        <td>{{ s.id_segnalante }}</td>
+        <td>{{ s.id_segnalato }}</td>
+        <td>
+          <div *ngIf="s.id !== undefined && messaggi[s.id]">
+            <strong>{{ messaggi[s.id]?.titolo }}</strong><br>
+            <span>{{ messaggi[s.id]?.contenuto }}</span>
+          </div>
+          <div *ngIf="s.id === undefined || !messaggi[s.id]">-</div>
+        </td>
+        <td>{{ s.stato }}</td>
+        <td>
+          <select [(ngModel)]="s.stato" (change)="s.id !== undefined && aggiornaStato(s.id, s.stato)">
+            <option value="aperta">aperta</option>
+            <option value="in_gestione">in gestione</option>
+            <option value="risolta">risolta</option>
+            <option value="respinta">respinta</option>
+          </select>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <div *ngIf="!loading && segnalazioni.length === 0">Nessuna segnalazione presente.</div>
+</div>

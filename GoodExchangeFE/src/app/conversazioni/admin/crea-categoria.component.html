@@ -1,0 +1,20 @@
+<div class="crea-categoria-container">
+	<h3>Crea nuova categoria</h3>
+	<form #form="ngForm" (ngSubmit)="submit()" class="crea-categoria-form">
+		<div>
+			<label>Nome *</label>
+			<input [(ngModel)]="nome" name="nome" required />
+		</div>
+		<div>
+			<label>Crediti *</label>
+			<input type="number" [(ngModel)]="crediti" name="crediti" min="1" required />
+		</div>
+		<div>
+			<label>Descrizione</label>
+			<textarea [(ngModel)]="descrizione" name="descrizione"></textarea>
+		</div>
+		<button type="submit" [disabled]="form.invalid">Crea categoria</button>
+	</form>
+	<div *ngIf="error" class="error">{{ error }}</div>
+	<div *ngIf="success" class="success">{{ success }}</div>
+</div>

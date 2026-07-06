@@ -1,0 +1,51 @@
+<div class="lista-suggerimenti-container">
+  <h2>Suggerimenti</h2>
+  <div *ngIf="loading">Caricamento suggerimenti...</div>
+  <div *ngIf="!loading && suggerimentiRichiesti.length + suggerimentiCompletati.length === 0">Nessun suggerimento presente.</div>
+  <table *ngIf="!loading && (suggerimentiRichiesti.length + suggerimentiCompletati.length > 0)" class="tabella-suggerimenti">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Stato</th>
+        <th>Mittente</th>
+        <th>Titolo</th>
+        <th>Descrizione</th>
+        <th>Azioni</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let s of suggerimentiRichiesti">
+        <td>{{ s.id }}</td>
+        <td><span class="stato stato-richiesto">{{ s.stato }}</span></td>
+        <td>
+          <span *ngIf="messaggi[s.id]?.length">Utente #{{ messaggi[s.id][0].id_mittente }}</span>
+        </td>
+        <td>
+          <span *ngIf="messaggi[s.id]?.length">{{ messaggi[s.id][0].titolo }}</span>
+        </td>
+        <td>
+          <span *ngIf="messaggi[s.id]?.length">{{ messaggi[s.id][0].contenuto }}</span>
+        </td>
+        <td>
+          <button class="btn-completa" (click)="completaSuggerimento(s)">Contrassegna come completato</button>
+        </td>
+      </tr>
+      <tr *ngFor="let s of suggerimentiCompletati">
+        <td>{{ s.id }}</td>
+        <td><span class="stato stato-completato">{{ s.stato }}</span></td>
+        <td>
+          <span *ngIf="messaggi[s.id]?.length">Utente #{{ messaggi[s.id][0].id_mittente }}</span>
+        </td>
+        <td>
+          <span *ngIf="messaggi[s.id]?.length">{{ messaggi[s.id][0].titolo }}</span>
+        </td>
+        <td>
+          <span *ngIf="messaggi[s.id]?.length">{{ messaggi[s.id][0].contenuto }}</span>
+        </td>
+        <td>
+          <!-- Nessuna azione per suggerimenti completati -->
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

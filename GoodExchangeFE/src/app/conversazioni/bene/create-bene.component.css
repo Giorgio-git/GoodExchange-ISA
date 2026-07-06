@@ -1,0 +1,50 @@
+.create-bene-container {
+	max-width: 700px;
+	margin: 32px auto;
+	background: #fff;
+	border-radius: 12px;
+	box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+	padding: 32px 24px;
+}
+.bene-form div {
+	margin-bottom: 1rem;
+}
+.bene-form label {
+	display: block;
+	font-weight: 500;
+	margin-bottom: 0.3rem;
+}
+.bene-form input, .bene-form textarea, .bene-form select {
+	width: 100%;
+	padding: 0.5rem;
+	border-radius: 6px;
+	border: 1px solid #e0e0e0;
+	font-size: 1rem;
+}
+.btn-primary {
+	background: #1976d2;
+	color: #fff;
+	border: none;
+	border-radius: 6px;
+	padding: 8px 20px;
+	margin-right: 8px;
+	cursor: pointer;
+	transition: background 0.2s;
+}
+.btn-primary:disabled {
+	background: #ccc;
+	cursor: not-allowed;
+}
+.errore, .error {
+	color: #d32f2f;
+	margin-top: 1rem;
+	font-weight: 500;
+}
+.success {
+	color: #388e3c;
+	margin-top: 1rem;
+}
+.loading {
+	color: #1976d2;
+	margin-top: 1rem;
+}

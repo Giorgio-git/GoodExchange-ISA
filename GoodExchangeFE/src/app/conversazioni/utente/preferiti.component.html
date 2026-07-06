@@ -1,0 +1,26 @@
+<div class="preferiti-container">
+	<h2>I tuoi utenti preferiti</h2>
+	<div *ngIf="errore" class="errore">{{ errore }}</div>
+	<table *ngIf="utentiPreferiti.length > 0">
+		<thead>
+			<tr>
+				<th>Nome</th>
+				<th>Cognome</th>
+				<th>Username</th>
+				<th>Azioni</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr *ngFor="let utente of utentiPreferiti">
+				<td>{{ utente.nome }}</td>
+				<td>{{ utente.cognome }}</td>
+				<td>{{ utente.username }}</td>
+				<td>
+					<button (click)="vaiAlProfilo(utente.id)" class="btn-primary">Vedi profilo</button>
+					<button (click)="rimuoviPreferito(utente.id)" class="btn-danger">Rimuovi</button>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	<div *ngIf="utentiPreferiti.length === 0">Nessun utente preferito.</div>
+</div>
