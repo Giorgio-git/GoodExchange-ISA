@@ -19,7 +19,7 @@ async def get_utenti_preferiti(
 ) -> list[dict]:
     """Recupera tutti gli utenti preferiti di una lista preferiti."""
     try:
-        sql = 'SELECT * FROM "preferitiItem" WHERE id_preferiti=$1'
+        sql = 'SELECT * FROM "preferitiItem" WHERE id=$1'
         rows = await conn.fetch(sql, id_preferiti)
         return [dict(r) for r in rows]
     except Exception as err:
@@ -32,7 +32,7 @@ async def add_utente_preferito(
 ) -> bool:
     """Aggiunge un utente alla lista preferiti. Porting di addUtentePreferito() in preferitiItemDao.js."""
     try:
-        sql = 'INSERT INTO "preferitiItem" (id_preferiti, id_utente_preferito) VALUES ($1, $2) RETURNING id'
+        sql = 'INSERT INTO "preferitiItem" (id, id_utente_preferito) VALUES ($1, $2) RETURNING id'
         row = await conn.fetchrow(sql, id_preferiti, id_utente_preferito)
         return row is not None
     except Exception as err:
@@ -45,7 +45,7 @@ async def remove_utente_preferito(
 ) -> bool:
     """Rimuove un utente dalla lista preferiti. Porting di removeUtentePreferito() in preferitiItemDao.js."""
     try:
-        sql = 'DELETE FROM "preferitiItem" WHERE id_preferiti=$1 AND id_utente_preferito=$2'
+        sql = 'DELETE FROM "preferitiItem" WHERE id=$1 AND id_utente_preferito=$2'
         status = await conn.execute(sql, id_preferiti, id_utente_preferito)
         return _rows_affected(status) > 0
     except Exception as err:

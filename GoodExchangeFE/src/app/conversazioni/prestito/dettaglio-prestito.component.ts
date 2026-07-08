@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { SessionService } from '../../servizi/session.service';
 import { CommonModule } from '@angular/common';
 import { MessaggioComponent } from '../messaggio/messaggio.component';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Prestito } from '../../modelli/prestito.model';
 import { Messaggio } from '../../modelli/messaggio.model';
 import { PrestitoService } from '../../servizi/prestito.service';
@@ -34,6 +34,7 @@ export class DettaglioPrestitoComponent implements OnInit {
 
 		constructor(
 			private route: ActivatedRoute,
+			private router: Router,
 			private prestitoService: PrestitoService,
 			private messaggioService: MessaggioService,
 			private sessionService: SessionService,
@@ -71,7 +72,7 @@ export class DettaglioPrestitoComponent implements OnInit {
 		return this.utenti[messaggio.id_mittente]?.username || `Utente #${messaggio.id_mittente}`;
 	}
 
-		// Cambia lo stato del prestito (accetta/rifiuta/completa)
+		// Cambia lo stato del prestito (accetta/rifiuta/completa) e reindirizza alla tabella prestiti
 			cambiaStatoPrestito(nuovoStato: 'accettato' | 'rifiutato' | 'completato') {
 				console.log('Bottone cliccato, valore passato:', nuovoStato);
 				if (!this.prestito) return;
@@ -83,6 +84,8 @@ export class DettaglioPrestitoComponent implements OnInit {
 						console.log('Risposta backend:', res);
 						this.successoStato = `Prestito ${nuovoStato} con successo.`;
 						this.prestito = res.prestito;
+						// Reindirizza automaticamente alla tabella dei prestiti
+						this.router.navigate(['/prestiti']);
 					},
 					error: (err) => {
 						console.error('Errore backend:', err);

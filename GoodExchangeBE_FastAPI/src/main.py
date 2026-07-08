@@ -52,6 +52,19 @@ async def lifespan(app: FastAPI):
     logger.info("Avvio GoodExchange Backend — creazione pool connessioni DB...")
     app.state.db_pool = await create_db_pool()
     logger.info("Pool connessioni DB creato con successo.")
+    
+    # Auto-Migrazione / Check dello schema al boot (Self-Healing del DB locale)
+    async with app.state.db_pool.acquire() as conn:
+        try:
+            await conn.execute("""
+                ALTER TABLE utente 
+                ADD COLUMN IF NOT EXISTS reputazione DECIMAL(3,2) DEFAULT NULL 
+                CHECK (reputazione IS NULL OR (reputazione >= 1.0 AND reputazione <= 5.0));
+            """)
+            logger.info("Check/migrazione colonna 'reputazione' su tabella utente completato con successo.")
+        except Exception as e_mig:
+            logger.warning("Nota durante verifica schema reputazione: %s", e_mig)
+
     yield
     logger.info("Chiusura GoodExchange Backend — rilascio pool connessioni DB...")
     await app.state.db_pool.close()

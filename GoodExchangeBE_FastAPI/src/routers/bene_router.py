@@ -36,20 +36,29 @@ async def get_beni(
     limit: Optional[int] = Query(None),
     citta: Optional[str] = Query(None),
     regione: Optional[str] = Query(None),
+    provincia: Optional[str] = Query(None),
+    via: Optional[str] = Query(None),
+    civico: Optional[str] = Query(None),
 ):
     """
     Elenco beni con filtri dinamici.
-    Se filtrati per citta/regione, esegue prima la ricerca degli utenti della zona.
+    Se filtrati per citta/regione/provincia/via/civico, esegue prima la ricerca degli utenti della zona.
     Porting di GET /beni in beneRouter.js.
     """
     async with conn.transaction():
         # Filtro per zona: prima trova gli utenti, poi i loro beni
-        if citta or regione:
+        if citta or regione or provincia or via or civico:
             filtri_utente: dict = {}
             if citta:
                 filtri_utente["citta"] = citta
             if regione:
                 filtri_utente["regione"] = regione
+            if provincia:
+                filtri_utente["provincia"] = provincia
+            if via:
+                filtri_utente["via"] = via
+            if civico:
+                filtri_utente["civico"] = civico
 
             utenti = await utente_dao.find_utenti(conn, filtri_utente)
             if not utenti:

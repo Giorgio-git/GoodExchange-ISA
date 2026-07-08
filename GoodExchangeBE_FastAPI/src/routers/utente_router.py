@@ -45,7 +45,7 @@ async def login(
             raise HTTPException(status_code=401, detail="Credenziali non valide")
         # Rimuovi la password dalla risposta
         result = {k: v for k, v in utente.items() if k != "password"}
-        return result
+        return {"messaggio": "Login effettuato con successo", "utente": result}
 
 
 # ——— GET /api/utenti ———

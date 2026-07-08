@@ -51,25 +51,52 @@ async def find_utenti(conn: asyncpg.Connection, filtri: dict) -> list[dict]:
         for campo, valore in filtri.items():
             if valore is None or valore == "":
                 continue
-            parts.append(f"{campo} = ${len(params) + 1}")
-            params.append(valore)
+            if campo in ("citta", "regione", "provincia", "via"):
+                parts.append(f"{campo} ILIKE ${len(params) + 1}")
+                params.append(valore if "%" in str(valore) else f"%{valore}%")
+            else:
+                parts.append(f"{campo} = ${len(params) + 1}")
+                params.append(valore)
 
         if parts:
             sql += " WHERE " + " AND ".join(parts)
 
         rows = await conn.fetch(sql, *params)
-        return [dict(r) for r in rows]
+        utenti_list = [dict(r) for r in rows]
+        # Arricchimento read-only con reputazione calcolata al volo dai feedback (senza UPDATE che abortiscono transazioni)
+        for u in utenti_list:
+            try:
+                sql_rep = "SELECT ROUND(AVG(voto)::numeric, 2) as media FROM feedback WHERE id_destinatario = $1"
+                row_rep = await conn.fetchrow(sql_rep, u["id"])
+                media = row_rep["media"] if row_rep and row_rep["media"] is not None else None
+                u["reputazione"] = float(media) if media is not None else None
+            except Exception:
+                if "reputazione" not in u:
+                    u["reputazione"] = None
+        return utenti_list
     except Exception as err:
         logger.error("Errore in find_utenti: %s", err)
         raise
 
 
 async def find_utente_by_id(conn: asyncpg.Connection, id_utente: int) -> Optional[dict]:
-    """Restituisce un utente per ID o None se non trovato."""
+    """Restituisce un utente per ID o None se non trovato. Calcola la reputazione al volo in read-only per totale sicurezza."""
     try:
         sql = "SELECT * FROM utente WHERE id=$1"
         row = await conn.fetchrow(sql, id_utente)
-        return dict(row) if row else None
+        if not row:
+            return None
+        
+        utente_dict = dict(row)
+        try:
+            sql_rep = "SELECT ROUND(AVG(voto)::numeric, 2) as media FROM feedback WHERE id_destinatario = $1"
+            row_rep = await conn.fetchrow(sql_rep, id_utente)
+            media = row_rep["media"] if row_rep and row_rep["media"] is not None else None
+            utente_dict["reputazione"] = float(media) if media is not None else None
+        except Exception:
+            if "reputazione" not in utente_dict:
+                utente_dict["reputazione"] = None
+        return utente_dict
     except Exception as err:
         logger.error("Errore in find_utente_by_id: %s", err)
         raise
@@ -78,11 +105,23 @@ async def find_utente_by_id(conn: asyncpg.Connection, id_utente: int) -> Optiona
 async def find_utente_by_username(
     conn: asyncpg.Connection, username: str
 ) -> Optional[dict]:
-    """Restituisce un utente per username o None se non trovato."""
+    """Restituisce un utente per username o None se non trovato. Calcola la reputazione al volo in read-only."""
     try:
         sql = "SELECT * FROM utente WHERE username=$1"
         row = await conn.fetchrow(sql, username)
-        return dict(row) if row else None
+        if not row:
+            return None
+        
+        utente_dict = dict(row)
+        try:
+            sql_rep = "SELECT ROUND(AVG(voto)::numeric, 2) as media FROM feedback WHERE id_destinatario = $1"
+            row_rep = await conn.fetchrow(sql_rep, utente_dict["id"])
+            media = row_rep["media"] if row_rep and row_rep["media"] is not None else None
+            utente_dict["reputazione"] = float(media) if media is not None else None
+        except Exception:
+            if "reputazione" not in utente_dict:
+                utente_dict["reputazione"] = None
+        return utente_dict
     except Exception as err:
         logger.error("Errore in find_utente_by_username: %s", err)
         raise

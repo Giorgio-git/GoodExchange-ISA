@@ -15,5 +15,6 @@ export interface Utente {
   crediti_valore_beni: number;
   crediti_accumulati: number;
   cauzione: number;
+  reputazione?: number | null;
   created_at?: string;
 }

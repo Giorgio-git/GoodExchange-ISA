@@ -27,7 +27,7 @@
 			<div class="profilo-dato"><span class="profilo-dato-label">Città:</span> <span class="profilo-dato-value">{{ utenteEdit.citta }}</span></div>
 			<div class="profilo-dato"><span class="profilo-dato-label">Provincia:</span> <span class="profilo-dato-value">{{ utenteEdit.provincia }}</span></div>
 			<div class="profilo-dato"><span class="profilo-dato-label">Regione:</span> <span class="profilo-dato-value">{{ utenteEdit.regione }}</span></div>
-			<div class="profilo-dato"><span class="profilo-dato-label">Via:</span> <span class="profilo-dato-value">{{ utenteEdit.via }} {{ utenteEdit.civico }}</span></div>
+			<div class="profilo-dato"><span class="profilo-dato-label">Reputazione media:</span> <span class="profilo-dato-value">{{ utenteEdit.reputazione !== undefined && utenteEdit.reputazione !== null ? (utenteEdit.reputazione | number:'1.1-2') + ' / 5' : 'Nessun voto ricevuto' }}</span></div>
 		</div>
 
 		<div >
@@ -57,7 +57,7 @@
 				<div class="profilo-dato"><span class="profilo-dato-label">Città:</span> <span class="profilo-dato-value">{{ utenteEdit.citta }}</span></div>
 				<div class="profilo-dato"><span class="profilo-dato-label">Provincia:</span> <span class="profilo-dato-value">{{ utenteEdit.provincia }}</span></div>
 				<div class="profilo-dato"><span class="profilo-dato-label">Regione:</span> <span class="profilo-dato-value">{{ utenteEdit.regione }}</span></div>
-				<div class="profilo-dato"><span class="profilo-dato-label">Via:</span> <span class="profilo-dato-value">{{ utenteEdit.via }} {{ utenteEdit.civico }}</span></div>
+				<div class="profilo-dato"><span class="profilo-dato-label">Reputazione media:</span> <span class="profilo-dato-value">{{ utenteEdit.reputazione !== undefined && utenteEdit.reputazione !== null ? (utenteEdit.reputazione | number:'1.1-2') + ' / 5' : 'Nessun voto ricevuto' }}</span></div>
 			</div>
 			<a class="btn btn-danger btn-mt-1-5" [routerLink]="['/conversazioni/utente', utenteEdit.id, 'segnala']">Segnala utente</a>
 
@@ -76,10 +76,22 @@
 		<div *ngIf="feedbackRicevuti.length === 0" class="feedback-empty">Nessun feedback disponibile.</div>
 
 			<ul *ngIf="feedbackRicevuti.length > 0" class="feedback-list">
-			<li *ngFor="let fb of feedbackRicevuti">
-				<div class="feedback-voto">Voto: {{ fb.voto }}</div>
-				<div class="feedback-data">Data: {{ fb.data ? (fb.data | slice:0:10) : '-' }}</div>
-				<div *ngIf="fb.id !== undefined && messaggiFeedback[fb.id]">
+			<li *ngFor="let fb of feedbackRicevuti" class="feedback-card">
+				<div class="feedback-card-header">
+					<div class="feedback-author">
+						<a [routerLink]="['/conversazioni/utente', fb.id_utente]" class="feedback-author-link">
+							{{ mittentiFeedback[fb.id_utente]?.username || ('Utente ' + fb.id_utente) }}
+						</a>
+						<span *ngIf="mittentiFeedback[fb.id_utente]" class="feedback-author-name">
+							({{ mittentiFeedback[fb.id_utente]?.nome }} {{ mittentiFeedback[fb.id_utente]?.cognome }})
+						</span>
+					</div>
+					<div class="feedback-meta">
+						<span class="feedback-voto-badge">{{ fb.voto }} / 5</span>
+						<span class="feedback-data">{{ fb.data ? (fb.data | slice:0:10) : '-' }}</span>
+					</div>
+				</div>
+				<div *ngIf="fb.id !== undefined && messaggiFeedback[fb.id]" class="feedback-card-body">
 					<div class="feedback-titolo">{{ messaggiFeedback[fb.id]?.titolo }}</div>
 					<div class="feedback-descrizione">{{ messaggiFeedback[fb.id]?.contenuto }}</div>
 				</div>

@@ -38,7 +38,6 @@ export class CreaPrestitoComponent implements OnInit {
 	dataInizio: Date | null = null;
 	dataFine: Date | null = null;
 
-	disponibilita: boolean | null = null;
 	errore: string = '';
 	successo: string = '';
 
@@ -98,24 +97,9 @@ export class CreaPrestitoComponent implements OnInit {
 		return !this.occupiedDates.some((d: Date) => d.toDateString() === date.toDateString());
 	};
 
-	verificaDisponibilita(): void {
-		if (!this.bene || !this.dataInizio || !this.dataFine) return;
-		const dataInizioStr = this.dataInizio.toISOString().slice(0,10);
-		const dataFineStr = this.dataFine.toISOString().slice(0,10);
-		this.prestitoService.verificaDisponibilita(this.bene.id!, dataInizioStr, dataFineStr).subscribe({
-			next: res => { this.disponibilita = res.disponibile; },
-			error: () => { this.disponibilita = null; }
-		});
-	}
-
 	richiediPrestito(): void {
 		if (!this.bene || !this.loggedUser || !this.dataInizio || !this.dataFine || !this.titoloMessaggio || !this.contenutoMessaggio) {
 			this.errore = 'Compila tutti i campi.';
-			this.successo = '';
-			return;
-		}
-		if (!this.disponibilita) {
-			this.errore = 'Il bene non è disponibile per il periodo selezionato.';
 			this.successo = '';
 			return;
 		}

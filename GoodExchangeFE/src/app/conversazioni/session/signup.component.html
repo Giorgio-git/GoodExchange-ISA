@@ -1,157 +1,140 @@
-<div class="form-container">
-  
-  <h2>Crea il tuo account</h2>
+<div class="signup-container">
+  <div class="signup-card">
 
-  <form (ngSubmit)="signup()" #signupForm="ngForm">
-    
-    <!-- Nome -->
-    <input 
-      type="text" 
-      name="nome" 
-      [(ngModel)]="nuovoUtente.nome" 
-      placeholder="Nome" 
-      required
-      minlength="2">
-    
-    <!-- Cognome -->
-    <input 
-      type="text" 
-      name="cognome" 
-      [(ngModel)]="nuovoUtente.cognome" 
-      placeholder="Cognome" 
-      required
-      minlength="2">
-    
-    <!-- Username -->
-    <input 
-      type="text" 
-      name="username" 
-      [(ngModel)]="nuovoUtente.username" 
-      placeholder="Username" 
-      required
-      minlength="3">
-    
-    <!-- Password -->
-    <input 
-      type="password" 
-      name="password" 
-      [(ngModel)]="nuovoUtente.password" 
-      placeholder="Password" 
-      class="password-input" 
-      required
-      minlength="4">
-    
-    <!-- Codice Fiscale -->
-    <input 
-      type="text" 
-      name="codice_fiscale" 
-      [(ngModel)]="nuovoUtente.codice_fiscale" 
-      placeholder="Codice Fiscale" 
-      required
-      maxlength="16"
-      pattern="[A-Z0-9]{16}">
-
-    <!-- Indirizzo - Sezione -->
-    <h3>Indirizzo</h3>
-    
-    <!-- Regione -->
-    <input 
-      type="text" 
-      name="regione" 
-      [(ngModel)]="nuovoUtente.regione" 
-      placeholder="Regione" 
-      required>
-    
-    <!-- Provincia -->
-    <input 
-      type="text" 
-      name="provincia" 
-      [(ngModel)]="nuovoUtente.provincia" 
-      placeholder="Provincia" 
-      required
-      maxlength="2">
-    
-    <!-- Città -->
-    <input 
-      type="text" 
-      name="citta" 
-      [(ngModel)]="nuovoUtente.citta" 
-      placeholder="Città" 
-      required>
-    
-    <!-- Via -->
-    <input 
-      type="text" 
-      name="via" 
-      [(ngModel)]="nuovoUtente.via" 
-      placeholder="Via" 
-      required>
-    
-    <!-- Civico -->
-    <input 
-      type="text" 
-      name="civico" 
-      [(ngModel)]="nuovoUtente.civico" 
-      placeholder="Numero Civico" 
-      required>
-
-    <!-- Pulsante Pulisci Form -->
-    <div class="form-actions">
-      <button 
-        type="submit" 
-        [disabled]="!signupForm.form.valid" 
-        [class.active]="signupForm.form.valid"
-        class="btn-primary">
-        Registrati
-      </button>
-      
-      <button 
-        type="button" 
-        (click)="clearForm()"
-        class="btn-secondary">
-        Pulisci
-      </button>
+    <!-- Intestazione -->
+    <div class="signup-header">
+      <h2 class="signup-title">Crea il tuo Account</h2>
+      <p class="signup-subtitle">Unisciti alla community di GoodExchange</p>
     </div>
 
-    <!-- Messaggio di errore -->
-    <div class="errore" *ngIf="errore">{{ errore }}</div>
-    
+    <!-- Form di Registrazione -->
+    <form (ngSubmit)="signup()" #signupForm="ngForm" class="signup-form">
 
-  <!-- DA RIMUOVERE -->
-  <!-- Debug stato form -->
-  <pre style="background:#eef; padding:8px; font-size:0.95em;">
-    Valid: {{ signupForm.form.valid }}
-    Touched: {{ signupForm.form.touched }}
-    Dirty: {{ signupForm.form.dirty }}
-    Status: {{ signupForm.form.status }}
-    Errors: {{ signupForm.form.errors | json }}
+      <!-- Sezione Dati Personali -->
+      <div class="section-divider">
+        <span class="divider-title">Dati Personali & Accesso</span>
+      </div>
 
-  Nome valid: {{ signupForm.controls['nome'].valid }}
-  Nome errors: {{ signupForm.controls['nome'].errors | json }}
-  Cognome valid: {{ signupForm.controls['cognome'].valid }}
-  Cognome errors: {{ signupForm.controls['cognome'].errors | json }}
-  Username valid: {{ signupForm.controls['username'].valid }}
-  Username errors: {{ signupForm.controls['username'].errors | json }}
-  Password valid: {{ signupForm.controls['password'].valid }}
-  Password errors: {{ signupForm.controls['password'].errors | json }}
-  Codice fiscale valid: {{ signupForm.controls['codice_fiscale'].valid }}
-  Codice fiscale errors: {{ signupForm.controls['codice_fiscale'].errors | json }}
-  Regione valid: {{ signupForm.controls['regione'].valid }}
-  Regione errors: {{ signupForm.controls['regione'].errors | json }}
-  Provincia valid: {{ signupForm.controls['provincia'].valid }}
-  Provincia errors: {{ signupForm.controls['provincia'].errors | json }}
-  Citta valid: {{ signupForm.controls['citta'].valid }}
-  Citta errors: {{ signupForm.controls['citta'].errors | json }}
-  Via valid: {{ signupForm.controls['via'].valid }}
-  Via errors: {{ signupForm.controls['via'].errors | json }}
-  Civico valid: {{ signupForm.controls['civico'].valid }}
-  Civico errors: {{ signupForm.controls['civico'].errors | json }}
-  </pre>
-  </form>
+      <div class="form-grid">
+        <!-- Nome -->
+        <div class="form-group">
+          <label for="nome" class="form-label">Nome</label>
+          <input type="text" id="nome" name="nome" [(ngModel)]="nuovoUtente.nome" placeholder="es. Mario" required
+            minlength="2" class="form-input">
+        </div>
 
-  <!-- Link login -->
-  <p class="login-link">
-    Hai già un account? <a routerLink="/login">Accedi</a>
-  </p>
-  
+        <!-- Cognome -->
+        <div class="form-group">
+          <label for="cognome" class="form-label">Cognome</label>
+          <input type="text" id="cognome" name="cognome" [(ngModel)]="nuovoUtente.cognome" placeholder="es. Rossi"
+            required minlength="2" class="form-input">
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <!-- Username -->
+        <div class="form-group">
+          <label for="username" class="form-label">Username</label>
+          <input type="text" id="username" name="username" [(ngModel)]="nuovoUtente.username"
+            placeholder="es. mario.rossi" required minlength="3" class="form-input">
+        </div>
+
+        <!-- Password -->
+        <div class="form-group">
+          <label for="password" class="form-label">Password</label>
+          <input type="password" id="password" name="password" [(ngModel)]="nuovoUtente.password"
+            placeholder="Minimo 4 caratteri" required minlength="4" class="form-input">
+        </div>
+      </div>
+
+      <!-- Codice Fiscale -->
+      <div class="form-group">
+        <label for="codice_fiscale" class="form-label">Codice Fiscale</label>
+        <input type="text" id="codice_fiscale" name="codice_fiscale" [(ngModel)]="nuovoUtente.codice_fiscale"
+          placeholder="16 caratteri alfanumerici (es. RSSMRA80A01H501U)" required maxlength="16"
+          pattern="[A-Za-z0-9]{16}" class="form-input uppercase-input">
+      </div>
+
+      <!-- Sezione Indirizzo -->
+      <div class="section-divider mt-4">
+        <span class="divider-title">Indirizzo di Residenza</span>
+      </div>
+
+      <div class="form-grid">
+        <!-- Regione -->
+        <div class="form-group">
+          <label for="regione" class="form-label">Regione</label>
+          <select id="regione" name="regione" [(ngModel)]="nuovoUtente.regione" (change)="onRegioneChange()" required class="form-input">
+            <option value="" disabled selected>Seleziona la tua regione...</option>
+            <option *ngFor="let reg of regioni" [value]="reg.nome">{{ reg.nome }}</option>
+          </select>
+        </div>
+
+        <!-- Provincia -->
+        <div class="form-group">
+          <label for="provincia" class="form-label">Provincia</label>
+          <select id="provincia" name="provincia" [(ngModel)]="nuovoUtente.provincia" (change)="onProvinciaChange()" [disabled]="!nuovoUtente.regione" required class="form-input">
+            <option value="" disabled selected>Seleziona provincia...</option>
+            <option *ngFor="let prov of provinceDisponibili" [value]="prov.sigla">{{ prov.nome }} ({{ prov.sigla }})</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Città -->
+      <div class="form-group">
+        <label for="citta" class="form-label">Città</label>
+        <select id="citta" name="citta" [(ngModel)]="cittaSelezionataInMenu" (change)="onComuneMenuChange()" [disabled]="!nuovoUtente.provincia" required class="form-input">
+          <option value="" disabled selected>Seleziona il comune di residenza...</option>
+          <option *ngFor="let com of comuniDisponibili" [value]="com">{{ com }}</option>
+        </select>
+      </div>
+
+      <!-- Inserimento manuale del comune se selezionato 'Altro comune (specifica)...' -->
+      <div *ngIf="altroComuneAttivo" class="form-group">
+        <label for="altro_citta" class="form-label">Specifica il nome del tuo Comune *</label>
+        <input type="text" id="altro_citta" name="altro_citta" [(ngModel)]="nuovoUtente.citta" placeholder="es. Vigarano Mainarda" required class="form-input">
+      </div>
+
+      <div class="form-grid grid-via-civico">
+        <!-- Via -->
+        <div class="form-group">
+          <label for="via" class="form-label">Via / Piazza</label>
+          <input type="text" id="via" name="via" [(ngModel)]="nuovoUtente.via" placeholder="es. Via Garibaldi" required
+            class="form-input">
+        </div>
+
+        <!-- Civico -->
+        <div class="form-group">
+          <label for="civico" class="form-label">Civico</label>
+          <input type="text" id="civico" name="civico" [(ngModel)]="nuovoUtente.civico" placeholder="es. 12" required
+            class="form-input">
+        </div>
+      </div>
+
+      <!-- Messaggio di errore -->
+      <div *ngIf="errore" class="error-message">
+        {{ errore }}
+      </div>
+
+      <!-- Pulsanti Azione -->
+      <div class="form-actions">
+        <button type="submit" [disabled]="!signupForm.form.valid" class="btn btn-primary">
+          Registrati
+        </button>
+
+        <button type="button" (click)="clearForm()" class="btn btn-secondary">
+          Pulisci
+        </button>
+      </div>
+
+    </form>
+
+    <!-- Footer link al Login -->
+    <div class="signup-footer">
+      <p class="login-link">
+        Hai già un account? <a routerLink="/login" class="link">Accedi qui</a>
+      </p>
+    </div>
+
+  </div>
 </div>

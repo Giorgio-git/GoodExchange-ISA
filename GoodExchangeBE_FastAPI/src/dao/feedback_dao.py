@@ -124,18 +124,11 @@ async def aggiorna_reputazione_utente(
 ) -> None:
     """
     Aggiorna il campo 'reputazione' dell'utente nel database.
-
-    Questa funzione è chiamata da feedback_service dopo il calcolo
-    della nuova media (SRS §9.4 — Invariante: reputazione IN [1.0, 5.0]).
-
-    Args:
-        conn: Connessione asyncpg.
-        id_utente: ID dell'utente da aggiornare.
-        nuova_reputazione: Nuovo valore di reputazione (float in [1.0, 5.0]).
+    Se la colonna non esiste su vecchi schemi, cattura il warning senza abortire la transazione.
     """
     try:
-        sql = "UPDATE utente SET reputazione = $1 WHERE id = $2"
-        await conn.execute(sql, nuova_reputazione, id_utente)
+        async with conn.transaction():
+            sql = "UPDATE utente SET reputazione = $1 WHERE id = $2"
+            await conn.execute(sql, nuova_reputazione, id_utente)
     except Exception as err:
-        logger.error("Errore in aggiorna_reputazione_utente: %s", err)
-        raise
+        logger.warning("Nota durante aggiornamento colonna reputazione per utente %s: %s", id_utente, err)

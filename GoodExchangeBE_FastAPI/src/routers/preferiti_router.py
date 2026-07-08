@@ -17,7 +17,12 @@ async def get_preferiti(
     async with conn.transaction():
         pref = await preferiti_dao.find_preferiti_by_utente(conn, id_utente)
         if not pref:
-            raise HTTPException(status_code=404, detail="Lista preferiti non trovata")
+            # Lazy Creation: se l'utente non ha ancora un contenitore preferiti (es. appena registrato),
+            # lo creiamo automaticamente su richiesta
+            await preferiti_dao.create_preferiti(conn, id_utente, None)
+            pref = await preferiti_dao.find_preferiti_by_utente(conn, id_utente)
+            if not pref:
+                raise HTTPException(status_code=404, detail="Lista preferiti non trovata")
         return pref
 
 

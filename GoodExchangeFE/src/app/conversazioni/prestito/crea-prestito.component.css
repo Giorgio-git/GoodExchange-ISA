@@ -25,26 +25,6 @@
 .calendario-section {
 	margin-bottom: 18px;
 }
-.btn-verifica {
-	background: #2a4d7c;
-	color: #fff;
-	border: none;
-	border-radius: 4px;
-	padding: 7px 16px;
-	font-weight: 500;
-	cursor: pointer;
-	margin-top: 8px;
-}
-.disponibile {
-	color: #080;
-	font-weight: 500;
-	margin-left: 12px;
-}
-.non-disponibile {
-	color: #c00;
-	font-weight: 500;
-	margin-left: 12px;
-}
 .messaggio-section {
 	margin-top: 18px;
 }

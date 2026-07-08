@@ -32,6 +32,7 @@ export class ProfiloComponent implements OnInit {
 
   feedbackRicevuti: Feedback[] = [];
   messaggiFeedback: { [id: number]: Messaggio | null } = {};
+  mittentiFeedback: { [id_utente: number]: Utente | null } = {};
 
   importoVersamento: number = 0;
   messaggioCauzione: string = '';
@@ -179,6 +180,16 @@ export class ProfiloComponent implements OnInit {
               this.messaggiFeedback[fb.id!] = null;
             }
           });
+          if (fb.id_utente && !this.mittentiFeedback[fb.id_utente]) {
+            this.utenteService.getUtenteById(fb.id_utente).subscribe({
+              next: (u) => {
+                this.mittentiFeedback[fb.id_utente] = u;
+              },
+              error: () => {
+                this.mittentiFeedback[fb.id_utente] = null;
+              }
+            });
+          }
         });
       },
       error: () => {

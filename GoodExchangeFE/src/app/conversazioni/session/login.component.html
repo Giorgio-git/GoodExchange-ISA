@@ -1,11 +1,10 @@
 <div class="login-container">
-  
   <div class="login-card">
     
-    <!-- Titolo -->
+    <!-- Intestazione pulita e moderna -->
     <div class="login-header">
-      <h2 class="login-title"> Accedi al tuo Account</h2>
-      <p class="login-subtitle">Benvenuto di nuovo!</p>
+      <h2 class="login-title">Accedi alla Piattaforma</h2>
+      <p class="login-subtitle">Bentornato su GoodExchange</p>
     </div>
 
     <!-- Form di login -->
@@ -22,7 +21,7 @@
           required
           minlength="3"
           class="form-input"
-          placeholder="Inserisci il tuo username">
+          placeholder="es. mario.rossi">
       </div>
 
       <!-- Campo Password -->
@@ -36,7 +35,7 @@
           required
           minlength="4"
           class="form-input"
-          placeholder="Inserisci la tua password">
+          placeholder="••••••••">
       </div>
 
       <!-- Messaggio di errore -->
@@ -44,32 +43,31 @@
         {{ errore }}
       </div>
 
-      <!-- Pulsanti -->
+      <!-- Pulsanti d'azione -->
       <div class="form-actions">
         <button 
           type="submit" 
-          class="btn-primary">
+          class="btn btn-primary">
           Accedi
         </button>
         
         <button 
           type="button" 
           (click)="clearForm()"
-          class="btn-secondary">
+          class="btn btn-secondary">
           Pulisci
         </button>
       </div>
 
-      <!-- Link registrazione -->
+      <!-- Link alla registrazione -->
       <div class="login-footer">
         <p class="signup-link">
-          Non hai un account? 
-          <a routerLink="/signup" class="link">Registrati qui</a>
+          Non hai ancora un account? 
+          <a routerLink="/signup" class="link">Registrati subito</a>
         </p>
       </div>
 
     </form>
 
   </div>
-
 </div>

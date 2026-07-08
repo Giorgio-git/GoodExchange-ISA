@@ -44,9 +44,6 @@
 			<span *ngIf="dataInizio && !dataFine">Data inizio: {{ dataInizio | date:'dd/MM/yyyy' }}. Ora seleziona la data di fine.</span>
 			<span *ngIf="dataInizio && dataFine">Periodo selezionato: {{ dataInizio | date:'dd/MM/yyyy' }} - {{ dataFine | date:'dd/MM/yyyy' }}</span>
 		</div>
-		<button (click)="verificaDisponibilita()" class="btn-verifica" [disabled]="!dataInizio || !dataFine">Verifica disponibilità</button>
-		<span *ngIf="disponibilita === true" class="disponibile">Disponibile!</span>
-		<span *ngIf="disponibilita === false" class="non-disponibile">Non disponibile</span>
 	</div>
 
 	<!-- Messaggio al proprietario -->
