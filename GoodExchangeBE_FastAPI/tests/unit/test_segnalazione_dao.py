@@ -46,7 +46,9 @@ async def test_find_segnalazione_by_id():
     res = await segnalazione_dao.find_segnalazione_by_id(mock_conn, 10)
     assert res is not None
     assert res["id"] == 10
-    mock_conn.fetchrow.assert_called_once_with("SELECT * FROM segnalazione WHERE id=$1", 10)
+    mock_conn.fetchrow.assert_called_once_with(
+        "SELECT * FROM segnalazione WHERE id=$1", 10
+    )
 
 
 @pytest.mark.asyncio
@@ -56,4 +58,6 @@ async def test_update_segnalazione_stato():
 
     success = await segnalazione_dao.update_segnalazione_stato(mock_conn, 10, "risolta")
     assert success is True
-    mock_conn.execute.assert_called_once_with("UPDATE segnalazione SET stato=$1 WHERE id=$2", "risolta", 10)
+    mock_conn.execute.assert_called_once_with(
+        "UPDATE segnalazione SET stato=$1 WHERE id=$2", "risolta", 10
+    )

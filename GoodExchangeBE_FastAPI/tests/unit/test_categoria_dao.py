@@ -11,8 +11,18 @@ from src.dao import categoria_dao
 async def test_find_categorie():
     mock_conn = AsyncMock()
     mock_conn.fetch.return_value = [
-        {"id": 1, "nome": "Elettronica", "crediti": 10, "descrizione": "Gadget e strumenti"},
-        {"id": 2, "nome": "Fai da te", "crediti": 5, "descrizione": "Attrezzi da lavoro"},
+        {
+            "id": 1,
+            "nome": "Elettronica",
+            "crediti": 10,
+            "descrizione": "Gadget e strumenti",
+        },
+        {
+            "id": 2,
+            "nome": "Fai da te",
+            "crediti": 5,
+            "descrizione": "Attrezzi da lavoro",
+        },
     ]
 
     res = await categoria_dao.find_categorie(mock_conn)

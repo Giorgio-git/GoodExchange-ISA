@@ -41,7 +41,9 @@ async def test_update_suggerimento_stato():
     mock_conn = AsyncMock()
     mock_conn.execute.return_value = "UPDATE 1"
 
-    success = await suggerimento_dao.update_suggerimento_stato(mock_conn, 5, "completato")
+    success = await suggerimento_dao.update_suggerimento_stato(
+        mock_conn, 5, "completato"
+    )
     assert success is True
     mock_conn.execute.assert_called_once_with(
         "UPDATE suggerimento SET stato=$1 WHERE id=$2", "completato", 5

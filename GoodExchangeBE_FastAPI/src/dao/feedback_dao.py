@@ -131,4 +131,8 @@ async def aggiorna_reputazione_utente(
             sql = "UPDATE utente SET reputazione = $1 WHERE id = $2"
             await conn.execute(sql, nuova_reputazione, id_utente)
     except Exception as err:
-        logger.warning("Nota durante aggiornamento colonna reputazione per utente %s: %s", id_utente, err)
+        logger.warning(
+            "Nota durante aggiornamento colonna reputazione per utente %s: %s",
+            id_utente,
+            err,
+        )

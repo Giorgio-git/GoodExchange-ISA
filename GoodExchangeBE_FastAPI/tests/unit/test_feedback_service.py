@@ -26,11 +26,15 @@ from src.services import feedback_service
 
 # definiamo una strategia hypothesis per generare voti e liste di voti validi
 voti_validi = st.integers(min_value=1, max_value=5)
-lista_voti = st.lists(voti_validi, min_size=1, max_size=100) # una lista di voti validi che va da un voto singolo fino ad un massimo di 100 voti
+lista_voti = st.lists(
+    voti_validi, min_size=1, max_size=100
+)  # una lista di voti validi che va da un voto singolo fino ad un massimo di 100 voti
 
 
-@given(voti=lista_voti) # accettiamo le liste generate a caso
-@settings(max_examples=500) # imposta il numero massimo di esempi che hypothesis deve generare
+@given(voti=lista_voti)  # accettiamo le liste generate a caso
+@settings(
+    max_examples=500
+)  # imposta il numero massimo di esempi che hypothesis deve generare
 def test_pbt_reputazione_sempre_in_range(voti):
     """
     Invariante INV-05 (SRS §10):
@@ -49,7 +53,9 @@ def test_pbt_reputazione_e_media_aritmetica(voti):
     """
     media = feedback_service.calcola_reputazione_media_locale(voti)
     atteso = sum(voti) / len(voti)
-    assert abs(media - atteso) < 1e-9 # verifico che il valore restituito sia uguale a quello calcolato manualmente in virgola mobile
+    assert (
+        abs(media - atteso) < 1e-9
+    )  # verifico che il valore restituito sia uguale a quello calcolato manualmente in virgola mobile
 
 
 def test_pbt_reputazione_lista_vuota_errore():
@@ -59,6 +65,7 @@ def test_pbt_reputazione_lista_vuota_errore():
     with pytest.raises(ValueError, match="non può essere vuota"):
         feedback_service.calcola_reputazione_media_locale([])
 
+
 # caso limite in cui abbiamo un solo voto
 def test_reputazione_unico_voto_identita():
     """
@@ -66,6 +73,7 @@ def test_reputazione_unico_voto_identita():
     """
     for v in [1, 3, 5]:
         assert feedback_service.calcola_reputazione_media_locale([v]) == float(v)
+
 
 # caso limite in cui tutti i voti sono uguali a 5
 def test_reputazione_tutti_massimi():
@@ -106,7 +114,9 @@ async def test_crea_feedback_aggiorna_reputazione():
 
     # sistituiamo tutte e tre le funzioni del DAO con le loro versioni mock
     with (
-        patch("src.dao.feedback_dao.create_feedback", new_callable=AsyncMock) as mock_create,
+        patch(
+            "src.dao.feedback_dao.create_feedback", new_callable=AsyncMock
+        ) as mock_create,
         patch(
             "src.dao.feedback_dao.calcola_reputazione_media", new_callable=AsyncMock
         ) as mock_media,
@@ -125,9 +135,11 @@ async def test_crea_feedback_aggiorna_reputazione():
     # Verifica post-condizioni
     assert result is not None
     assert result["id"] == 10
-    mock_create.assert_awaited_once() # verifica che la mock function create sia stata chiamata una sola volta
+    mock_create.assert_awaited_once()  # verifica che la mock function create sia stata chiamata una sola volta
     mock_media.assert_awaited_once_with(mock_conn, 2)  # destinatario corretto
-    mock_aggiorna.assert_awaited_once_with(mock_conn, 2, 4.0) # verifica che la mock function aggiorna sia stata chiamata una sola volta con i parametri corretti
+    mock_aggiorna.assert_awaited_once_with(
+        mock_conn, 2, 4.0
+    )  # verifica che la mock function aggiorna sia stata chiamata una sola volta con i parametri corretti
 
 
 @pytest.mark.asyncio
@@ -140,7 +152,9 @@ async def test_crea_feedback_dao_fallisce():
     feedback_data = {"id_utente": 1, "id_destinatario": 2, "voto": 3}
 
     with (
-        patch("src.dao.feedback_dao.create_feedback", new_callable=AsyncMock) as mock_create,
+        patch(
+            "src.dao.feedback_dao.create_feedback", new_callable=AsyncMock
+        ) as mock_create,
         patch(
             "src.dao.feedback_dao.calcola_reputazione_media", new_callable=AsyncMock
         ) as mock_media,

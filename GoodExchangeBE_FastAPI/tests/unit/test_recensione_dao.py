@@ -29,7 +29,9 @@ async def test_find_recensione_by_id():
     res = await recensione_dao.find_recensione_by_id(mock_conn, 1)
     assert res is not None
     assert res["voto"] == 4
-    mock_conn.fetchrow.assert_called_once_with("SELECT * FROM recensione WHERE id=$1", 1)
+    mock_conn.fetchrow.assert_called_once_with(
+        "SELECT * FROM recensione WHERE id=$1", 1
+    )
 
 
 @pytest.mark.asyncio

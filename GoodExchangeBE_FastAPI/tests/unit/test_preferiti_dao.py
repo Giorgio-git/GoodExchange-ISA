@@ -15,7 +15,9 @@ async def test_find_preferiti_by_utente():
     res = await preferiti_dao.find_preferiti_by_utente(mock_conn, 10)
     assert res is not None
     assert res["id_utente"] == 10
-    mock_conn.fetchrow.assert_called_once_with("SELECT * FROM preferiti WHERE id_utente=$1", 10)
+    mock_conn.fetchrow.assert_called_once_with(
+        "SELECT * FROM preferiti WHERE id_utente=$1", 10
+    )
 
 
 @pytest.mark.asyncio
@@ -35,7 +37,9 @@ async def test_delete_preferiti():
 
     res = await preferiti_dao.delete_preferiti(mock_conn, 10)
     assert res is True
-    mock_conn.execute.assert_called_once_with("DELETE FROM preferiti WHERE id_utente=$1", 10)
+    mock_conn.execute.assert_called_once_with(
+        "DELETE FROM preferiti WHERE id_utente=$1", 10
+    )
 
 
 @pytest.mark.asyncio

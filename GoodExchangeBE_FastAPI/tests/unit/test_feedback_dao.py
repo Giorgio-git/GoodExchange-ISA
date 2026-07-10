@@ -26,7 +26,9 @@ async def test_find_feedback_by_username():
     res = await feedback_dao.find_feedback_by_username(mock_conn, "giorgio")
     assert len(res) == 1
     assert res[0]["voto"] == 4
-    mock_conn.fetchrow.assert_called_once_with("SELECT id FROM utente WHERE username=$1", "giorgio")
+    mock_conn.fetchrow.assert_called_once_with(
+        "SELECT id FROM utente WHERE username=$1", "giorgio"
+    )
 
 
 @pytest.mark.asyncio

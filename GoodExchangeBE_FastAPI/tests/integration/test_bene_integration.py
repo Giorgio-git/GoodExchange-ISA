@@ -59,7 +59,9 @@ async def test_bene_flusso_completo_e_crediti_integration(
     assert any(b["id"] == bene_id for b in res_search_txt.json())
 
     # 5. Eliminazione del bene con ricalcolo crediti (DELETE /api/beni/:id?id_proprietario=...)
-    res_del = await async_client.delete(f"/api/beni/{bene_id}?id_proprietario={proprietario_id}")
+    res_del = await async_client.delete(
+        f"/api/beni/{bene_id}?id_proprietario={proprietario_id}"
+    )
     assert res_del.status_code == 200
 
     # 6. Verifica bene inesistente -> 404

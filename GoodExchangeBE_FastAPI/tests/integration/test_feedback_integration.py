@@ -34,7 +34,9 @@ async def test_feedback_creazione_e_ricalcolo_reputazione_integration(
     assert float(reputazione_aggiornata) == pytest.approx(5.0)
 
     # 3. Lettura per username (GET /api/feedback/username/:username)
-    res_get_username = await async_client.get(f"/api/feedback/username/{username_destinatario}")
+    res_get_username = await async_client.get(
+        f"/api/feedback/username/{username_destinatario}"
+    )
     assert res_get_username.status_code == 200
     assert any(f["voto"] == 5 for f in res_get_username.json())
 

@@ -33,22 +33,30 @@ async def test_prestito_fsm_e_side_effects_integration(
 
     # 1. Creazione in stato 'richiesto'
     res_create = await async_client.post("/api/prestiti", json=payload)
-    assert res_create.status_code == 201, f"Errore creazione prestito: {res_create.text}"
+    assert res_create.status_code == 201, (
+        f"Errore creazione prestito: {res_create.text}"
+    )
     prestito_id = res_create.json()["id"]
 
     # 2. Transizione verso 'accettato'
-    res_acc = await async_client.put(f"/api/prestiti/{prestito_id}/stato", json={"stato": "accettato"})
+    res_acc = await async_client.put(
+        f"/api/prestiti/{prestito_id}/stato", json={"stato": "accettato"}
+    )
     assert res_acc.status_code == 200
 
     # 3. Transizione verso 'in_corso' (deve bloccare il bene -> stato = False)
-    res_in_corso = await async_client.put(f"/api/prestiti/{prestito_id}/stato", json={"stato": "in_corso"})
+    res_in_corso = await async_client.put(
+        f"/api/prestiti/{prestito_id}/stato", json={"stato": "in_corso"}
+    )
     assert res_in_corso.status_code == 200
 
     res_bene_bloccato = await async_client.get(f"/api/beni/{id_bene}")
     assert res_bene_bloccato.json()["stato"] is False  # Bene bloccato (non disponibile)
 
     # 4. Transizione verso 'completato' (deve sbloccare il bene -> stato = True e aggiornare i crediti)
-    res_compl = await async_client.put(f"/api/prestiti/{prestito_id}/stato", json={"stato": "completato"})
+    res_compl = await async_client.put(
+        f"/api/prestiti/{prestito_id}/stato", json={"stato": "completato"}
+    )
     assert res_compl.status_code == 200
 
     res_bene_sbloccato = await async_client.get(f"/api/beni/{id_bene}")
@@ -67,7 +75,9 @@ async def test_prestito_solvibilita_insufficiente_409_integration(
     la creazione del prestito viene rigettata in transazione con 409 Conflict.
     """
     # Assicuriamoci che il beneficiario abbia cauzione 0
-    await async_client.put(f"/api/utenti/{utente_beneficiario['id']}/cauzione", json={"cauzione": 0.0})
+    await async_client.put(
+        f"/api/utenti/{utente_beneficiario['id']}/cauzione", json={"cauzione": 0.0}
+    )
 
     payload = {
         "id_bene": bene_test["id"],
@@ -113,7 +123,9 @@ async def test_prestito_conflitto_date_e_fsm_illiceita_integration(
     res_1 = await async_client.post("/api/prestiti", json=payload_1)
     assert res_1.status_code == 201
     prestito_1_id = res_1.json()["id"]
-    await async_client.put(f"/api/prestiti/{prestito_1_id}/stato", json={"stato": "accettato"})
+    await async_client.put(
+        f"/api/prestiti/{prestito_1_id}/stato", json={"stato": "accettato"}
+    )
 
     # 2. Proviamo a creare un secondo prestito sovrapposto (periodo: 5-15 Ottobre) -> 409 Conflict
     payload_sovrapposto = {
@@ -142,6 +154,8 @@ async def test_prestito_conflitto_date_e_fsm_illiceita_integration(
     prestito_3_id = res_3.json()["id"]
 
     # Da 'richiesto' verso 'completato' non è consentito in FSM_TRANSIZIONI
-    res_fsm_err = await async_client.put(f"/api/prestiti/{prestito_3_id}/stato", json={"stato": "completato"})
+    res_fsm_err = await async_client.put(
+        f"/api/prestiti/{prestito_3_id}/stato", json={"stato": "completato"}
+    )
     assert res_fsm_err.status_code == 409
     assert "Transizione non valida" in res_fsm_err.json()["detail"]

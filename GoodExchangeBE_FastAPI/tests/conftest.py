@@ -125,7 +125,11 @@ async def utente_beneficiario(async_client: AsyncClient) -> dict[str, Any]:
 async def categoria_test(async_client: AsyncClient) -> dict[str, Any]:
     """Crea e restituisce una categoria di test con crediti impostati."""
     nome_cat = f"Cat_{uuid.uuid4().hex[:6]}"
-    payload = {"nome": nome_cat, "crediti": 15, "descrizione": "Categoria per integration test"}
+    payload = {
+        "nome": nome_cat,
+        "crediti": 15,
+        "descrizione": "Categoria per integration test",
+    }
     res = await async_client.post("/api/categorie", json=payload)
     assert res.status_code == 201, f"Errore creazione categoria: {res.text}"
     return res.json()

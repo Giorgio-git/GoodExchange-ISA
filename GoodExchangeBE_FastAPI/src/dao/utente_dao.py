@@ -68,7 +68,11 @@ async def find_utenti(conn: asyncpg.Connection, filtri: dict) -> list[dict]:
             try:
                 sql_rep = "SELECT ROUND(AVG(voto)::numeric, 2) as media FROM feedback WHERE id_destinatario = $1"
                 row_rep = await conn.fetchrow(sql_rep, u["id"])
-                media = row_rep["media"] if row_rep and row_rep["media"] is not None else None
+                media = (
+                    row_rep["media"]
+                    if row_rep and row_rep["media"] is not None
+                    else None
+                )
                 u["reputazione"] = float(media) if media is not None else None
             except Exception:
                 if "reputazione" not in u:
@@ -91,7 +95,9 @@ async def find_utente_by_id(conn: asyncpg.Connection, id_utente: int) -> Optiona
         try:
             sql_rep = "SELECT ROUND(AVG(voto)::numeric, 2) as media FROM feedback WHERE id_destinatario = $1"
             row_rep = await conn.fetchrow(sql_rep, id_utente)
-            media = row_rep["media"] if row_rep and row_rep["media"] is not None else None
+            media = (
+                row_rep["media"] if row_rep and row_rep["media"] is not None else None
+            )
             utente_dict["reputazione"] = float(media) if media is not None else None
         except Exception:
             if "reputazione" not in utente_dict:
@@ -116,7 +122,9 @@ async def find_utente_by_username(
         try:
             sql_rep = "SELECT ROUND(AVG(voto)::numeric, 2) as media FROM feedback WHERE id_destinatario = $1"
             row_rep = await conn.fetchrow(sql_rep, utente_dict["id"])
-            media = row_rep["media"] if row_rep and row_rep["media"] is not None else None
+            media = (
+                row_rep["media"] if row_rep and row_rep["media"] is not None else None
+            )
             utente_dict["reputazione"] = float(media) if media is not None else None
         except Exception:
             if "reputazione" not in utente_dict:

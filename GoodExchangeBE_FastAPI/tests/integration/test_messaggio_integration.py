@@ -41,12 +41,16 @@ async def test_messaggio_flusso_completo_integration(
     assert any(m["id"] == msg_id for m in res_mittente.json())
 
     # 4. Lettura per destinatario (GET /api/messaggi/destinatario/:id)
-    res_destinatario = await async_client.get(f"/api/messaggi/destinatario/{id_destinatario}")
+    res_destinatario = await async_client.get(
+        f"/api/messaggi/destinatario/{id_destinatario}"
+    )
     assert res_destinatario.status_code == 200
     assert any(m["id"] == msg_id for m in res_destinatario.json())
 
     # 5. Lettura per tipo e id_riferito (GET /api/messaggi/tipo/:tipo?id_riferito=...)
-    res_tipo = await async_client.get(f"/api/messaggi/tipo/prestito?id_riferito={id_bene}")
+    res_tipo = await async_client.get(
+        f"/api/messaggi/tipo/prestito?id_riferito={id_bene}"
+    )
     assert res_tipo.status_code == 200
     assert any(m["id"] == msg_id for m in res_tipo.json())
 

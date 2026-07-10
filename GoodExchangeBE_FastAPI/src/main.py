@@ -61,7 +61,9 @@ async def lifespan(app: FastAPI):
                 ADD COLUMN IF NOT EXISTS reputazione DECIMAL(3,2) DEFAULT NULL
                 CHECK (reputazione IS NULL OR (reputazione >= 1.0 AND reputazione <= 5.0));
             """)
-            logger.info("Check/migrazione colonna 'reputazione' su tabella utente completato con successo.")
+            logger.info(
+                "Check/migrazione colonna 'reputazione' su tabella utente completato con successo."
+            )
         except Exception as e_mig:
             logger.warning("Nota durante verifica schema reputazione: %s", e_mig)
 

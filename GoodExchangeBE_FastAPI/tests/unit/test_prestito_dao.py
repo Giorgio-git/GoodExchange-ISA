@@ -11,9 +11,13 @@ from src.dao import prestito_dao
 @pytest.mark.asyncio
 async def test_find_prestiti():
     mock_conn = AsyncMock()
-    mock_conn.fetch.return_value = [{"id": 1, "stato": "richiesto", "bene_nome": "Trapano"}]
+    mock_conn.fetch.return_value = [
+        {"id": 1, "stato": "richiesto", "bene_nome": "Trapano"}
+    ]
 
-    res = await prestito_dao.find_prestiti(mock_conn, {"stato": "richiesto", "id_beneficiario": 5})
+    res = await prestito_dao.find_prestiti(
+        mock_conn, {"stato": "richiesto", "id_beneficiario": 5}
+    )
     assert len(res) == 1
     assert res[0]["bene_nome"] == "Trapano"
     mock_conn.fetch.assert_called_once()

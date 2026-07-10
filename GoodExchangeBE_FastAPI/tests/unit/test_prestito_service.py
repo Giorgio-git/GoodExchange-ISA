@@ -48,8 +48,10 @@ def test_pbt_verifica_solvibilita_proprietario(
 
 
 @given(
-    st.dates(min_value=date(2020, 1, 1), max_value=date(2030, 12, 31)), # genero date tra il 2020 e il 2030
-    st.integers(min_value=1, max_value=365), # genero giorni di durata tra 1 e 365
+    st.dates(
+        min_value=date(2020, 1, 1), max_value=date(2030, 12, 31)
+    ),  # genero date tra il 2020 e il 2030
+    st.integers(min_value=1, max_value=365),  # genero giorni di durata tra 1 e 365
 )
 @pytest.mark.asyncio
 async def test_pbt_creazione_prestito_date_valide(data_inizio, giorni_durata):
@@ -175,7 +177,12 @@ async def test_aggiorna_stato_completato_side_effect():
             "id_bene": 20,
             "id_proprietario": 10,
         },  # SELECT FOR UPDATE
-        {"id": 5, "stato": "completato", "id_bene": 20, "id_proprietario": 10},  # return
+        {
+            "id": 5,
+            "stato": "completato",
+            "id_bene": 20,
+            "id_proprietario": 10,
+        },  # return
     ]
 
     with (
@@ -273,7 +280,9 @@ async def test_crea_prestito_dao_fallisce():
     d1 = date(2026, 8, 1)
     d2 = date(2026, 8, 10)
 
-    with patch("src.dao.prestito_dao.verifica_disponibilita", new_callable=AsyncMock) as mock_disp:
+    with patch(
+        "src.dao.prestito_dao.verifica_disponibilita", new_callable=AsyncMock
+    ) as mock_disp:
         mock_disp.return_value = True
         mock_conn.fetchrow.return_value = None  # Simuliamo fallimento INSERT
 
@@ -311,7 +320,10 @@ async def test_crea_prestito_solvibilita_insufficiente():
     # side_effect per le query di row_bene e row_utente
     mock_conn.fetchrow.side_effect = [
         {"id": 10, "crediti_richiesti": 150},  # Il bene costa 150 crediti
-        {"cauzione": 100.0, "crediti_accumulati": 0},  # L'utente ha solo 100 di cauzione e 0 crediti
+        {
+            "cauzione": 100.0,
+            "crediti_accumulati": 0,
+        },  # L'utente ha solo 100 di cauzione e 0 crediti
     ]
 
     with pytest.raises(ValueError, match="Solvibilità insufficiente"):
@@ -331,7 +343,10 @@ async def test_crea_prestito_solvibilita_sufficiente():
     # side_effect per row_bene, row_utente e inserimento prestito
     mock_conn.fetchrow.side_effect = [
         {"id": 10, "crediti_richiesti": 150},  # Il bene costa 150 crediti
-        {"cauzione": 100.0, "crediti_accumulati": 60},  # L'utente ha 100 + 60 = 160 >= 150
+        {
+            "cauzione": 100.0,
+            "crediti_accumulati": 60,
+        },  # L'utente ha 100 + 60 = 160 >= 150
         {
             "id": 1,
             "id_bene": 10,
@@ -343,8 +358,9 @@ async def test_crea_prestito_solvibilita_sufficiente():
         },
     ]
 
-    with patch("src.dao.prestito_dao.verifica_disponibilita", new_callable=AsyncMock) as mock_disp:
+    with patch(
+        "src.dao.prestito_dao.verifica_disponibilita", new_callable=AsyncMock
+    ) as mock_disp:
         mock_disp.return_value = True
         res = await prestito_service.crea_prestito(mock_conn, 10, 20, 30, d1, d2)
         assert res["stato"] == "richiesto"
-

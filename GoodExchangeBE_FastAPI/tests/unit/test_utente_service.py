@@ -31,7 +31,9 @@ from src.services import utente_service
     valore_bene=st.floats(min_value=0.01, max_value=100_000.0, allow_nan=False),
 )
 @settings(max_examples=500)
-def test_pbt_verifica_solvibilita_correttezza(cauzione, crediti_accumulati, valore_bene):
+def test_pbt_verifica_solvibilita_correttezza(
+    cauzione, crediti_accumulati, valore_bene
+):
     """
     PBT — Proprietà matematica (SRS §9.3):
     Per qualsiasi combinazione valida di input, la funzione deve restituire
@@ -39,7 +41,9 @@ def test_pbt_verifica_solvibilita_correttezza(cauzione, crediti_accumulati, valo
     """
     atteso = (cauzione + crediti_accumulati) >= valore_bene
     assert (
-        utente_service.verifica_solvibilita_utente(cauzione, crediti_accumulati, valore_bene)
+        utente_service.verifica_solvibilita_utente(
+            cauzione, crediti_accumulati, valore_bene
+        )
         == atteso
     )
 
@@ -54,7 +58,9 @@ def test_pbt_solvibilita_monotona(cauzione, crediti_accumulati, valore_bene):
     PBT — Proprietà di monotonicità:
     Se solvibile con crediti X, lo è anche con crediti X+1.
     """
-    if utente_service.verifica_solvibilita_utente(cauzione, crediti_accumulati, valore_bene):
+    if utente_service.verifica_solvibilita_utente(
+        cauzione, crediti_accumulati, valore_bene
+    ):
         assert utente_service.verifica_solvibilita_utente(
             cauzione, crediti_accumulati + 1.0, valore_bene
         )

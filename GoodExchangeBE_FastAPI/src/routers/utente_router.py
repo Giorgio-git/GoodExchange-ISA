@@ -147,8 +147,9 @@ async def create_utente(
                 raise HTTPException(status_code=400, detail="Creazione utente fallita")
             return {k: v for k, v in result.items() if k != "password"}
     except asyncpg.exceptions.UniqueViolationError:
-        raise HTTPException(status_code=409, detail="Username o Codice Fiscale già registrato") from None
-
+        raise HTTPException(
+            status_code=409, detail="Username o Codice Fiscale già registrato"
+        ) from None
 
 
 # ——— PUT /api/utenti/:id/stato ———

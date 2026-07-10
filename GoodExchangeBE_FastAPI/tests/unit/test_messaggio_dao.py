@@ -39,7 +39,9 @@ async def test_find_messaggio_by_id():
     assert res is not None
     assert res["id"] == 100
     assert res["titolo"] == "Test msg"
-    mock_conn.fetchrow.assert_called_once_with("SELECT * FROM messaggio WHERE id=$1", 100)
+    mock_conn.fetchrow.assert_called_once_with(
+        "SELECT * FROM messaggio WHERE id=$1", 100
+    )
 
 
 @pytest.mark.asyncio
@@ -86,7 +88,9 @@ async def test_find_messaggi_by_tipo_and_riferito():
     mock_conn = AsyncMock()
     mock_conn.fetch.return_value = [{"id": 103, "tipo": "prestito", "id_riferito": 50}]
 
-    res = await messaggio_dao.find_messaggi_by_tipo_and_riferito(mock_conn, "prestito", 50)
+    res = await messaggio_dao.find_messaggi_by_tipo_and_riferito(
+        mock_conn, "prestito", 50
+    )
     assert len(res) == 1
     assert res[0]["id_riferito"] == 50
     mock_conn.fetch.assert_called_once_with(
@@ -99,7 +103,9 @@ async def test_find_messaggi_by_tipo_and_riferito():
 @pytest.mark.asyncio
 async def test_update_messaggio():
     mock_conn = AsyncMock()
-    await messaggio_dao.update_messaggio(mock_conn, 100, {"titolo": "Nuovo titolo", "contenuto": "Nuovo testo"})
+    await messaggio_dao.update_messaggio(
+        mock_conn, 100, {"titolo": "Nuovo titolo", "contenuto": "Nuovo testo"}
+    )
     mock_conn.execute.assert_called_once()
     args = mock_conn.execute.call_args[0]
     assert "UPDATE messaggio SET" in args[0]
