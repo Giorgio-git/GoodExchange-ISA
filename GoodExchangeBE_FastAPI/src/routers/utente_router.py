@@ -140,11 +140,15 @@ async def create_utente(
     Crea un nuovo utente.
     Porting di POST /utenti in utenteRouter.js.
     """
-    async with conn.transaction():
-        result = await utente_dao.create_utente(conn, utente.model_dump())
-        if not result:
-            raise HTTPException(status_code=400, detail="Creazione utente fallita")
-        return {k: v for k, v in result.items() if k != "password"}
+    try:
+        async with conn.transaction():
+            result = await utente_dao.create_utente(conn, utente.model_dump())
+            if not result:
+                raise HTTPException(status_code=400, detail="Creazione utente fallita")
+            return {k: v for k, v in result.items() if k != "password"}
+    except asyncpg.exceptions.UniqueViolationError:
+        raise HTTPException(status_code=409, detail="Username o Codice Fiscale già registrato") from None
+
 
 
 # ——— PUT /api/utenti/:id/stato ———

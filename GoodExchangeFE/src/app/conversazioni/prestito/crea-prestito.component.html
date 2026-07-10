@@ -1,62 +1,76 @@
 <div class="crea-prestito-container" *ngIf="bene">
+  <div class="crea-prestito-card">
+    
+    <!-- Intestazione -->
+    <div class="page-header">
+      <h2 class="page-title">Richiesta di prestito</h2>
+      <p class="page-subtitle">Seleziona il periodo desiderato e invia un messaggio al proprietario del bene</p>
+    </div>
 
-	<h2>Richiedi prestito: {{ bene.nome }}</h2>
+    <!-- Informazioni sul bene -->
+    <div class="bene-info-card">
+      <img *ngIf="urlImmagine" [src]="urlImmagine" alt="Foto bene" class="bene-img">
+      <div class="bene-details">
+        <span class="bene-label">Oggetto richiesto</span>
+        <h3 class="bene-name">{{ bene.nome }}</h3>
+        <p class="bene-desc">{{ bene.descrizione }}</p>
+      </div>
+    </div>
 
-	<!-- Informazioni sul bene -->
-	<div class="bene-info">
-		<img *ngIf="urlImmagine" [src]="urlImmagine" alt="Foto bene" class="bene-img">
-		<div class="bene-details">
-			<p><strong>Nome:</strong> {{ bene.nome }}</p>
-			<p><strong>Descrizione:</strong> {{ bene.descrizione }}</p>
-		</div>
-	</div>
+    <!-- Sezione calendario e disponibilità -->
+    <div class="calendario-section">
+      <div class="section-header">
+        <h3 class="section-title">Selezione periodo di prestito</h3>
+      </div>
+      
+      <mat-form-field appearance="outline" class="custom-date-field">
+        <mat-label>Intervallo di date</mat-label>
+        <mat-date-range-input [rangePicker]="picker" [dateFilter]="dateFilter">
+          <input matStartDate placeholder="Data inizio" [(ngModel)]="dataInizio" name="dataInizio" required>
+          <input matEndDate placeholder="Data fine" [(ngModel)]="dataFine" name="dataFine" required>
+        </mat-date-range-input>
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-date-range-picker #picker></mat-date-range-picker>
+      </mat-form-field>
 
-	<!-- Sezione calendario e disponibilità -->
-	<div class="calendario-section">
-		<h3>Seleziona periodo</h3>
-		<mat-form-field appearance="outline">
-			<mat-label>Periodo prestito</mat-label>
-			<!-- Input per selezione intervallo date, collega il picker e filtra le date disponibili -->
-			<!-- La proprietà [rangePicker] collega il date range input al date range picker 
-			     mentre la proprietà [dateFilter] applica il filtro sulle date disponibili -->
-			<mat-date-range-input [rangePicker]="picker" [dateFilter]="dateFilter">
-				<!-- Campo per la data di inizio intervallo. 
-						 matStartDate: indica che è l'inizio intervallo per il date range
-						 placeholder: testo guida
-						 [(ngModel)]: binding bidirezionale con la variabile dataInizio
-						 name: nome del campo per i form Angular -->
-				<input matStartDate placeholder="Data inizio" [(ngModel)]="dataInizio" name="dataInizio" required>
-				<!-- Campo per la data di fine intervallo.
-						 matEndDate: indica che è la fine intervallo per il date range
-						 placeholder: testo guida
-						 [(ngModel)]: binding bidirezionale con la variabile dataFine
-						 name: nome del campo per i form Angular -->
-				<input matEndDate placeholder="Data fine" [(ngModel)]="dataFine" name="dataFine" required>
-			</mat-date-range-input>
-			<!-- Bottone icona per aprire il selettore calendario, associato al picker -->
-			<mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-			<!-- Componente vero e proprio del selettore intervallo date, referenziato come #picker -->
-			<mat-date-range-picker #picker></mat-date-range-picker>
-		</mat-form-field>
+      <div class="selezione-info" *ngIf="!dataInizio || !dataFine">
+        <span *ngIf="!dataInizio">Seleziona la data di inizio e la data di fine dal calendario per verificare l'intervallo.</span>
+        <span *ngIf="dataInizio && !dataFine">Data di inizio selezionata ({{ dataInizio | date:'dd/MM/yyyy' }}). Seleziona la data di fine per completare l'intervallo.</span>
+      </div>
 
-		<div class="selezione-info">
-			<span *ngIf="!dataInizio">Seleziona la data di inizio</span>
-			<span *ngIf="dataInizio && !dataFine">Data inizio: {{ dataInizio | date:'dd/MM/yyyy' }}. Ora seleziona la data di fine.</span>
-			<span *ngIf="dataInizio && dataFine">Periodo selezionato: {{ dataInizio | date:'dd/MM/yyyy' }} - {{ dataFine | date:'dd/MM/yyyy' }}</span>
-		</div>
-	</div>
+      <div class="selezione-info selezione-confermata" *ngIf="dataInizio && dataFine">
+        <span>Periodo confermato: {{ dataInizio | date:'dd/MM/yyyy' }} &rarr; {{ dataFine | date:'dd/MM/yyyy' }}</span>
+      </div>
+    </div>
 
-	<!-- Messaggio al proprietario -->
-	<div class="messaggio-section">
-		<h3>Messaggio al proprietario</h3>
-		<form (ngSubmit)="richiediPrestito()" #msgForm="ngForm" class="messaggio-form">
-			<label for="titolo">Titolo</label>
-			<input id="titolo" name="titolo" [(ngModel)]="titoloMessaggio" required>
-			<label for="contenuto">Contenuto</label>
-			<textarea id="contenuto" name="contenuto" [(ngModel)]="contenutoMessaggio" required></textarea>
-			<button type="submit" class="btn-invia">Richiedi prestito</button>
-		</form>
-		<div class="error" *ngIf="errore">{{ errore }}</div>
-		<div class="success" *ngIf="successo">{{ successo }}</div>
-	</div>
+    <!-- Messaggio al proprietario -->
+    <div class="messaggio-section">
+      <div class="section-header">
+        <h3 class="section-title">Messaggio per il proprietario</h3>
+      </div>
+
+      <form (ngSubmit)="richiediPrestito()" #msgForm="ngForm" class="messaggio-form">
+        <div class="form-group">
+          <label for="titolo" class="form-label">Titolo del messaggio *</label>
+          <input id="titolo" name="titolo" [(ngModel)]="titoloMessaggio" placeholder="es. Richiesta di prestito per {{ bene.nome }}" required class="form-control">
+        </div>
+        
+        <div class="form-group">
+          <label for="contenuto" class="form-label">Contenuto della richiesta *</label>
+          <textarea id="contenuto" name="contenuto" [(ngModel)]="contenutoMessaggio" placeholder="Presentati brevemente e descrivi il motivo per cui richiedi il prestito in queste date..." required class="form-control"></textarea>
+        </div>
+        
+        <div class="form-actions">
+          <button type="submit" [disabled]="!msgForm.form.valid || !dataInizio || !dataFine" class="btn btn-primary btn-submit">
+            Invia richiesta di prestito
+          </button>
+        </div>
+      </form>
+
+      <!-- Notifiche di esito -->
+      <div class="alert-message alert-error" *ngIf="errore">{{ errore }}</div>
+      <div class="alert-message alert-success" *ngIf="successo">{{ successo }}</div>
+    </div>
+
+  </div>
 </div>

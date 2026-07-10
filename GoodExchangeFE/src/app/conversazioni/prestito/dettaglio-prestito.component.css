@@ -1,72 +1,279 @@
-/* Bottoni accetta/rifiuta prestito */
+/* ==========================================================================
+   DETTAGLIO PRESTITO STYLES (DETTAGLIO-PRESTITO.COMPONENT.CSS)
+   ========================================================================== */
+
+.dettaglio-prestito-container {
+  max-width: 800px;
+  margin: 3.5rem auto;
+  padding: 0 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.dettaglio-card,
+.messaggi-card {
+  background-color: #ffffff;
+  border-radius: var(--radius-xl);
+  padding: 2.5rem;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--color-slate-200);
+}
+
+.page-header {
+  border-bottom: 1px solid var(--color-slate-200);
+  padding-bottom: 1.25rem;
+  margin-bottom: 1.75rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.page-title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--color-slate-900);
+  margin: 0;
+}
+
+.badge-stato {
+  display: inline-block;
+  padding: 0.35rem 0.85rem;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.badge-richiesto {
+  background-color: #fef9c3;
+  color: #854d0e;
+  border: 1px solid #fde047;
+}
+
+.badge-accettato, .badge-in_corso {
+  background-color: #dbeafe;
+  color: #1e40af;
+  border: 1px solid #bfdbfe;
+}
+
+.badge-completato {
+  background-color: #dcfce7;
+  color: #166534;
+  border: 1px solid #86efac;
+}
+
+.badge-rifiutato {
+  background-color: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+/* === RIEPILOGO GRID === */
+.riepilogo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.25rem;
+  background-color: var(--color-slate-50);
+  padding: 1.5rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-slate-200);
+  margin-bottom: 1.75rem;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.info-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-slate-500);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.info-value {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--color-slate-800);
+}
+
+/* === AZIONI === */
 .gestione-stato-prestito {
-	display: flex;
-	gap: 16px;
-	margin: 18px 0 10px 0;
-	justify-content: center;
+  display: flex;
+  gap: 1rem;
+  margin: 1.5rem 0;
+  flex-wrap: wrap;
 }
-.btn-accetta, .btn-rifiuta {
-	background: #2a4d7c;
-	color: #fff;
-	border: none;
-	border-radius: 4px;
-	padding: 8px 16px;
-	font-weight: 500;
-	font-size: 1rem;
-	cursor: pointer;
-	margin: 0 4px;
-	box-shadow: 0 2px 8px #e0e7ef;
-	transition: background 0.2s;
+
+.btn-action {
+  padding: 0.75rem 1.4rem;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  border: none;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
-.btn-accetta:hover, .btn-rifiuta:hover {
-	background: #1a355c;
+
+.btn-accetta {
+  background-color: #22c55e;
+  color: white;
+  box-shadow: 0 4px 6px -1px rgba(34, 197, 94, 0.2);
 }
-/* Form elegante per nuovo messaggio */
+
+.btn-accetta:hover {
+  background-color: #16a34a;
+}
+
+.btn-rifiuta {
+  background-color: #ef4444;
+  color: white;
+  box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.2);
+}
+
+.btn-rifiuta:hover {
+  background-color: #dc2626;
+}
+
+.btn-completato {
+  background-color: var(--color-primary);
+  color: white;
+  box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+}
+
+.btn-completato:hover {
+  background-color: var(--color-primary-hover);
+}
+
+/* === MESSAGGI SECTION === */
+.section-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--color-slate-800);
+  margin: 0 0 1.5rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.messaggi-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-bottom: 2.5rem;
+}
+
+.empty-messages {
+  text-align: center;
+  padding: 2.5rem;
+  background-color: var(--color-slate-50);
+  border-radius: var(--radius-lg);
+  color: var(--color-slate-500);
+  border: 1px dashed var(--color-slate-300);
+}
+
+/* === FORM MESSAGGIO === */
 .nuovo-messaggio-form {
-	margin: 24px auto 0 auto;
-	max-width: 420px;
+  background-color: var(--color-slate-50);
+  border: 1px solid var(--color-slate-200);
+  padding: 1.75rem;
+  border-radius: var(--radius-lg);
 }
-.nuovo-messaggio-form form {
-	background: #f7faff;
-	padding: 16px;
-	border-radius: 8px;
-	box-shadow: 0 2px 8px #e0e7ef;
-	max-width: 400px;
-	margin: 0 auto;
+
+.form-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-slate-800);
+  margin: 0 0 1.25rem 0;
 }
-.nuovo-messaggio-form label {
-	display: block;
-	font-weight: 500;
-	margin-bottom: 4px;
-	color: #2a4d7c;
+
+.msg-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
 }
-.nuovo-messaggio-form input,
-.nuovo-messaggio-form textarea {
-	width: 100%;
-	padding: 6px 8px;
-	border-radius: 4px;
-	border: 1px solid #b6c2d2;
-	margin-bottom: 10px;
-	font-size: 1rem;
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
 }
-.nuovo-messaggio-form textarea {
-	min-height: 60px;
+
+.form-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-slate-700);
 }
-.nuovo-messaggio-form button[type="submit"] {
-	background: #2a4d7c;
-	color: #fff;
-	border: none;
-	border-radius: 4px;
-	padding: 8px 16px;
-	font-weight: 500;
-	cursor: pointer;
-	margin-top: 6px;
+
+.form-input,
+.form-textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--color-slate-300);
+  border-radius: var(--radius-md);
+  font-size: 0.95rem;
+  color: var(--color-slate-800);
+  background-color: #ffffff;
+  transition: all var(--transition-fast);
+  outline: none;
+  font-family: inherit;
 }
-.nuovo-messaggio-form .error {
-	color: #c00;
-	margin-top: 8px;
+
+.form-textarea {
+  min-height: 90px;
+  resize: vertical;
 }
-.nuovo-messaggio-form .success {
-	color: #080;
-	margin-top: 8px;
+
+.form-input:focus,
+.form-textarea:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.btn-submit {
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  align-self: flex-start;
+}
+
+.alert-message {
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.alert-error {
+  background-color: var(--color-danger-bg);
+  color: var(--color-danger-text);
+}
+
+.alert-success {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+@media (max-width: 600px) {
+  .dettaglio-card,
+  .messaggi-card {
+    padding: 1.5rem;
+  }
+  .gestione-stato-prestito {
+    flex-direction: column;
+  }
+  .btn-action {
+    width: 100%;
+    justify-content: center;
+  }
 }

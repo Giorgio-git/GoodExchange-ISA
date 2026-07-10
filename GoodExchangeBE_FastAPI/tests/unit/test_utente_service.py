@@ -19,7 +19,6 @@ from hypothesis import strategies as st
 
 from src.services import utente_service
 
-
 # ——————————————————————————————————————————————
 # 1. PBT con Hypothesis — verifica_solvibilita_utente (funzione pura)
 # SRS §9.3, BK-01: cauzione + crediti_accumulati >= valore_bene

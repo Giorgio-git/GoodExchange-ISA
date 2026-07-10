@@ -86,7 +86,7 @@ async def find_utente_by_id(conn: asyncpg.Connection, id_utente: int) -> Optiona
         row = await conn.fetchrow(sql, id_utente)
         if not row:
             return None
-        
+
         utente_dict = dict(row)
         try:
             sql_rep = "SELECT ROUND(AVG(voto)::numeric, 2) as media FROM feedback WHERE id_destinatario = $1"
@@ -111,7 +111,7 @@ async def find_utente_by_username(
         row = await conn.fetchrow(sql, username)
         if not row:
             return None
-        
+
         utente_dict = dict(row)
         try:
             sql_rep = "SELECT ROUND(AVG(voto)::numeric, 2) as media FROM feedback WHERE id_destinatario = $1"

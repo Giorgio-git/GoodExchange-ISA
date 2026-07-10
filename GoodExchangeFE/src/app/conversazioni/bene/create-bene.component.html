@@ -1,39 +1,70 @@
 <div class="create-bene-container">
-	<h2>Aggiungi un nuovo bene</h2>
-	<form (ngSubmit)="submit()" class="bene-form">
-		<div>
-			<label>Nome *</label>
-			<input [(ngModel)]="nome" name="nome" required />
-		</div>
-		<div>
-			<label>Descrizione</label>
-			<textarea [(ngModel)]="descrizione" name="descrizione"></textarea>
-		</div>
-		<div>
-			<label>Categoria *</label>
-			<select [(ngModel)]="id_categoria" name="id_categoria" required>
-				<option [value]="null">Seleziona categoria</option>
-				<option *ngFor="let cat of categorie" [value]="cat.id">{{ cat.nome }}</option>
-			</select>
-		</div>
-		<div>
-			<label>Peso (Kg)</label>
-			<input type="number" [(ngModel)]="peso" name="peso" min="0" required/>
-		</div>
-		
-		<div>
-			<label>Stato</label>
-			<select [(ngModel)]="stato" name="stato">
-				<option [value]="true">Disponibile</option>
-				<option [value]="false">Occupato</option>
-			</select>
-		</div>
-		<div>
-			<label>Immagine</label>
-			<input type="file" (change)="onFileChange($event)" accept="image/*" />
-		</div>
-	<button type="submit">Aggiungi Bene</button>
-	</form>
-	<div *ngIf="error" class="error">{{ error }}</div>
-	<div *ngIf="success" class="success">{{ success }}</div>
+  <div class="create-bene-card">
+
+    <div class="page-header">
+      <h2 class="page-title">Pubblica un Nuovo Bene</h2>
+      <p class="page-subtitle">Condividi un oggetto con la community di GoodExchange</p>
+    </div>
+
+    <form (ngSubmit)="submit()" #beneForm="ngForm" class="bene-form">
+
+      <!-- Nome -->
+      <div class="form-group">
+        <label class="form-label">Nome dell'Oggetto *</label>
+        <input type="text" [(ngModel)]="nome" name="nome" placeholder="es. Trapano a Percussione Bosch" required
+          class="form-input" />
+      </div>
+
+      <!-- Descrizione -->
+      <div class="form-group">
+        <label class="form-label">Descrizione Dettagliata</label>
+        <textarea [(ngModel)]="descrizione" name="descrizione"
+          placeholder="Descrivi le condizioni, gli accessori inclusi e le caratteristiche..."
+          class="form-textarea"></textarea>
+      </div>
+
+      <!-- Griglia rapida: Categoria & Peso -->
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Categoria *</label>
+          <select [(ngModel)]="id_categoria" name="id_categoria" required class="form-select">
+            <option [value]="null" disabled selected>Seleziona categoria...</option>
+            <option *ngFor="let cat of categorie" [value]="cat.id">{{ cat.nome }}</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Peso stimato (Kg)</label>
+          <input type="number" [(ngModel)]="peso" name="peso" min="0" step="0.1" placeholder="es. 2.5" required
+            class="form-input" />
+        </div>
+      </div>
+
+      <!-- Griglia rapida: Stato & Immagine -->
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Stato Iniziale</label>
+          <select [(ngModel)]="stato" name="stato" class="form-select">
+            <option [value]="true">Disponibile</option>
+            <option [value]="false">Non disponibile al momento</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Foto Illustrativa</label>
+          <div class="file-input-wrapper">
+            <input type="file" (change)="onFileChange($event)" accept="image/*" />
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" [disabled]="!beneForm.form.valid || !id_categoria" class="btn btn-primary btn-submit">
+        Pubblica Oggetto
+      </button>
+    </form>
+
+    <div *ngIf="error" class="alert-message alert-error">{{ error }}</div>
+    <div *ngIf="success" class="alert-message alert-success">{{ success }}</div>
+
+  </div>
 </div>

@@ -1,53 +1,98 @@
 <div class="dettaglio-prestito-container" *ngIf="prestito">
-			<h2>Dettaglio Prestito #{{ prestito.id }}</h2>
-			<div class="riepilogo">
-				<p><strong>Oggetto:</strong> {{ prestito.bene_nome }}</p>
-				<p><strong>Beneficiario:</strong> {{ prestito.beneficiario_username || prestito.id_beneficiario }}</p>
-				<p><strong>Proprietario:</strong> {{ prestito.proprietario_username || prestito.id_proprietario }}</p>
-				<p><strong>Periodo:</strong> {{ prestito.data_inizio.slice(0,10) }} - {{ prestito.data_fine.slice(0,10) }}</p>
+  
+  <!-- Card Dettagli Prestito -->
+  <div class="dettaglio-card">
+    <div class="page-header">
+      <h2 class="page-title">📦 Prestito #{{ prestito.id }}</h2>
+      <span class="badge-stato" [ngClass]="'badge-' + prestito.stato">{{ prestito.stato }}</span>
+    </div>
 
-				<!-- Bottone accetta/rifiuta visibile solo al proprietario e se lo stato è 'richiesto' -->
-				<div *ngIf="prestito.stato === 'richiesto' && loggedUser?.id === prestito.id_proprietario" class="gestione-stato-prestito">
-					<button (click)="cambiaStatoPrestito('accettato')" class="btn-accetta">Accetta richiesta</button>
-					<button (click)="cambiaStatoPrestito('rifiutato')" class="btn-rifiuta">Rifiuta richiesta</button>
-				</div>
+    <!-- Griglia Riepilogo -->
+    <div class="riepilogo-grid">
+      <div class="info-item">
+        <span class="info-label">Bene</span>
+        <span class="info-value">{{ prestito.bene_nome }}</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Beneficiario</span>
+        <span class="info-value">{{ prestito.beneficiario_username || prestito.id_beneficiario }}</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Proprietario</span>
+        <span class="info-value">{{ prestito.proprietario_username || prestito.id_proprietario }}</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Periodo</span>
+        <span class="info-value">{{ prestito.data_inizio.slice(0,10) }} ➔ {{ prestito.data_fine.slice(0,10) }}</span>
+      </div>
+      <div class="info-item" *ngIf="prestito.crediti_utilizzati">
+        <span class="info-label">Crediti Utilizzati</span>
+        <span class="info-value">{{ prestito.crediti_utilizzati }} crediti</span>
+      </div>
+    </div>
 
-				<!-- Bottone completa visibile solo al proprietario se il prestito è accettato/in_corso -->
-				<div *ngIf="(prestito.stato === 'accettato' || prestito.stato === 'in_corso') && loggedUser?.id === prestito.id_proprietario" class="gestione-stato-prestito" style="margin-top: 10px;">
-					<button (click)="cambiaStatoPrestito('completato')" class="btn-accetta" style="background-color: #28a745;">Contrassegna come completato (Restituito)</button>
-				</div>
+    <!-- Note opzionali -->
+    <div class="info-item" *ngIf="prestito.note" style="margin-bottom: 1.5rem;">
+      <span class="info-label">Note / Messaggio iniziale</span>
+      <span class="info-value" style="font-weight: 400; color: var(--color-slate-700);">{{ prestito.note }}</span>
+    </div>
 
-				<div class="error" *ngIf="erroreStato">{{ erroreStato }}</div>
-				<div class="success" *ngIf="successoStato">{{ successoStato }}</div>
-				
-				<p *ngIf="prestito.note"><strong>Note:</strong> {{ prestito.note }}</p>
-				<p *ngIf="prestito.crediti_utilizzati"><strong>Crediti utilizzati:</strong> {{ prestito.crediti_utilizzati }}</p>
-			</div>
+    <!-- Bottoni di gestione per il Proprietario -->
+    <div *ngIf="prestito.stato === 'richiesto' && loggedUser?.id === prestito.id_proprietario" class="gestione-stato-prestito">
+      <button (click)="cambiaStatoPrestito('accettato')" class="btn-action btn-accetta">
+        ✅ Accetta Richiesta
+      </button>
+      <button (click)="cambiaStatoPrestito('rifiutato')" class="btn-action btn-rifiuta">
+        ❌ Rifiuta Richiesta
+      </button>
+    </div>
 
-	<div class="messaggi-section">
-		<h3>Messaggi</h3>
-		<div *ngIf="messaggi.length === 0">Nessun messaggio scambiato.</div>
+    <!-- Bottone di completamento (Restituzione) -->
+    <div *ngIf="(prestito.stato === 'accettato' || prestito.stato === 'in_corso') && loggedUser?.id === prestito.id_proprietario" class="gestione-stato-prestito">
+      <button (click)="cambiaStatoPrestito('completato')" class="btn-action btn-completato">
+        🏁 Contrassegna come Restituito (Completato)
+      </button>
+    </div>
 
-		<!-- uso il template di messaggio -->
-		<app-messaggio *ngFor="let msg of messaggi" [messaggio]="msg" [mittenteUsername]="getUsernameMittente(msg)"></app-messaggio>
+    <!-- Errori / Successo sullo stato -->
+    <div class="alert-message alert-error" *ngIf="erroreStato">{{ erroreStato }}</div>
+    <div class="alert-message alert-success" *ngIf="successoStato">{{ successoStato }}</div>
+  </div>
 
-		<div class="nuovo-messaggio-form" *ngIf="prestito && loggedUser">
-			<h4 style="margin-bottom: 10px; color: #2a4d7c;">Scrivi un nuovo messaggio</h4>
-			<form (ngSubmit)="inviaMessaggio()" #msgForm="ngForm" style="background: #f7faff; padding: 16px; border-radius: 8px; box-shadow: 0 2px 8px #e0e7ef; max-width: 400px; margin: 0 auto;">
-				<div style="margin-bottom: 10px;">
-					<label for="titolo" style="display: block; font-weight: 500; margin-bottom: 4px;">Titolo</label>
-					<input id="titolo" name="titolo" [(ngModel)]="titoloMessaggio" required style="width: 100%; padding: 6px 8px; border-radius: 4px; border: 1px solid #b6c2d2;">
-				</div>
-				<div style="margin-bottom: 10px;">
-					<label for="contenuto" style="display: block; font-weight: 500; margin-bottom: 4px;">Contenuto</label>
-					<textarea id="contenuto" name="contenuto" [(ngModel)]="contenutoMessaggio" required style="width: 100%; min-height: 60px; padding: 6px 8px; border-radius: 4px; border: 1px solid #b6c2d2;"></textarea>
-				</div>
-				<button type="submit" style="background: #2a4d7c; color: #fff; border: none; border-radius: 4px; padding: 8px 16px; font-weight: 500; cursor: pointer;">Invia messaggio</button>
-			</form>
-			<div class="error" *ngIf="invioError" style="color: #c00; margin-top: 8px;">{{ invioError }}</div>
-			<div class="success" *ngIf="invioSuccess" style="color: #080; margin-top: 8px;">{{ invioSuccess }}</div>
-		</div>
-	</div>
+  <!-- Card Messaggi -->
+  <div class="messaggi-card">
+    <h3 class="section-title">💬 Conversazione e Messaggi</h3>
+    
+    <div class="messaggi-list" *ngIf="messaggi.length > 0">
+      <app-messaggio *ngFor="let msg of messaggi" [messaggio]="msg" [mittenteUsername]="getUsernameMittente(msg)"></app-messaggio>
+    </div>
+
+    <div class="empty-messages" *ngIf="messaggi.length === 0">
+      Nessun messaggio scambiato in questo prestito. Inizia la conversazione qui sotto!
+    </div>
+
+    <!-- Form nuovo messaggio -->
+    <div class="nuovo-messaggio-form" *ngIf="prestito && loggedUser">
+      <h4 class="form-title">✉️ Scrivi al {{ loggedUser.id === prestito.id_proprietario ? 'Beneficiario' : 'Proprietario' }}</h4>
+      <form (ngSubmit)="inviaMessaggio()" #msgForm="ngForm" class="msg-form">
+        <div class="form-group">
+          <label for="titolo" class="form-label">Titolo</label>
+          <input id="titolo" name="titolo" [(ngModel)]="titoloMessaggio" placeholder="Oggetto del messaggio..." required class="form-input">
+        </div>
+        <div class="form-group">
+          <label for="contenuto" class="form-label">Messaggio</label>
+          <textarea id="contenuto" name="contenuto" [(ngModel)]="contenutoMessaggio" placeholder="Scrivi qui il tuo messaggio..." required class="form-textarea"></textarea>
+        </div>
+        <button type="submit" [disabled]="!msgForm.form.valid" class="btn btn-primary btn-submit">
+          Invia Messaggio
+        </button>
+      </form>
+      
+      <div class="alert-message alert-error" *ngIf="invioError">{{ invioError }}</div>
+      <div class="alert-message alert-success" *ngIf="invioSuccess">{{ invioSuccess }}</div>
+    </div>
+  </div>
+
 </div>
 
 

@@ -25,7 +25,7 @@ from src.services import feedback_service
 # ——————————————————————————————————————————————
 
 # definiamo una strategia hypothesis per generare voti e liste di voti validi
-voti_validi = st.integers(min_value=1, max_value=5) 
+voti_validi = st.integers(min_value=1, max_value=5)
 lista_voti = st.lists(voti_validi, min_size=1, max_size=100) # una lista di voti validi che va da un voto singolo fino ad un massimo di 100 voti
 
 

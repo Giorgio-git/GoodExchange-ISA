@@ -40,10 +40,10 @@ jobs:
           uv run ruff format --check .
 
       # --- Verifica Frontend Angular ---
-      - name: Setup Node.js 20 per Frontend
+      - name: Setup Node.js 22 per Frontend
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
           cache-dependency-path: GoodExchangeFE/package-lock.json
 
