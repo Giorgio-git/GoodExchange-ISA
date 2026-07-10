@@ -1,0 +1,169 @@
+# Riferimento Corso: Sezione 6737 "GitHub Actions" e Sezione 6702 "CI/CD Pipeline"
+# Pipeline Three-Tier: Frontend Angular + Backend FastAPI + Database PostgreSQL
+name: CI/CD Pipeline GoodExchange Full-Stack
+
+on:
+  push:
+    branches: [ "main", "develop", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+  workflow_dispatch:  # Consente l'esecuzione manuale dal pannello di GitHub Actions
+
+jobs:
+  # =====================================================================
+  # JOB 1: LINTING & BUILD VALIDATION (CI - Continuous Integration)
+  # =====================================================================
+  lint-and-validate:
+    name: Qualità Codice & Compilazione (Frontend + Backend)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout del Codice Repository
+        uses: actions/checkout@v4
+
+      # --- Verifica Backend Python ---
+      - name: Setup Astral uv per Backend
+        uses: astral-sh/setup-uv@v3
+
+      - name: Set up Python 3.11
+        run: uv python install 3.11
+
+      - name: Installazione Dipendenze Backend
+        run: |
+          cd GoodExchangeBE_FastAPI
+          uv sync --dev
+
+      - name: Linting e Controllo Qualità con Ruff (SRS §NFR-07)
+        run: |
+          cd GoodExchangeBE_FastAPI
+          uv run ruff check .
+          uv run ruff format --check .
+
+      # --- Verifica Frontend Angular ---
+      - name: Setup Node.js 20 per Frontend
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: GoodExchangeFE/package-lock.json
+
+      - name: Installazione Dipendenze Frontend (npm ci)
+        run: |
+          cd GoodExchangeFE
+          npm ci
+
+      - name: Verifica Compilazione Angular (ng build production)
+        run: |
+          cd GoodExchangeFE
+          npm run build -- --configuration production
+
+  # =====================================================================
+  # JOB 2: TEST SUITE & COPERTURA STRUTTURALE (CI - Verification)
+  # =====================================================================
+  test-and-coverage:
+    name: Test di Unità e di Integrazione con Database Reale
+    needs: lint-and-validate
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_DB: goodexchange_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout del Codice Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Astral uv
+        uses: astral-sh/setup-uv@v3
+
+      - name: Set up Python 3.11
+        run: uv python install 3.11
+
+      - name: Installazione Dipendenze Backend per i Test
+        run: |
+          cd GoodExchangeBE_FastAPI
+          uv sync --dev
+
+      - name: Inizializzazione Schema Database di Test
+        run: |
+          PGPASSWORD=postgres psql -h localhost -U postgres -d goodexchange_test -f schema.sql
+
+      - name: Esecuzione Misurazione Copertura Combinata (Unit + Integration Tests)
+        run: |
+          cd GoodExchangeBE_FastAPI
+          uv run coverage run --branch --source=src -m pytest tests/ --maxfail=1 --disable-warnings -v
+        env:
+          TEST_DATABASE_URL: postgresql://postgres:postgres@localhost/goodexchange_test
+
+      - name: Generazione Report di Copertura C₀ e C₁ (Target >= 70%)
+        run: |
+          cd GoodExchangeBE_FastAPI
+          uv run coverage report -m
+          uv run coverage html -d htmlcov/
+
+      - name: Caricamento Artefatto HTML Coverage Report su GitHub
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-report-html
+          path: GoodExchangeBE_FastAPI/htmlcov/
+
+  # =====================================================================
+  # JOB 3: CONTINUOUS DELIVERY (CD - Containerization & Docker Hub Push)
+  # =====================================================================
+  docker-build-and-push:
+    name: Build & Deploy Container su Docker Hub (CD)
+    needs: test-and-coverage
+    runs-on: ubuntu-latest
+    # Si attiva solamente se i test superano il controllo al 100% sul branch principale (o inviluppo manuale)
+    if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+
+    steps:
+      - name: Checkout del Codice Repository
+        uses: actions/checkout@v4
+
+      - name: Login su Docker Hub con i GitHub Secrets
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # --- Build & Push Backend Container ---
+      - name: Build & Push Immagine Backend FastAPI
+        uses: docker/build-push-action@v5
+        with:
+          context: ./GoodExchangeBE_FastAPI
+          file: ./GoodExchangeBE_FastAPI/Dockerfile
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/goodexchange-isa-backend:latest
+            ${{ secrets.DOCKER_USERNAME }}/goodexchange-isa-backend:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # --- Build & Push Frontend Container ---
+      - name: Build & Push Immagine Frontend Angular (NGINX)
+        uses: docker/build-push-action@v5
+        with:
+          context: ./GoodExchangeFE
+          file: ./GoodExchangeFE/Dockerfile
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/goodexchange-isa-frontend:latest
+            ${{ secrets.DOCKER_USERNAME }}/goodexchange-isa-frontend:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

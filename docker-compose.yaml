@@ -1,0 +1,60 @@
+# Riferimento Corso: Sezione 4382 "Docker Compose" — Infrastructure as Code
+# Gestione coordinata dell'architettura a microservizi / Three-Tier: DB -> Backend -> Frontend
+version: '3.8'
+
+services:
+  # ——— SERVIZIO 1: DATABASE POSTGRESQL ———
+  db:
+    image: postgres:15-alpine
+    container_name: goodexchange_db
+    restart: always
+    environment:
+      POSTGRES_DB: GoodExchange
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d GoodExchange"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # ——— SERVIZIO 2: BACKEND FASTAPI ———
+  backend:
+    build:
+      context: ./GoodExchangeBE_FastAPI
+      dockerfile: Dockerfile
+    container_name: goodexchange_backend
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PGHOST: db
+      PGPORT: 5432
+      PGDATABASE: GoodExchange
+      PGUSER: postgres
+      PGPASSWORD: postgres
+      CORS_ORIGIN: http://localhost:4200,http://localhost
+    ports:
+      - "3000:3000"
+
+  # ——— SERVIZIO 3: FRONTEND ANGULAR (SPA + NGINX) ———
+  frontend:
+    build:
+      context: ./GoodExchangeFE
+      dockerfile: Dockerfile
+    container_name: goodexchange_frontend
+    restart: always
+    depends_on:
+      - backend
+    ports:
+      - "4200:80"
+      - "80:80"
+
+volumes:
+  postgres_data:
