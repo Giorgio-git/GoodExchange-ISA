@@ -13,10 +13,13 @@ SETUP TEST DB LOCALE:
 """
 
 import os
+import uuid
 from collections.abc import AsyncGenerator
+from typing import Any
 
 import asyncpg
 import pytest
+import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
 
 from src.main import app
@@ -36,7 +39,7 @@ TEST_DB_URL = os.getenv(
 # ——————————————————————————————————————————————
 
 
-@pytest.fixture(scope="function")
+@pytest_asyncio.fixture(scope="function")
 async def db_pool() -> AsyncGenerator[asyncpg.Pool, None]:
     """
     Pool di connessioni asyncpg per il DB di test.
@@ -47,7 +50,7 @@ async def db_pool() -> AsyncGenerator[asyncpg.Pool, None]:
     await pool.close()
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 async def db_conn(db_pool: asyncpg.Pool) -> AsyncGenerator[asyncpg.Connection, None]:
     """
     Connessione singola con rollback automatico al termine del test.
@@ -59,7 +62,7 @@ async def db_conn(db_pool: asyncpg.Pool) -> AsyncGenerator[asyncpg.Connection, N
             # Il rollback automatico resetta il DB allo stato pre-test
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 async def async_client(db_pool: asyncpg.Pool) -> AsyncGenerator[AsyncClient, None]:
     """
     Client HTTP ASGI (httpx) per i test di integrazione delle API.
@@ -90,3 +93,61 @@ UTENTE_TEST_BASE = {
     "civico": "1",
     "ruolo": "utente",
 }
+
+
+# ——————————————————————————————————————————————
+# Fixtures dedicate per scenari complessi (FSM, ACID, Interazione tra entità)
+# ——————————————————————————————————————————————
+
+
+@pytest_asyncio.fixture
+async def utente_proprietario(async_client: AsyncClient) -> dict[str, Any]:
+    """Crea e restituisce un utente completo (ruolo 'utente' o 'proprietario') persistito nel DB di test."""
+    username = f"prop_{uuid.uuid4().hex[:8]}"
+    cf = f"PRP{uuid.uuid4().hex[:13].upper()}"[:16]
+    payload = {**UTENTE_TEST_BASE, "username": username, "codice_fiscale": cf}
+    res = await async_client.post("/api/utenti", json=payload)
+    assert res.status_code == 201, f"Errore creazione proprietario: {res.text}"
+    return res.json()
+
+
+@pytest_asyncio.fixture
+async def utente_beneficiario(async_client: AsyncClient) -> dict[str, Any]:
+    """Crea e restituisce un secondo utente indipendente dal proprietario, persistito nel DB di test."""
+    username = f"ben_{uuid.uuid4().hex[:8]}"
+    cf = f"BEN{uuid.uuid4().hex[:13].upper()}"[:16]
+    payload = {**UTENTE_TEST_BASE, "username": username, "codice_fiscale": cf}
+    res = await async_client.post("/api/utenti", json=payload)
+    assert res.status_code == 201, f"Errore creazione beneficiario: {res.text}"
+    return res.json()
+
+
+@pytest_asyncio.fixture
+async def categoria_test(async_client: AsyncClient) -> dict[str, Any]:
+    """Crea e restituisce una categoria di test con crediti impostati."""
+    nome_cat = f"Cat_{uuid.uuid4().hex[:6]}"
+    payload = {"nome": nome_cat, "crediti": 15, "descrizione": "Categoria per integration test"}
+    res = await async_client.post("/api/categorie", json=payload)
+    assert res.status_code == 201, f"Errore creazione categoria: {res.text}"
+    return res.json()
+
+
+@pytest_asyncio.fixture
+async def bene_test(
+    async_client: AsyncClient,
+    utente_proprietario: dict[str, Any],
+    categoria_test: dict[str, Any],
+) -> dict[str, Any]:
+    """Crea e restituisce un bene disponibile associato a proprietario e categoria preesistenti."""
+    nome_bene = f"Bene_{uuid.uuid4().hex[:6]}"
+    payload = {
+        "nome": nome_bene,
+        "descrizione": "Descrizione bene test integration",
+        "id_categoria": categoria_test["id"],
+        "id_proprietario": utente_proprietario["id"],
+        "stato": True,
+        "peso": 1.5,
+    }
+    res = await async_client.post("/api/beni", json=payload)
+    assert res.status_code == 201, f"Errore creazione bene: {res.text}"
+    return res.json()
