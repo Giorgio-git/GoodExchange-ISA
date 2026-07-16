@@ -101,7 +101,10 @@ async def test_feedback_get_e_delete_integration(
     # DELETE feedback
     res_del = await async_client.delete(f"/api/feedback/{fb_id}")
     assert res_del.status_code == 200
-    assert "rimosso" in res_del.json()["messaggio"].lower() or "eliminato" in res_del.json()["messaggio"].lower()
+    assert (
+        "rimosso" in res_del.json()["messaggio"].lower()
+        or "eliminato" in res_del.json()["messaggio"].lower()
+    )
 
     # DELETE inesistente -> 404
     res_404 = await async_client.delete("/api/feedback/99999999")

@@ -28,9 +28,7 @@ async def test_preferiti_flusso_completo_integration(
     assert res_items.status_code == 200
 
     # 3. POST — aggiunge utente_beneficiario ai preferiti
-    res_add = await async_client.post(
-        f"/api/preferitiItem/{id_lista}/{id_preferito}"
-    )
+    res_add = await async_client.post(f"/api/preferitiItem/{id_lista}/{id_preferito}")
     assert res_add.status_code == 201
     assert "aggiunto" in res_add.json()["messaggio"].lower()
 

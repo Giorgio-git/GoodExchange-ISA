@@ -31,9 +31,7 @@ async def test_suggerimento_flusso_felice_integration(
     assert suggerimento_id in ids
 
     # 3. GET suggerimenti del mittente (per utente)
-    res_get_user = await async_client.get(
-        f"/api/suggerimenti/utente/{id_mittente}"
-    )
+    res_get_user = await async_client.get(f"/api/suggerimenti/utente/{id_mittente}")
     assert res_get_user.status_code == 200
 
     # 4. PUT — aggiornamento stato verso il secondo e ultimo stato consentito: 'completato'
@@ -45,8 +43,6 @@ async def test_suggerimento_flusso_felice_integration(
     assert res_stato.json()["stato"] == "completato"
 
     # 5. GET con filtro per stato 'completato'
-    res_filtro = await async_client.get(
-        "/api/suggerimenti?stato=completato"
-    )
+    res_filtro = await async_client.get("/api/suggerimenti?stato=completato")
     assert res_filtro.status_code == 200
     assert any(s["id"] == suggerimento_id for s in res_filtro.json())
