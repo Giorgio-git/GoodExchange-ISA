@@ -37,7 +37,9 @@ async def create_categoria(
         async with conn.transaction():
             result = await categoria_dao.create_categoria(conn, categoria.model_dump())
             if not result:
-                raise HTTPException(status_code=400, detail="Creazione categoria fallita")
+                raise HTTPException(
+                    status_code=400, detail="Creazione categoria fallita"
+                )
             return result
     except asyncpg.exceptions.UniqueViolationError:
         raise HTTPException(

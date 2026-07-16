@@ -64,8 +64,14 @@ async def get_beni(
             if not utenti:
                 return []
             id_proprietari = [u["id"] for u in utenti]
-            stato_filtro = stato if id_proprietario is not None else (True if stato is None else stato)
-            return await bene_dao.find_beni_by_proprietari(conn, id_proprietari, stato=stato_filtro)
+            stato_filtro = (
+                stato
+                if id_proprietario is not None
+                else (True if stato is None else stato)
+            )
+            return await bene_dao.find_beni_by_proprietari(
+                conn, id_proprietari, stato=stato_filtro
+            )
 
         # Filtro standard
         filters: dict = {}

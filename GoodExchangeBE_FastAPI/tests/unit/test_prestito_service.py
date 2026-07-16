@@ -27,9 +27,7 @@ from src.services import prestito_service
     st.floats(min_value=0.0, max_value=100_000.0, allow_nan=False),
     st.floats(min_value=0.01, max_value=100_000.0, allow_nan=False),
 )
-def test_pbt_verifica_solvibilita_utente(
-    cauzione, crediti_accumulati, valore_bene
-):
+def test_pbt_verifica_solvibilita_utente(cauzione, crediti_accumulati, valore_bene):
     """
     Test basato su proprietà (Bonus Hypothesis):
     La funzione verifica_solvibilita_utente deve restituire True se e solo se

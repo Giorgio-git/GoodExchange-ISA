@@ -208,4 +208,3 @@ async def update_utente(
         dati = body.model_dump(exclude_unset=True)
         await utente_dao.update_utente(conn, id, dati)
         return {"messaggio": "Utente aggiornato con successo"}
-

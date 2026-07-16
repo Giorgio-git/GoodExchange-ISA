@@ -24,7 +24,9 @@ class PrestitoCreate(BaseModel):
     data_fine: date
     stato: STATI_VALIDI = "richiesto"
 
-    @model_validator(mode="after")  # decoratore che verifica che la data di fine sia successiva a quella di inizio
+    @model_validator(
+        mode="after"
+    )  # decoratore che verifica che la data di fine sia successiva a quella di inizio
     def check_date_valide(self) -> "PrestitoCreate":
         """
         Precondizione (Design by Contract — Sezione 3.3):

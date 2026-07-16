@@ -132,7 +132,11 @@ async def blocca_bene_con_crediti(
     success = await bene_dao.block_bene(conn, id_bene)
     if success:
         await utente_dao.calcola_crediti_valore_beni(conn, bene["id_proprietario"])
-        logger.info("Bene %s bloccato. Crediti proprietario %s ricalcolati.", id_bene, bene["id_proprietario"])
+        logger.info(
+            "Bene %s bloccato. Crediti proprietario %s ricalcolati.",
+            id_bene,
+            bene["id_proprietario"],
+        )
     return success
 
 
@@ -151,7 +155,11 @@ async def sblocca_bene_con_crediti(
     success = await bene_dao.unblock_bene(conn, id_bene)
     if success:
         await utente_dao.calcola_crediti_valore_beni(conn, bene["id_proprietario"])
-        logger.info("Bene %s sbloccato. Crediti proprietario %s ricalcolati.", id_bene, bene["id_proprietario"])
+        logger.info(
+            "Bene %s sbloccato. Crediti proprietario %s ricalcolati.",
+            id_bene,
+            bene["id_proprietario"],
+        )
     return success
 
 
@@ -170,5 +178,9 @@ async def aggiorna_bene_con_crediti(
     success = await bene_dao.update_bene(conn, id_bene, aggiornamenti)
     if success and ("id_categoria" in aggiornamenti or "stato" in aggiornamenti):
         await utente_dao.calcola_crediti_valore_beni(conn, bene["id_proprietario"])
-        logger.info("Bene %s aggiornato. Crediti proprietario %s ricalcolati.", id_bene, bene["id_proprietario"])
+        logger.info(
+            "Bene %s aggiornato. Crediti proprietario %s ricalcolati.",
+            id_bene,
+            bene["id_proprietario"],
+        )
     return success

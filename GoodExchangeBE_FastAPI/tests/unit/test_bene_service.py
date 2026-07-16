@@ -188,7 +188,9 @@ async def test_blocca_bene_aggiorna_crediti():
     with (
         patch("src.dao.bene_dao.find_bene_by_id", new_callable=AsyncMock) as mock_find,
         patch("src.dao.bene_dao.block_bene", new_callable=AsyncMock) as mock_block,
-        patch("src.dao.utente_dao.calcola_crediti_valore_beni", new_callable=AsyncMock) as mock_crediti,
+        patch(
+            "src.dao.utente_dao.calcola_crediti_valore_beni", new_callable=AsyncMock
+        ) as mock_crediti,
     ):
         mock_find.return_value = {"id": 10, "id_proprietario": 5}
         mock_block.return_value = True
@@ -207,7 +209,9 @@ async def test_sblocca_bene_aggiorna_crediti():
     with (
         patch("src.dao.bene_dao.find_bene_by_id", new_callable=AsyncMock) as mock_find,
         patch("src.dao.bene_dao.unblock_bene", new_callable=AsyncMock) as mock_unblock,
-        patch("src.dao.utente_dao.calcola_crediti_valore_beni", new_callable=AsyncMock) as mock_crediti,
+        patch(
+            "src.dao.utente_dao.calcola_crediti_valore_beni", new_callable=AsyncMock
+        ) as mock_crediti,
     ):
         mock_find.return_value = {"id": 10, "id_proprietario": 5}
         mock_unblock.return_value = True
@@ -226,12 +230,16 @@ async def test_aggiorna_bene_aggiorna_crediti_quando_stato_o_categoria_cambia():
     with (
         patch("src.dao.bene_dao.find_bene_by_id", new_callable=AsyncMock) as mock_find,
         patch("src.dao.bene_dao.update_bene", new_callable=AsyncMock) as mock_update,
-        patch("src.dao.utente_dao.calcola_crediti_valore_beni", new_callable=AsyncMock) as mock_crediti,
+        patch(
+            "src.dao.utente_dao.calcola_crediti_valore_beni", new_callable=AsyncMock
+        ) as mock_crediti,
     ):
         mock_find.return_value = {"id": 10, "id_proprietario": 5}
         mock_update.return_value = True
 
-        result = await bene_service.aggiorna_bene_con_crediti(mock_conn, id_bene=10, aggiornamenti={"stato": False})
+        result = await bene_service.aggiorna_bene_con_crediti(
+            mock_conn, id_bene=10, aggiornamenti={"stato": False}
+        )
 
     assert result is True
     mock_update.assert_awaited_once_with(mock_conn, 10, {"stato": False})

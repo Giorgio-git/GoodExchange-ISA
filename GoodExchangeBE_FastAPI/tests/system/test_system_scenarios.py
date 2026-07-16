@@ -20,7 +20,9 @@ from tests.conftest import UTENTE_TEST_BASE
 
 
 @pytest.mark.asyncio
-async def test_system_scenario_1_ciclo_prestito_feedback_crediti(async_client: AsyncClient):
+async def test_system_scenario_1_ciclo_prestito_feedback_crediti(
+    async_client: AsyncClient,
+):
     """
     SCENARIO DI SISTEMA 1: Ciclo di vita E2E di un prestito con rilascio feedback e accredito crediti.
 
@@ -39,51 +41,79 @@ async def test_system_scenario_1_ciclo_prestito_feedback_crediti(async_client: A
     # 1. REGISTRAZIONE ATTORI (Mario e Luigi)
     username_mario = f"mario_sys_{uuid.uuid4().hex[:6]}"
     cf_mario = f"MRO{uuid.uuid4().hex[:13].upper()}"[:16]
-    res_mario = await async_client.post("/api/utenti", json={
-        **UTENTE_TEST_BASE, "username": username_mario, "nome": "Mario", "cognome": "Rossi", "codice_fiscale": cf_mario
-    })
+    res_mario = await async_client.post(
+        "/api/utenti",
+        json={
+            **UTENTE_TEST_BASE,
+            "username": username_mario,
+            "nome": "Mario",
+            "cognome": "Rossi",
+            "codice_fiscale": cf_mario,
+        },
+    )
     assert res_mario.status_code == 201
     mario = res_mario.json()
     id_mario = mario.get("id") or mario.get("id_utente")
 
     username_luigi = f"luigi_sys_{uuid.uuid4().hex[:6]}"
     cf_luigi = f"LGI{uuid.uuid4().hex[:13].upper()}"[:16]
-    res_luigi = await async_client.post("/api/utenti", json={
-        **UTENTE_TEST_BASE, "username": username_luigi, "nome": "Luigi", "cognome": "Verdi", "codice_fiscale": cf_luigi
-    })
+    res_luigi = await async_client.post(
+        "/api/utenti",
+        json={
+            **UTENTE_TEST_BASE,
+            "username": username_luigi,
+            "nome": "Luigi",
+            "cognome": "Verdi",
+            "codice_fiscale": cf_luigi,
+        },
+    )
     assert res_luigi.status_code == 201
     luigi = res_luigi.json()
     id_luigi = luigi.get("id") or luigi.get("id_utente")
 
     # Luigi ricarica la cauzione a 100€ per essere solvibile
-    res_cauz = await async_client.put(f"/api/utenti/{id_luigi}/cauzione", json={"cauzione": 100.0})
+    res_cauz = await async_client.put(
+        f"/api/utenti/{id_luigi}/cauzione", json={"cauzione": 100.0}
+    )
     assert res_cauz.status_code == 200
 
     # 2. CREAZIONE CATEGORIA DA PARTE DELL'AMMINISTRATORE E BENE NEL CATALOGO DA PARTE DI MARIO
     # Solo l'Amministratore ha il permesso concettuale/architetturale di definire le categorie
     username_admin = f"admin_sc1_{uuid.uuid4().hex[:6]}"
     cf_admin = f"AD1{uuid.uuid4().hex[:13].upper()}"[:16]
-    res_admin = await async_client.post("/api/utenti", json={
-        **UTENTE_TEST_BASE, "username": username_admin, "ruolo": "admin", "codice_fiscale": cf_admin
-    })
+    res_admin = await async_client.post(
+        "/api/utenti",
+        json={
+            **UTENTE_TEST_BASE,
+            "username": username_admin,
+            "ruolo": "admin",
+            "codice_fiscale": cf_admin,
+        },
+    )
     assert res_admin.status_code == 201
 
-    res_cat = await async_client.post("/api/categorie", json={
-        "nome": f"Sport_{uuid.uuid4().hex[:4]}",
-        "crediti": 20,
-        "descrizione": "Attrezzature sportive e mobilità"
-    })
+    res_cat = await async_client.post(
+        "/api/categorie",
+        json={
+            "nome": f"Sport_{uuid.uuid4().hex[:4]}",
+            "crediti": 20,
+            "descrizione": "Attrezzature sportive e mobilità",
+        },
+    )
     assert res_cat.status_code == 201
     id_cat = res_cat.json()["id"]
 
-    res_bene = await async_client.post("/api/beni", json={
-        "nome": "Bicicletta Elettrica",
-        "descrizione": "Bici in perfette condizioni",
-        "id_categoria": id_cat,
-        "id_proprietario": id_mario,
-        "stato": True,
-        "peso": 15.0
-    })
+    res_bene = await async_client.post(
+        "/api/beni",
+        json={
+            "nome": "Bicicletta Elettrica",
+            "descrizione": "Bici in perfette condizioni",
+            "id_categoria": id_cat,
+            "id_proprietario": id_mario,
+            "stato": True,
+            "peso": 15.0,
+        },
+    )
     assert res_bene.status_code == 201
     id_bene = res_bene.json()["id"]
 
@@ -93,21 +123,28 @@ async def test_system_scenario_1_ciclo_prestito_feedback_crediti(async_client: A
     assert res_get_mario.json()["crediti_valore_beni"] == 20
 
     # 3. AVVIO E PROGRESSIONE PRESTITO (FSM: richiesto -> accettato -> in_corso)
-    res_prestito = await async_client.post("/api/prestiti", json={
-        "id_bene": id_bene,
-        "id_beneficiario": id_luigi,
-        "id_proprietario": id_mario,
-        "data_inizio": "2026-08-01",
-        "data_fine": "2026-08-10",
-        "stato": "richiesto"
-    })
+    res_prestito = await async_client.post(
+        "/api/prestiti",
+        json={
+            "id_bene": id_bene,
+            "id_beneficiario": id_luigi,
+            "id_proprietario": id_mario,
+            "data_inizio": "2026-08-01",
+            "data_fine": "2026-08-10",
+            "stato": "richiesto",
+        },
+    )
     assert res_prestito.status_code == 201
     id_prestito = res_prestito.json()["id"]
 
-    res_acc = await async_client.put(f"/api/prestiti/{id_prestito}/stato", json={"stato": "accettato"})
+    res_acc = await async_client.put(
+        f"/api/prestiti/{id_prestito}/stato", json={"stato": "accettato"}
+    )
     assert res_acc.status_code == 200
 
-    res_in_corso = await async_client.put(f"/api/prestiti/{id_prestito}/stato", json={"stato": "in_corso"})
+    res_in_corso = await async_client.put(
+        f"/api/prestiti/{id_prestito}/stato", json={"stato": "in_corso"}
+    )
     assert res_in_corso.status_code == 200
 
     # Verifica sul catalogo: il bene rimane con stato=True (gestito solo dal proprietario)
@@ -142,12 +179,15 @@ async def test_system_scenario_1_ciclo_prestito_feedback_crediti(async_client: A
     assert res_mario_post.json()["crediti_accumulati"] == 20
 
     # 5. RILASCIO FEEDBACK E CALCOLO REPUTAZIONE
-    res_fb = await async_client.post("/api/feedback", json={
-        "id_utente": id_luigi,
-        "id_destinatario": id_mario,
-        "voto": 5,
-        "data": None
-    })
+    res_fb = await async_client.post(
+        "/api/feedback",
+        json={
+            "id_utente": id_luigi,
+            "id_destinatario": id_mario,
+            "voto": 5,
+            "data": None,
+        },
+    )
     assert res_fb.status_code in (200, 201)
 
     # Verifica reputazione finale di Mario
@@ -156,7 +196,9 @@ async def test_system_scenario_1_ciclo_prestito_feedback_crediti(async_client: A
 
 
 @pytest.mark.asyncio
-async def test_system_scenario_2_intervento_dufficio_admin_segnalazione(async_client: AsyncClient):
+async def test_system_scenario_2_intervento_dufficio_admin_segnalazione(
+    async_client: AsyncClient,
+):
     """
     SCENARIO DI SISTEMA 2: Intervento d'ufficio dell'Amministratore a seguito di una segnalazione durante un prestito in corso.
 
@@ -178,41 +220,99 @@ async def test_system_scenario_2_intervento_dufficio_admin_segnalazione(async_cl
     # 1. REGISTRAZIONE ATTORI (Mario, Luigi, Admin)
     username_mario = f"mario_seg_{uuid.uuid4().hex[:6]}"
     cf_mario = f"MSG{uuid.uuid4().hex[:13].upper()}"[:16]
-    id_mario = (await async_client.post("/api/utenti", json={
-        **UTENTE_TEST_BASE, "username": username_mario, "codice_fiscale": cf_mario
-    })).json().get("id")
+    id_mario = (
+        (
+            await async_client.post(
+                "/api/utenti",
+                json={
+                    **UTENTE_TEST_BASE,
+                    "username": username_mario,
+                    "codice_fiscale": cf_mario,
+                },
+            )
+        )
+        .json()
+        .get("id")
+    )
 
     username_luigi = f"luigi_seg_{uuid.uuid4().hex[:6]}"
     cf_luigi = f"LSG{uuid.uuid4().hex[:13].upper()}"[:16]
-    id_luigi = (await async_client.post("/api/utenti", json={
-        **UTENTE_TEST_BASE, "username": username_luigi, "codice_fiscale": cf_luigi
-    })).json().get("id")
+    id_luigi = (
+        (
+            await async_client.post(
+                "/api/utenti",
+                json={
+                    **UTENTE_TEST_BASE,
+                    "username": username_luigi,
+                    "codice_fiscale": cf_luigi,
+                },
+            )
+        )
+        .json()
+        .get("id")
+    )
 
     await async_client.put(f"/api/utenti/{id_luigi}/cauzione", json={"cauzione": 100.0})
 
     username_admin = f"admin_sys_{uuid.uuid4().hex[:6]}"
     cf_admin = f"ADM{uuid.uuid4().hex[:13].upper()}"[:16]
-    res_admin = await async_client.post("/api/utenti", json={
-        **UTENTE_TEST_BASE, "username": username_admin, "ruolo": "admin", "codice_fiscale": cf_admin
-    })
+    res_admin = await async_client.post(
+        "/api/utenti",
+        json={
+            **UTENTE_TEST_BASE,
+            "username": username_admin,
+            "ruolo": "admin",
+            "codice_fiscale": cf_admin,
+        },
+    )
     assert res_admin.status_code == 201
 
     # 2. CREAZIONE BENE E PRESTITO "IN CORSO"
-    id_cat = (await async_client.post("/api/categorie", json={
-        "nome": f"Tech_{uuid.uuid4().hex[:4]}", "crediti": 30, "descrizione": "Elettronica"
-    })).json()["id"]
+    id_cat = (
+        await async_client.post(
+            "/api/categorie",
+            json={
+                "nome": f"Tech_{uuid.uuid4().hex[:4]}",
+                "crediti": 30,
+                "descrizione": "Elettronica",
+            },
+        )
+    ).json()["id"]
 
-    id_bene = (await async_client.post("/api/beni", json={
-        "nome": "Trapano Bosch", "descrizione": "Potente", "id_categoria": id_cat, "id_proprietario": id_mario, "stato": True, "peso": 2.0
-    })).json()["id"]
+    id_bene = (
+        await async_client.post(
+            "/api/beni",
+            json={
+                "nome": "Trapano Bosch",
+                "descrizione": "Potente",
+                "id_categoria": id_cat,
+                "id_proprietario": id_mario,
+                "stato": True,
+                "peso": 2.0,
+            },
+        )
+    ).json()["id"]
 
-    id_prestito = (await async_client.post("/api/prestiti", json={
-        "id_bene": id_bene, "id_beneficiario": id_luigi, "id_proprietario": id_mario,
-        "data_inizio": "2026-09-01", "data_fine": "2026-09-05", "stato": "richiesto"
-    })).json()["id"]
+    id_prestito = (
+        await async_client.post(
+            "/api/prestiti",
+            json={
+                "id_bene": id_bene,
+                "id_beneficiario": id_luigi,
+                "id_proprietario": id_mario,
+                "data_inizio": "2026-09-01",
+                "data_fine": "2026-09-05",
+                "stato": "richiesto",
+            },
+        )
+    ).json()["id"]
 
-    await async_client.put(f"/api/prestiti/{id_prestito}/stato", json={"stato": "accettato"})
-    await async_client.put(f"/api/prestiti/{id_prestito}/stato", json={"stato": "in_corso"})
+    await async_client.put(
+        f"/api/prestiti/{id_prestito}/stato", json={"stato": "accettato"}
+    )
+    await async_client.put(
+        f"/api/prestiti/{id_prestito}/stato", json={"stato": "in_corso"}
+    )
 
     # Verifica sul catalogo: il bene rimane con stato=True
     assert (await async_client.get(f"/api/beni/{id_bene}")).json()["stato"] is True
@@ -247,14 +347,18 @@ async def test_system_scenario_2_intervento_dufficio_admin_segnalazione(async_cl
     assert (await async_client.get(f"/api/beni/{id_bene}")).json()["stato"] is True
 
     # c) Nessun credito deve essere stato addebitato/accreditato impropriamente
-    assert (
-        await async_client.get(f"/api/utenti/{id_mario}")
-    ).json()["crediti_accumulati"] == 0
-    assert (
-        await async_client.get(f"/api/utenti/{id_luigi}")
-    ).json()["crediti_accumulati"] == 0
+    assert (await async_client.get(f"/api/utenti/{id_mario}")).json()[
+        "crediti_accumulati"
+    ] == 0
+    assert (await async_client.get(f"/api/utenti/{id_luigi}")).json()[
+        "crediti_accumulati"
+    ] == 0
 
     # 6. CHIUSURA DELLA SEGNALAZIONE DA PARTE DELL'ADMIN
-    res_chiudi_seg = await async_client.put(f"/api/segnalazioni/{id_segnalazione}/stato", json={"stato": "risolta"})
+    res_chiudi_seg = await async_client.put(
+        f"/api/segnalazioni/{id_segnalazione}/stato", json={"stato": "risolta"}
+    )
     assert res_chiudi_seg.status_code == 200
-    assert (await async_client.get(f"/api/segnalazioni/{id_segnalazione}")).json()["stato"] == "risolta"
+    assert (await async_client.get(f"/api/segnalazioni/{id_segnalazione}")).json()[
+        "stato"
+    ] == "risolta"
