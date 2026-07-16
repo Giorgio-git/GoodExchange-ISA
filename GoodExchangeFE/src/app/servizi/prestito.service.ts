@@ -8,7 +8,7 @@ import { Prestito } from '../modelli/prestito.model';
 })
 export class PrestitoService {
 
-  private apiUrl = 'http://localhost:3000/api/prestiti';
+  private apiUrl = '/api/prestiti';
 
   constructor(private http: HttpClient) {}
 

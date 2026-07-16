@@ -7,7 +7,7 @@ import { Recensione } from '../modelli/recensione.model';
     providedIn: 'root'
 })
 export class RecensioneService {
-    private apiUrl = 'http://localhost:3000/api/recensioni';
+    private apiUrl = '/api/recensioni';
 
     constructor(private http: HttpClient) {}
 

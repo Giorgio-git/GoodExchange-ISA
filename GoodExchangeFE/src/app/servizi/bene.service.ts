@@ -11,7 +11,7 @@ import { Bene } from '../modelli/bene.model';
 })
 export class BeneService {
 
-  private apiUrl = 'http://localhost:3000/api/beni';
+  private apiUrl = '/api/beni';
 
   constructor(private http: HttpClient) { }
 

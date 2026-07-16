@@ -5,7 +5,7 @@ import { Suggerimento } from '../modelli/suggerimento.model';
 
 @Injectable({ providedIn: 'root' })
 export class SuggerimentoService {
-  private apiUrl = 'http://localhost:3000/api/suggerimenti';
+  private apiUrl = '/api/suggerimenti';
 
   constructor(private http: HttpClient) {}
 

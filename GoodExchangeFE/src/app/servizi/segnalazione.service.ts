@@ -5,7 +5,7 @@ import { Segnalazione } from '../modelli/segnalazione.model';
 
 @Injectable({ providedIn: 'root' })
 export class SegnalazioneService {
-  private apiUrl = 'http://localhost:3000/api/segnalazioni';
+  private apiUrl = '/api/segnalazioni';
 
   constructor(private http: HttpClient) {}
 

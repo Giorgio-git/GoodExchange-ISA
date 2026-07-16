@@ -10,7 +10,7 @@ import { Preferiti, PreferitiItem } from '../modelli/preferiti.model';
   providedIn: 'root'
 })
 export class PreferitiService {
-  private apiUrl = 'http://localhost:3000/api';
+  private apiUrl = '/api';
 
   constructor(private http: HttpClient) { }
 

@@ -88,7 +88,7 @@ app = FastAPI(
 # Equivalente a: app.use(cors({ origin: 'http://localhost:4200' }))
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[settings.cors_origin],
+    allow_origins=[o.strip() for o in settings.cors_origin.split(",") if o.strip()],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

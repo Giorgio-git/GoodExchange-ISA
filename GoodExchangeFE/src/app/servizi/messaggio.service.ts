@@ -6,7 +6,7 @@ import { Messaggio } from '../modelli/messaggio.model';
 
 @Injectable({ providedIn: 'root' })
 export class MessaggioService {
-	private apiUrl = 'http://localhost:3000/api/messaggi';
+	private apiUrl = '/api/messaggi';
 
 	constructor(private http: HttpClient) {}
 

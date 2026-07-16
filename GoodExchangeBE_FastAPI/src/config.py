@@ -15,7 +15,7 @@ class Settings(BaseSettings):
     pgdatabase: str = "GoodExchange"
     pguser: str = "postgres"
     pgpassword: str = "postgres"
-    cors_origin: str = "http://localhost:4200"
+    cors_origin: str = "http://localhost:4200,http://localhost"
 
     class Config:
         env_file = ".env"

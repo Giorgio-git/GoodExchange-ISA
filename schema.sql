@@ -15,6 +15,7 @@ CREATE TABLE utente (
   crediti_valore_beni INTEGER DEFAULT 0,
   crediti_accumulati INTEGER DEFAULT 0,
   cauzione DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+  reputazione DECIMAL(3,2) DEFAULT NULL CHECK (reputazione IS NULL OR (reputazione >= 1.0 AND reputazione <= 5.0)),
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT chk_cauzione_non_negativa CHECK (cauzione >= 0),
   CONSTRAINT chk_crediti_non_negativi CHECK (crediti_valore_beni >= 0 AND crediti_accumulati >= 0)
