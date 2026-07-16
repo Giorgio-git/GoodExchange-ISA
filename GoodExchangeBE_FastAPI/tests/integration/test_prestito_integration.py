@@ -174,3 +174,168 @@ async def test_prestito_conflitto_date_e_fsm_illiceita_integration(
     )
     assert res_fsm_err.status_code == 409
     assert "Transizione non valida" in res_fsm_err.json()["detail"]
+
+
+@pytest.mark.asyncio
+async def test_prestito_double_booking_su_accettazione_integration(
+    async_client: AsyncClient,
+    utente_proprietario: dict,
+    utente_beneficiario: dict,
+    bene_test: dict,
+):
+    """
+    Verifica la guardia anti-Double Booking implementata in aggiorna_stato_prestito:
+    se due richieste per date sovrapposte sono entrambe in stato 'richiesto', il proprietario
+    non può accettarle entrambe — il secondo tentativo restituisce 409 con il messaggio corretto.
+    """
+    id_bene = bene_test["id"]
+    id_prop = utente_proprietario["id"]
+    id_ben = utente_beneficiario["id"]
+
+    await async_client.put(f"/api/utenti/{id_ben}/cauzione", json={"cauzione": 100.0})
+
+    # 1. Crea due richieste sovrapposte per lo stesso periodo
+    payload_a = {
+        "id_bene": id_bene,
+        "id_beneficiario": id_ben,
+        "id_proprietario": id_prop,
+        "data_inizio": "2027-03-01",
+        "data_fine": "2027-03-10",
+        "stato": "richiesto",
+    }
+    payload_b = {
+        "id_bene": id_bene,
+        "id_beneficiario": id_ben,
+        "id_proprietario": id_prop,
+        "data_inizio": "2027-03-05",
+        "data_fine": "2027-03-15",
+        "stato": "richiesto",
+    }
+    res_a = await async_client.post("/api/prestiti", json=payload_a)
+    assert res_a.status_code == 201
+    id_a = res_a.json()["id"]
+
+    res_b = await async_client.post("/api/prestiti", json=payload_b)
+    assert res_b.status_code == 201
+    id_b = res_b.json()["id"]
+
+    # 2. Accetta il prestito A -> OK
+    res_acc_a = await async_client.put(
+        f"/api/prestiti/{id_a}/stato", json={"stato": "accettato"}
+    )
+    assert res_acc_a.status_code == 200
+
+    # 3. Tenta di accettare B (date sovrapposte con A già accettato) -> 409
+    res_acc_b = await async_client.put(
+        f"/api/prestiti/{id_b}/stato", json={"stato": "accettato"}
+    )
+    assert res_acc_b.status_code == 409
+    assert (
+        "Esiste già un prestito concesso per le date indicate"
+        in res_acc_b.json()["detail"]
+    )
+
+
+@pytest.mark.asyncio
+async def test_get_prestito_by_id_integration(
+    async_client: AsyncClient,
+    utente_proprietario: dict,
+    utente_beneficiario: dict,
+    bene_test: dict,
+):
+    """Verifica GET /api/prestiti/:id per un prestito esistente e per uno inesistente (404)."""
+    await async_client.put(
+        f"/api/utenti/{utente_beneficiario['id']}/cauzione", json={"cauzione": 100.0}
+    )
+    payload = {
+        "id_bene": bene_test["id"],
+        "id_beneficiario": utente_beneficiario["id"],
+        "id_proprietario": utente_proprietario["id"],
+        "data_inizio": "2027-05-01",
+        "data_fine": "2027-05-05",
+        "stato": "richiesto",
+    }
+    res_create = await async_client.post("/api/prestiti", json=payload)
+    assert res_create.status_code == 201
+    prestito_id = res_create.json()["id"]
+
+    # GET esistente
+    res_get = await async_client.get(f"/api/prestiti/{prestito_id}")
+    assert res_get.status_code == 200
+    assert res_get.json()["id"] == prestito_id
+
+    # GET inesistente -> 404
+    res_404 = await async_client.get("/api/prestiti/999999999")
+    assert res_404.status_code == 404
+
+
+@pytest.mark.asyncio
+async def test_prestito_filtri_calendario_e_delete_integration(
+    async_client: AsyncClient,
+    utente_proprietario: dict,
+    utente_beneficiario: dict,
+    bene_test: dict,
+):
+    """Verifica endpoint di filtri, disponibilità, calendario e cancellazione del router prestiti."""
+    await async_client.put(
+        f"/api/utenti/{utente_beneficiario['id']}/cauzione", json={"cauzione": 100.0}
+    )
+    payload = {
+        "id_bene": bene_test["id"],
+        "id_beneficiario": utente_beneficiario["id"],
+        "id_proprietario": utente_proprietario["id"],
+        "data_inizio": "2027-06-01",
+        "data_fine": "2027-06-05",
+        "stato": "richiesto",
+    }
+    res_create = await async_client.post("/api/prestiti", json=payload)
+    assert res_create.status_code == 201
+    prestito_id = res_create.json()["id"]
+
+    # 1. GET /api/prestiti/filtri con parametri
+    res_filtri = await async_client.get(
+        f"/api/prestiti/filtri?id_bene={bene_test['id']}&stato=richiesto"
+    )
+    assert res_filtri.status_code == 200
+    assert any(p["id"] == prestito_id for p in res_filtri.json())
+
+    # 2. GET /api/prestiti con query param
+    res_list = await async_client.get(
+        f"/api/prestiti?id_proprietario={utente_proprietario['id']}"
+    )
+    assert res_list.status_code == 200
+    assert any(p["id"] == prestito_id for p in res_list.json())
+
+    # 3. GET /api/prestiti/disponibilita/:bene_id
+    res_disp = await async_client.get(
+        f"/api/prestiti/disponibilita/{bene_test['id']}?data_inizio=2027-07-01&data_fine=2027-07-10"
+    )
+    assert res_disp.status_code == 200
+    assert "disponibile" in res_disp.json()
+
+    # 4. GET /api/prestiti/calendario/:bene_id con prestito 'richiesto' -> lista vuota perché calendario mostra solo accettati/in_corso
+    res_cal_empty = await async_client.get(
+        f"/api/prestiti/calendario/{bene_test['id']}?anno=2027&mese=6"
+    )
+    assert res_cal_empty.status_code == 200
+    assert res_cal_empty.json() == []
+
+    # Accettiamo il prestito per testare il calendario popolato
+    await async_client.put(
+        f"/api/prestiti/{prestito_id}/stato", json={"stato": "accettato"}
+    )
+    res_cal = await async_client.get(
+        f"/api/prestiti/calendario/{bene_test['id']}?anno=2027&mese=6"
+    )
+    assert res_cal.status_code == 200
+    assert len(res_cal.json()) > 0
+    assert res_cal.json()[0]["stato"] == "accettato"
+
+    # 5. DELETE /api/prestiti/:id
+    res_del = await async_client.delete(f"/api/prestiti/{prestito_id}")
+    assert res_del.status_code == 200
+    assert "eliminato" in res_del.json()["messaggio"].lower()
+
+    # 6. DELETE inesistente -> 404
+    res_del_404 = await async_client.delete("/api/prestiti/999999999")
+    assert res_del_404.status_code == 404

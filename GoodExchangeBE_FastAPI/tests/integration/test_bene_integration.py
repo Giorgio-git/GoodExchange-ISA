@@ -74,3 +74,39 @@ async def test_bene_inesistente_404_integration(async_client: AsyncClient):
     """Verifica che la richiesta di un ID bene non esistente restituisca 404."""
     res = await async_client.get("/api/beni/999999999")
     assert res.status_code == 404
+
+
+@pytest.mark.asyncio
+async def test_bene_update_e_block_unblock_integration(
+    async_client: AsyncClient,
+    utente_proprietario: dict,
+    bene_test: dict,
+):
+    """Verifica la modifica dei dati di un bene e il blocco/sblocco dello stato catalogo via endpoint dedicati."""
+    bene_id = bene_test["id"]
+
+    # 1. PUT /api/beni/:id — modifica nome e descrizione
+    res_update = await async_client.put(
+        f"/api/beni/{bene_id}",
+        json={"nome": "Nome Aggiornato", "descrizione": "Nuova descrizione"},
+    )
+    assert res_update.status_code == 200
+
+    # 2. GET — verifica che le modifiche siano persistite
+    res_get = await async_client.get(f"/api/beni/{bene_id}")
+    assert res_get.json()["nome"] == "Nome Aggiornato"
+
+    # 3. PUT /api/beni/:id/blocca — blocca il bene
+    res_block = await async_client.put(f"/api/beni/{bene_id}/blocca")
+    assert res_block.status_code == 200
+
+    # 4. PUT /api/beni/:id/sblocca — sblocca il bene
+    res_unblock = await async_client.put(f"/api/beni/{bene_id}/sblocca")
+    assert res_unblock.status_code == 200
+
+    # 5. GET /api/beni con filtro id_proprietario
+    res_filtro = await async_client.get(
+        f"/api/beni?id_proprietario={utente_proprietario['id']}"
+    )
+    assert res_filtro.status_code == 200
+    assert any(b["id"] == bene_id for b in res_filtro.json())

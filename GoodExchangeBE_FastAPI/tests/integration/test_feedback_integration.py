@@ -65,3 +65,44 @@ async def test_feedback_validazione_dbc_integration(
     }
     res_auto = await async_client.post("/api/feedback", json=payload_auto)
     assert res_auto.status_code == 422
+
+
+@pytest.mark.asyncio
+async def test_feedback_get_e_delete_integration(
+    async_client: AsyncClient, utente_proprietario: dict, utente_beneficiario: dict
+):
+    """Verifica GET /api/feedback/:user_id, GET /api/feedback/username/:username e DELETE /api/feedback/:id."""
+    payload = {
+        "id_utente": utente_proprietario["id"],
+        "id_destinatario": utente_beneficiario["id"],
+        "voto": 5,
+        "commento": "Ottimo utente",
+    }
+    res_post = await async_client.post("/api/feedback", json=payload)
+    assert res_post.status_code == 201
+    fb_id = res_post.json()["id"]
+
+    # GET per user_id
+    res_get_user = await async_client.get(f"/api/feedback/{utente_beneficiario['id']}")
+    assert res_get_user.status_code == 200
+    assert any(f["id"] == fb_id for f in res_get_user.json())
+
+    # GET per username
+    res_get_username = await async_client.get(
+        f"/api/feedback/username/{utente_beneficiario['username']}"
+    )
+    assert res_get_username.status_code == 200
+    assert any(f["id"] == fb_id for f in res_get_username.json())
+
+    # GET utente senza feedback -> 404
+    res_get_404 = await async_client.get("/api/feedback/99999999")
+    assert res_get_404.status_code == 404
+
+    # DELETE feedback
+    res_del = await async_client.delete(f"/api/feedback/{fb_id}")
+    assert res_del.status_code == 200
+    assert "rimosso" in res_del.json()["messaggio"].lower() or "eliminato" in res_del.json()["messaggio"].lower()
+
+    # DELETE inesistente -> 404
+    res_404 = await async_client.delete("/api/feedback/99999999")
+    assert res_404.status_code == 404

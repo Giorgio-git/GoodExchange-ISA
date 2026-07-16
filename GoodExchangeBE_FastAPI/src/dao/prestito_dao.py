@@ -149,18 +149,18 @@ async def get_calendario_bene(
         ultimo_giorno = date_type(anno, mese, calendar.monthrange(anno, mese)[1])
 
         sql = """
-            SELECT data_inizio, data_fine, stato,
+            SELECT p.data_inizio, p.data_fine, p.stato,
                    ub.username as beneficiario_username
             FROM prestito p
             LEFT JOIN utente ub ON p.id_beneficiario = ub.id
             WHERE p.id_bene = $1
               AND p.stato IN ('accettato', 'in_corso')
               AND (
-                  (EXTRACT(YEAR FROM data_inizio) = $2 AND EXTRACT(MONTH FROM data_inizio) = $3) OR
-                  (EXTRACT(YEAR FROM data_fine) = $4 AND EXTRACT(MONTH FROM data_fine) = $5) OR
-                  (data_inizio <= $6 AND data_fine >= $7)
+                  (EXTRACT(YEAR FROM p.data_inizio) = $2 AND EXTRACT(MONTH FROM p.data_inizio) = $3) OR
+                  (EXTRACT(YEAR FROM p.data_fine) = $4 AND EXTRACT(MONTH FROM p.data_fine) = $5) OR
+                  (p.data_inizio <= $6 AND p.data_fine >= $7)
               )
-            ORDER BY data_inizio
+            ORDER BY p.data_inizio
         """
         params = [bene_id, anno, mese, anno, mese, primo_giorno, ultimo_giorno]
         rows = await conn.fetch(sql, *params)

@@ -111,14 +111,6 @@ jobs:
         run: |
           cd GoodExchangeBE_FastAPI
           uv run coverage report -m
-          uv run coverage html -d htmlcov/
-
-      - name: Caricamento Artefatto HTML Coverage Report su GitHub
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: coverage-report-html
-          path: GoodExchangeBE_FastAPI/htmlcov/
 
 
 
