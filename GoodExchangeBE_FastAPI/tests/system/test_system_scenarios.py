@@ -12,9 +12,10 @@ interagendo con il sistema esattamente come farebbero i servizi del Frontend Ang
 """
 
 import uuid
-from typing import Any
+
 import pytest
 from httpx import AsyncClient
+
 from tests.conftest import UTENTE_TEST_BASE
 
 
@@ -22,11 +23,11 @@ from tests.conftest import UTENTE_TEST_BASE
 async def test_system_scenario_1_ciclo_prestito_feedback_crediti(async_client: AsyncClient):
     """
     SCENARIO DI SISTEMA 1: Ciclo di vita E2E di un prestito con rilascio feedback e accredito crediti.
-    
+
     Attori simulati (dal Frontend verso le API):
     1. Mario (Proprietario del bene)
     2. Luigi (Beneficiario/Richiedente)
-    
+
     Flusso End-to-End verificato:
     - [Setup] Registrazione di Mario e Luigi + Ricarica cauzione di Luigi (100€ per soddisfare DbC solvibilità).
     - [Catalogo] Mario aggiunge "Bicicletta Elettrica" (categoria 20 crediti). Il sistema aggiorna `crediti_valore_beni` di Mario.
@@ -158,12 +159,12 @@ async def test_system_scenario_1_ciclo_prestito_feedback_crediti(async_client: A
 async def test_system_scenario_2_intervento_dufficio_admin_segnalazione(async_client: AsyncClient):
     """
     SCENARIO DI SISTEMA 2: Intervento d'ufficio dell'Amministratore a seguito di una segnalazione durante un prestito in corso.
-    
+
     Attori simulati (dal Frontend verso le API):
     1. Mario (Proprietario)
     2. Luigi (Beneficiario/Richiedente)
     3. Admin (Amministratore del sistema)
-    
+
     Flusso End-to-End verificato:
     - [Setup] Mario e Luigi avviano un prestito e lo portano in stato 'in_corso' (bene bloccato -> stato = False).
     - [Imprevisto] Durante il periodo d'uso si verifica un contenzioso/danno. Mario invia una `segnalazione` al sistema.

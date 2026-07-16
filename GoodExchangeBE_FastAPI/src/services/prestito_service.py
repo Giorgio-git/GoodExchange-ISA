@@ -18,7 +18,7 @@ from datetime import date
 import asyncpg
 import httpx
 
-from src.dao import bene_dao, prestito_dao, utente_dao
+from src.dao import prestito_dao, utente_dao
 from src.services.utente_service import verifica_solvibilita_utente
 
 logger = logging.getLogger(__name__)

@@ -33,7 +33,7 @@ jobs:
           cd GoodExchangeBE_FastAPI
           uv sync --dev
 
-      - name: Linting e Controllo Qualità con Ruff (SRS §NFR-07)
+      - name: Linting e Controllo Qualità con Ruff
         run: |
           cd GoodExchangeBE_FastAPI
           uv run ruff check .
