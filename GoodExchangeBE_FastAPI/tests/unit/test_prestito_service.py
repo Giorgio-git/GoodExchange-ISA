@@ -209,6 +209,39 @@ async def test_aggiorna_stato_prestito_non_trovato():
 
 
 @pytest.mark.asyncio
+async def test_aggiorna_stato_accettato_conflitto_double_booking():
+    """
+    Pre-condizione DbC anti-Double Booking:
+    Se si tenta di passare un prestito a 'accettato' ma il bene risulta già impegnato
+    in un altro prestito sovrapposto (verifica_disponibilita -> False),
+    il sistema solleva ValueError ed evita il Double Booking.
+    """
+    mock_conn = AsyncMock()
+    d1 = date(2026, 8, 1)
+    d2 = date(2026, 8, 10)
+    mock_conn.fetchrow.return_value = {
+        "id": 1,
+        "stato": "richiesto",
+        "id_bene": 10,
+        "id_proprietario": 30,
+        "data_inizio": d1,
+        "data_fine": d2,
+    }
+
+    with patch(
+        "src.dao.prestito_dao.verifica_disponibilita", new_callable=AsyncMock
+    ) as mock_disp:
+        mock_disp.return_value = (
+            False  # Esiste già un prestito accettato per quelle date
+        )
+
+        with pytest.raises(
+            ValueError, match="Esiste già un prestito concesso per le date indicate"
+        ):
+            await prestito_service.aggiorna_stato_prestito(mock_conn, 1, "accettato")
+
+
+@pytest.mark.asyncio
 async def test_crea_prestito_successo():
     """
     Test percorso felice: crea_prestito() con dati validi e bene disponibile.

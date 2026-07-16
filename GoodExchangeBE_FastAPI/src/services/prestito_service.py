@@ -177,6 +177,14 @@ async def aggiorna_stato_prestito(
             f"Transizioni consentite: {sorted(transizioni_valide)}"
         )
 
+    # ——— Verifica disponibilità anti-Double Booking al momento dell'accettazione ———
+    if nuovo_stato == "accettato":
+        disponibile = await prestito_dao.verifica_disponibilita(
+            conn, prestito["id_bene"], prestito["data_inizio"], prestito["data_fine"]
+        )
+        if not disponibile:
+            raise ValueError("Esiste già un prestito concesso per le date indicate")
+
     # ——— Aggiornamento stato ———
     await conn.execute(
         "UPDATE prestito SET stato=$1 WHERE id=$2",
