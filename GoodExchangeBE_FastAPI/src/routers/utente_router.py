@@ -19,7 +19,9 @@ from src.schemas.utente import (
     CauzioneUpdate,
     StatoUpdate,
     UtenteCreate,
+    UtenteUpdate,
 )
+from src.services import utente_service
 
 router = APIRouter(tags=["Utenti"])
 logger = logging.getLogger(__name__)
@@ -137,15 +139,15 @@ async def create_utente(
     conn: asyncpg.Connection = Depends(get_connection),
 ):
     """
-    Crea un nuovo utente.
+    Crea un nuovo utente tramite service layer (registra_utente).
     Porting di POST /utenti in utenteRouter.js.
     """
     try:
         async with conn.transaction():
-            result = await utente_dao.create_utente(conn, utente.model_dump())
+            result = await utente_service.registra_utente(conn, utente.model_dump())
             if not result:
                 raise HTTPException(status_code=400, detail="Creazione utente fallita")
-            return {k: v for k, v in result.items() if k != "password"}
+            return result
     except asyncpg.exceptions.UniqueViolationError:
         raise HTTPException(
             status_code=409, detail="Username o Codice Fiscale già registrato"
@@ -186,3 +188,24 @@ async def update_cauzione_utente(
         if not result:
             raise HTTPException(status_code=404, detail="Utente non trovato")
         return {"messaggio": "Cauzione aggiornata con successo"}
+
+
+# ——— PUT /api/utenti/:id ———
+@router.put("/utenti/{id}")
+async def update_utente(
+    id: int,
+    body: UtenteUpdate,
+    conn: asyncpg.Connection = Depends(get_connection),
+):
+    """
+    Aggiornamento dinamico di un utente.
+    Porting di PUT /utenti/:id in utenteRouter.js.
+    """
+    async with conn.transaction():
+        esistente = await utente_dao.find_utente_by_id(conn, id)
+        if not esistente:
+            raise HTTPException(status_code=404, detail="Utente non trovato")
+        dati = body.model_dump(exclude_unset=True)
+        await utente_dao.update_utente(conn, id, dati)
+        return {"messaggio": "Utente aggiornato con successo"}
+

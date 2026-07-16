@@ -37,7 +37,9 @@
       <span class="info-value" style="font-weight: 400; color: var(--color-slate-700);">{{ prestito.note }}</span>
     </div>
 
-    <!-- Bottoni di gestione per il Proprietario -->
+    <!-- === AZIONI PROPRIETARIO === -->
+
+    <!-- Proprietario: Accetta o Rifiuta la richiesta -->
     <div *ngIf="prestito.stato === 'richiesto' && loggedUser?.id === prestito.id_proprietario" class="gestione-stato-prestito">
       <button (click)="cambiaStatoPrestito('accettato')" class="btn-action btn-accetta">
         ✅ Accetta Richiesta
@@ -47,10 +49,33 @@
       </button>
     </div>
 
-    <!-- Bottone di completamento (Restituzione) -->
-    <div *ngIf="(prestito.stato === 'accettato' || prestito.stato === 'in_corso') && loggedUser?.id === prestito.id_proprietario" class="gestione-stato-prestito">
+    <!-- Proprietario: Segna il bene come consegnato (accettato → in_corso) -->
+    <div *ngIf="prestito.stato === 'accettato' && loggedUser?.id === prestito.id_proprietario" class="gestione-stato-prestito">
+      <button (click)="cambiaStatoPrestito('in_corso')" class="btn-action btn-in-corso">
+        🚀 Segna come Consegnato (In Corso)
+      </button>
+    </div>
+
+    <!-- Proprietario: Registra la restituzione (in_corso → completato) -->
+    <div *ngIf="prestito.stato === 'in_corso' && loggedUser?.id === prestito.id_proprietario" class="gestione-stato-prestito">
       <button (click)="cambiaStatoPrestito('completato')" class="btn-action btn-completato">
-        🏁 Contrassegna come Restituito (Completato)
+        🏁 Registra Restituzione (Completato)
+      </button>
+    </div>
+
+    <!-- === AZIONI RICHIEDENTE === -->
+
+    <!-- Richiedente: Annulla la propria richiesta (richiesto → annullato) -->
+    <div *ngIf="prestito.stato === 'richiesto' && loggedUser?.id === prestito.id_beneficiario" class="gestione-stato-prestito">
+      <button (click)="cambiaStatoPrestito('annullato')" class="btn-action btn-annulla">
+        🚫 Annulla Richiesta
+      </button>
+    </div>
+
+    <!-- Richiedente: Annulla prenotazione già accettata (accettato → annullato) -->
+    <div *ngIf="prestito.stato === 'accettato' && loggedUser?.id === prestito.id_beneficiario" class="gestione-stato-prestito">
+      <button (click)="cambiaStatoPrestito('annullato')" class="btn-action btn-annulla">
+        🚫 Annulla Prenotazione
       </button>
     </div>
 
@@ -68,11 +93,11 @@
     </div>
 
     <div class="empty-messages" *ngIf="messaggi.length === 0">
-      Nessun messaggio scambiato in questo prestito. Inizia la conversazione qui sotto!
+      {{ loggedUser?.ruolo === 'admin' ? 'Nessun messaggio scambiato in questo prestito.' : 'Nessun messaggio scambiato in questo prestito. Inizia la conversazione qui sotto!' }}
     </div>
 
     <!-- Form nuovo messaggio -->
-    <div class="nuovo-messaggio-form" *ngIf="prestito && loggedUser">
+    <div class="nuovo-messaggio-form" *ngIf="prestito && loggedUser && loggedUser.ruolo !== 'admin'">
       <h4 class="form-title">✉️ Scrivi al {{ loggedUser.id === prestito.id_proprietario ? 'Beneficiario' : 'Proprietario' }}</h4>
       <form (ngSubmit)="inviaMessaggio()" #msgForm="ngForm" class="msg-form">
         <div class="form-group">

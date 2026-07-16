@@ -16,8 +16,8 @@
 				<td>{{ utente.cognome }}</td>
 				<td>{{ utente.username }}</td>
 				<td>
-					<button (click)="vaiAlProfilo(utente.id)" class="btn-primary">Vedi profilo</button>
-					<button (click)="rimuoviPreferito(utente.id)" class="btn-danger">Rimuovi</button>
+					<button (click)="vaiAlProfilo(utente.id!)" class="btn-primary">Vedi profilo</button>
+					<button (click)="rimuoviPreferito(utente.id!)" class="btn-danger">Rimuovi</button>
 				</td>
 			</tr>
 		</tbody>

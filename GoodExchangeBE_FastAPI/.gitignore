@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Environment variables
+.env
+
+# Coverage
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Distribution
+dist/
+build/
+*.egg-info/
+
+# IDE
+.vscode/
+.idea/
+*.DS_Store
+
+# uv
+uv.lock
+
+# Docker
+*.log

@@ -21,5 +21,7 @@
 				<textarea id="messaggio" [(ngModel)]="messaggio" name="messaggio" rows="3" placeholder="Scrivi un commento sull'oggetto..." required></textarea>
 			</div>
 			<button type="submit" [disabled]="voto === 0">Invia recensione</button>
+			<button type="button" (click)="annulla()" routerLink="/prestiti" style="margin-left:1rem;">Annulla</button>
 	</form>
 </div>
+

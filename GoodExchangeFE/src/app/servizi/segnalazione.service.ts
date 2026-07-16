@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Segnalazione } from '../modelli/segnalazione.model';
 
@@ -14,17 +14,15 @@ export class SegnalazioneService {
   }
 
   getSegnalazioni(filtri?: any): Observable<Segnalazione[]> {
-    let url = this.apiUrl;
+    let params = new HttpParams();
     if (filtri) {
-      const params = new URLSearchParams();
       Object.keys(filtri).forEach(k => {
         if (filtri[k] !== undefined && filtri[k] !== null && filtri[k] !== '') {
-          params.append(k, filtri[k]);
+          params = params.set(k, filtri[k]);
         }
       });
-      url += '?' + params.toString();
     }
-    return this.http.get<Segnalazione[]>(url);
+    return this.http.get<Segnalazione[]>(this.apiUrl, { params });
   }
 
   getSegnalazioneById(id: number): Observable<Segnalazione> {

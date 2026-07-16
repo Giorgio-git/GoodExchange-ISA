@@ -1,17 +1,17 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RecensioneService } from '../../servizi/recensione.service';
 import { MessaggioService } from '../../servizi/messaggio.service';
 import { Recensione } from '../../modelli/recensione.model';
 import { Messaggio } from '../../modelli/messaggio.model';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, RouterModule } from '@angular/router';
 import { PrestitoService } from '../../servizi/prestito.service';
 
 @Component({
 	selector: 'app-recensione-bene',
 	standalone: true,
-	imports: [CommonModule, FormsModule],
+	imports: [CommonModule, FormsModule, RouterModule],
 	templateUrl: './recensione-bene.component.html',
 	styleUrls: ['./recensione-bene.component.css']
 })
@@ -48,8 +48,8 @@ export class RecensioneBeneComponent implements OnInit {
 					this.id_beneficiario = prestito.id_beneficiario;
 					this.id_destinatario = prestito.id_proprietario;
 				},
-				error: () => {
-					this.errore = 'Errore nel caricamento dati prestito.';
+				error: (err) => {
+					this.errore = err.error?.detail || err.error?.errore || 'Errore nel caricamento dati prestito.';
 				}
 			});
 		} else {
@@ -102,8 +102,8 @@ export class RecensioneBeneComponent implements OnInit {
 							// Reindirizza alla home dopo invio
 							this.router.navigate(['/home']);
 						},
-						error: () => {
-							this.errore = 'Errore nell’invio del messaggio.';
+						error: (err) => {
+							this.errore = err.error?.detail || err.error?.errore || 'Errore nell’invio del messaggio.';
 						}
 					});
 				} else {
@@ -114,17 +114,22 @@ export class RecensioneBeneComponent implements OnInit {
 					this.router.navigate(['/home']);
 				}
 			},
-			error: () => {
-				this.errore = 'Errore nell’invio della recensione.';
+			error: (err) => {
+				this.errore = err.error?.detail || err.error?.errore || 'Errore nell’invio della recensione.';
 			}
 		});
 	}
 
 	// Reset del form dopo l'invio
 	resetForm() {
-	this.voto = 0;
-	this.titolo = '';
-	this.messaggio = '';
-	this.successo = '';
+		this.voto = 0;
+		this.titolo = '';
+		this.messaggio = '';
+		this.successo = '';
+	}
+
+	annulla() {
+		this.router.navigate(['/prestiti']);
 	}
 }
+

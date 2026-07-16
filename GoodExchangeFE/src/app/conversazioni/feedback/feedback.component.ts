@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FeedbackService } from '../../servizi/feedback.service';
@@ -11,7 +11,7 @@ import { SessionService } from '../../servizi/session.service';
 @Component({
 	selector: 'app-feedback',
 	standalone: true,
-	imports: [CommonModule, FormsModule],
+	imports: [CommonModule, FormsModule, RouterModule],
 	templateUrl: './feedback.component.html',
 	styleUrls: ['./feedback.component.css']
 })
@@ -37,8 +37,8 @@ export class FeedbackComponent implements OnInit {
 	}
 
 	inviaFeedback() {
-		if (!this.idDestinatario || !this.idPrestito || !this.titolo || !this.descrizione || !this.voto) {
-			this.messaggio = 'Compila tutti i campi.';
+		if (!this.idDestinatario || !this.idPrestito || !this.titolo?.trim() || !this.descrizione?.trim() || !this.voto) {
+			this.messaggio = 'Compila sia il Titolo che la Descrizione per poter inviare il feedback.';
 			return;
 		}
 
@@ -48,19 +48,23 @@ export class FeedbackComponent implements OnInit {
 			return;
 		}
 
+		const d = new Date();
+		const dataLocale = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+
 		// Crea feedback
 		const nuovoFeedback: Feedback = {
-			id_utente: utenteLoggato.id,
+			id_utente: utenteLoggato.id!,
 			id_destinatario: this.idDestinatario,
 			voto: this.voto,
-			data: new Date().toISOString().slice(0, 10)
+			data: dataLocale
 		};
+
 
 			this.feedbackService.creaFeedback(nuovoFeedback).subscribe({
 				next: (fb) => {
 						// 2. Crea messaggio associato al feedback appena creato
 						const nuovoMessaggio: Messaggio = {
-							id_mittente: utenteLoggato.id,
+							id_mittente: utenteLoggato.id!,
 							id_destinatario: this.idDestinatario,
 							titolo: this.titolo,
 							contenuto: this.descrizione,
@@ -71,15 +75,20 @@ export class FeedbackComponent implements OnInit {
 						next: () => {
 							this.messaggio = 'Feedback inviato con successo!';
 							setTimeout(() => {
-								this.router.navigate(['/']);
+								this.router.navigate(['/prestiti']);
 							}, 500);
 						},
-						error: () => { this.messaggio = 'Errore nell invio del messaggio.'; }
+						error: (err) => { this.messaggio = err.error?.detail || err.error?.errore || 'Errore nell’invio del messaggio.'; }
 					});
 				},
-				error: () => {
-					this.messaggio = 'Errore nell invio del feedback.';
+				error: (err) => {
+					this.messaggio = err.error?.detail || err.error?.errore || 'Errore nell’invio del feedback.';
 				}
 			});
 	}
+
+	annulla() {
+		this.router.navigate(['/prestiti']);
+	}
 }
+

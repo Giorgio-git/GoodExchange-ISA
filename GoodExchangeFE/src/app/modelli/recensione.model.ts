@@ -3,5 +3,5 @@ export interface Recensione {
   id_bene: number;
   id_beneficiario: number;
   voto: number;
-  data_recensione?: string;
+  data?: string;
 }

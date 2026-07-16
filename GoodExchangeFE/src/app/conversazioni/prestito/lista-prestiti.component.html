@@ -20,18 +20,27 @@
         </thead>
         <tbody>
           <tr *ngFor="let p of tuttiIPrestiti">
-            <td><strong>#{{ p.id }}</strong></td>
-            <td>{{ p.bene_nome }}</td>
-            <td>{{ p.proprietario_username || p.id_proprietario }}</td>
-            <td>{{ p.beneficiario_username || p.id_beneficiario }}</td>
-            <td>{{ p.data_inizio.slice(0,10) }} ➔ {{ p.data_fine.slice(0,10) }}</td>
             <td>
-              <select [ngModel]="p.stato" (ngModelChange)="cambiaStatoPrestitoAdmin(p, $event)" class="filtri-select" style="padding: 0.35rem 0.65rem;">
-                <option *ngFor="let stato of statiPossibili" [value]="stato">{{ stato }}</option>
-              </select>
+              <button class="btn-link font-bold" (click)="p.id !== undefined && vaiADettaglio(p.id)">{{ p.id }}</button>
+            </td>
+            <td>{{ p.bene_nome }}</td>
+            <td>
+              <button class="btn-link" (click)="vaiAProfilo(p.id_proprietario)">{{ p.proprietario_username || ('Utente #' + p.id_proprietario) }}</button>
             </td>
             <td>
-              <a [routerLink]="['/prestiti', p.id]" class="btn-sm btn-visualizza">👀 Dettaglio</a>
+              <button class="btn-link" (click)="vaiAProfilo(p.id_beneficiario)">{{ p.beneficiario_username || ('Utente #' + p.id_beneficiario) }}</button>
+            </td>
+            <td>{{ p.data_inizio.slice(0,10) }} ➔ {{ p.data_fine.slice(0,10) }}</td>
+            <td>
+              <span class="badge-stato" [ngClass]="'badge-' + p.stato">{{ p.stato }}</span>
+            </td>
+            <td>
+              <div class="table-actions" style="justify-content: center; gap: 0.5rem;">
+                <a *ngIf="p.stato === 'in_corso'" (click)="cambiaStatoPrestitoAdmin(p, 'annullato')" class="btn-sm btn-annulla-admin" style="cursor: pointer;">
+                  Annulla prestito
+                </a>
+                <a [routerLink]="['/prestiti', p.id]" class="btn-sm btn-visualizza">Dettaglio</a>
+              </div>
             </td>
           </tr>
         </tbody>
@@ -150,14 +159,18 @@
               <td>{{ prestito.data_inizio.slice(0,10) }} ➔ {{ prestito.data_fine.slice(0,10) }}</td>
               <td>
                 <div class="table-actions" style="justify-content: flex-end;">
+                  <a *ngIf="prestito.stato === 'in_corso'" [routerLink]="['/conversazioni/utente', prestito.id_beneficiario, 'segnala']" class="btn-sm btn-segnala">
+                    🚨 Segnala
+                  </a>
                   <a *ngIf="prestito.stato === 'completato'" [routerLink]="['/feedback', prestito.id, prestito.id_beneficiario]" class="btn-sm btn-feedback">
                     💬 Feedback
                   </a>
-                  <a (click)="vaiADettaglio(prestito.id)" class="btn-sm btn-visualizza">
+                  <a (click)="vaiADettaglio(prestito.id!)" class="btn-sm btn-visualizza">
                     👀 Visualizza
                   </a>
                 </div>
               </td>
+
             </tr>
           </tbody>
         </table>

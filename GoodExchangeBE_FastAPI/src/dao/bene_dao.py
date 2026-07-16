@@ -106,8 +106,7 @@ async def find_beni(conn: asyncpg.Connection, filters: dict) -> list[dict]:
 
             if campo == "search":
                 n = len(params) + 1
-                parts.append(f"(nome LIKE ${n} OR descrizione LIKE ${n + 1})")
-                params.append(f"%{valore}%")
+                parts.append(f"nome ILIKE ${n}")
                 params.append(f"%{valore}%")
             elif campo in valid_bene_fields:
                 parts.append(f"{campo} = ${len(params) + 1}")
@@ -188,17 +187,6 @@ async def create_bene_raw(conn: asyncpg.Connection, bene: dict) -> Optional[dict
     except Exception as err:
         logger.error("Errore in create_bene_raw: %s", err)
         raise
-
-
-async def create_bene(conn: asyncpg.Connection, bene: dict) -> Optional[dict]:
-    """
-    [DEPRECATO — usare bene_service.crea_bene_con_crediti() dal router]
-
-    Wrapper di compatibilità che chiama create_bene_raw.
-    L'aggiornamento dei crediti_valore_beni è responsabilità del service layer.
-    Mantenuto per retrocompatibilità con i test esistenti.
-    """
-    return await create_bene_raw(conn, bene)
 
 
 async def update_bene(

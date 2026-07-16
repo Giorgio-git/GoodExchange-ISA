@@ -37,10 +37,10 @@ export class PreferitiComponent implements OnInit {
       return;
     }
 
-    this.preferitiService.getPreferitiByUtente(utente.id).subscribe({
+    this.preferitiService.getPreferitiByUtente(utente.id!).subscribe({
       next: (preferiti) => {
         // Passo la list adssociata all'utente loggato per recuperarne gli item
-        this.preferitiService.getPreferitiItems(preferiti.id).subscribe({
+        this.preferitiService.getPreferitiItems(preferiti.id!).subscribe({
           next: (items: PreferitiItem[]) => {
             if (items.length === 0) {
               this.utentiPreferiti = [];
@@ -54,20 +54,20 @@ export class PreferitiComponent implements OnInit {
             // Uso il forkJoin perchè ogni richiesta è un Observable e voglio aspettare che tutte siano completate
             forkJoin(richieste).subscribe({
               next: (utenti) => {
-                this.utentiPreferiti = utenti.filter(u => !!u);
+                this.utentiPreferiti = utenti;
               },
               error: () => {
-                this.errore = 'Errore nel caricamento utenti preferiti';
+                this.errore = 'Errore nel caricamento degli utenti';
               }
             });
           },
           error: () => {
-            this.errore = 'Errore nel caricamento utenti preferiti';
+            this.errore = 'Errore nel caricamento dei preferiti';
           }
         });
       },
       error: () => {
-        this.errore = 'Errore nel caricamento lista preferiti';
+        this.errore = 'Errore nel caricamento della lista preferiti';
       }
     });
   }
@@ -79,9 +79,9 @@ export class PreferitiComponent implements OnInit {
   rimuoviPreferito(id_utente_preferito: number): void {
     const utente = this.sessionService.getLoggedUser();
     if (!utente) return;
-    this.preferitiService.getPreferitiByUtente(utente.id).subscribe({
+    this.preferitiService.getPreferitiByUtente(utente.id!).subscribe({
       next: (preferiti) => {
-        this.preferitiService.removeUtentePreferito(preferiti.id, id_utente_preferito).subscribe({
+        this.preferitiService.removeUtentePreferito(preferiti.id!, id_utente_preferito).subscribe({
           next: () => {
             this.caricaUtentiPreferiti();
           },

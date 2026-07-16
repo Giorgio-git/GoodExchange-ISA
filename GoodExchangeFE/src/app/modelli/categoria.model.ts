@@ -1,6 +1,6 @@
 export interface Categoria {
-  id: number;
+  id?: number;
   nome: string;
-  crediti_default: number;
+  crediti: number;
   descrizione?: string;
 }

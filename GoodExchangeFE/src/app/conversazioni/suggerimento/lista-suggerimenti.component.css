@@ -1,53 +1,129 @@
+/* ==========================================================================
+   LISTA SUGGERIMENTI - STILE PROFESSIONALE E DINAMICO
+   ========================================================================== */
+
 .lista-suggerimenti-container {
-  max-width: 700px;
+  width: 100%;
+  max-width: 100%;
   margin: 0 auto;
-  background: #f8f9fa;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-  padding: 24px;
+  background: #ffffff;
+  border-radius: var(--radius-xl, 16px);
+  box-shadow: var(--shadow-md, 0 4px 6px -1px rgba(0, 0, 0, 0.1));
+  border: 1px solid var(--color-slate-200, #e2e8f0);
+  padding: 2rem 2.5rem;
+  box-sizing: border-box;
 }
+
+.lista-suggerimenti-container h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--color-slate-900, #0f172a);
+  margin: 0 0 1.5rem 0;
+  letter-spacing: -0.02em;
+}
+
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: var(--radius-lg, 12px);
+  border: 1px solid var(--color-slate-200, #e2e8f0);
+  background: #ffffff;
+}
+
 .tabella-suggerimenti {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 18px;
+  font-size: 0.92rem;
 }
-.tabella-suggerimenti th, .tabella-suggerimenti td {
-  border: 1px solid #ddd;
-  padding: 10px;
-  text-align: left;
+
+.tabella-suggerimenti th,
+.tabella-suggerimenti td {
+  padding: 1rem 0.85rem;
+  text-align: center;
+  border-bottom: 1px solid var(--color-slate-200, #e2e8f0);
 }
+
 .tabella-suggerimenti th {
-  background: #ffe082;
+  background-color: var(--color-slate-50, #f8fafc);
+  color: var(--color-slate-700, #334155);
+  font-weight: 600;
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
+
+.tabella-suggerimenti tbody tr {
+  transition: background-color var(--transition-fast, 0.15s ease);
+}
+
+.tabella-suggerimenti tbody tr:nth-child(even) {
+  background-color: var(--color-slate-50, #f8fafc);
+}
+
+.tabella-suggerimenti tbody tr:hover {
+  background-color: var(--color-primary-light, #eff6ff);
+}
+
+/* === STATI DEI SUGGERIMENTI === */
 .stato {
-  font-weight: bold;
-  padding: 2px 8px;
-  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.82rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-full, 9999px);
+  display: inline-block;
+  text-transform: capitalize;
 }
+
 .stato-richiesto {
-  background: #ffe082;
-  color: #222;
+  background-color: var(--color-warning-bg, #fef3c7);
+  color: var(--color-warning-text, #92400e);
 }
+
 .stato-completato {
-  background: #c8e6c9;
-  color: #222;
+  background-color: var(--color-success-bg, #dcfce7);
+  color: var(--color-success-text, #166534);
 }
+
+/* === AZIONI === */
 .btn-completa {
-  background: #2e7d32;
-  color: #fff;
+  background-color: var(--color-success, #16a34a);
+  color: #ffffff;
   border: none;
-  border-radius: 8px;
-  padding: 6px 16px;
-  font-size: 0.95rem;
-  font-weight: bold;
+  border-radius: var(--radius-md, 8px);
+  padding: 0.45rem 0.9rem;
+  font-size: 0.85rem;
+  font-weight: 500;
   cursor: pointer;
-  margin-left: 8px;
-  transition: background 0.2s;
+  transition: all var(--transition-fast, 0.15s ease);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
 }
+
 .btn-completa:hover {
-  background: #388e3c;
+  background-color: #15803d;
+  box-shadow: var(--shadow-sm, 0 1px 2px 0 rgba(0, 0, 0, 0.05));
 }
+
 .mittente {
   font-size: 0.95rem;
-  color: #666;
+  color: var(--color-slate-500, #64748b);
+}
+
+.btn-link {
+  background: none;
+  border: none;
+  color: var(--color-primary, #2563eb);
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 0.92rem;
+  font-weight: 500;
+  padding: 0.2rem 0.4rem;
+  transition: color var(--transition-fast, 0.15s ease);
+}
+
+.btn-link:hover {
+  color: var(--color-primary-hover, #1d4ed8);
 }

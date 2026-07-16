@@ -21,10 +21,12 @@
 			<textarea id="descrizione" [(ngModel)]="descrizione" name="descrizione" rows="4" required></textarea>
 		</div>
 
-		<button type="submit" [disabled]="form.invalid">Invia feedback</button>
-		<button type="button" routerLink="/prestiti" style="margin-left:1rem;">Annulla</button>
+		<div *ngIf="messaggio" class="feedback-message" [ngClass]="{'feedback-errore': messaggio.includes('Compila') || messaggio.includes('Errore') || messaggio.includes('Devi'), 'feedback-successo': !messaggio.includes('Compila') && !messaggio.includes('Errore') && !messaggio.includes('Devi')}">
+			{{ messaggio }}
+		</div>
 
-		<div *ngIf="messaggio" class="feedback-message">{{ messaggio }}</div>
+		<button type="submit" class="btn btn-primary">Invia feedback</button>
+		<button type="button" (click)="annulla()" routerLink="/prestiti" class="btn btn-secondary" style="margin-left:1rem;">Annulla</button>
 	</form>
 
 </div>

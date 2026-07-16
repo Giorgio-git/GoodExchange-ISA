@@ -34,7 +34,7 @@ export class ProfiloComponent implements OnInit {
   messaggiFeedback: { [id: number]: Messaggio | null } = {};
   mittentiFeedback: { [id_utente: number]: Utente | null } = {};
 
-  importoVersamento: number = 0;
+  importoVersamento: number | null = null;
   messaggioCauzione: string = '';
 
 
@@ -54,17 +54,17 @@ export class ProfiloComponent implements OnInit {
       return;
     }
     const nuovaCauzione = Number(this.utente.cauzione || 0) + Number(this.importoVersamento);
-    this.utenteService.aggiornaCauzioneUtente(this.utente.id, nuovaCauzione).subscribe({
+    this.utenteService.aggiornaCauzioneUtente(this.utente.id!, nuovaCauzione).subscribe({
       next: () => {
         this.utente!.cauzione = nuovaCauzione;
         this.utenteEdit.cauzione = nuovaCauzione;
         this.messaggioCauzione = 'Versamento effettuato!';
-        this.importoVersamento = 0;
+        this.importoVersamento = null;
       },
       error: () => {
         this.messaggioCauzione = 'Errore nel versamento.';
         // azzera cauzione
-        this.importoVersamento = 0;
+        this.importoVersamento = null;
       }
     });
   }
@@ -84,15 +84,15 @@ export class ProfiloComponent implements OnInit {
           // Carica i dati dell'utente visualizzato
           this.utenteService.getUtenteById(id).subscribe(utente => {
             this.utenteEdit = { ...utente };
-            this.caricaCrediti(utente.id);
+            this.caricaCrediti(utente.id!);
             // Rimosso reset editing/modifiche
-            this.caricaFeedbackRicevuti(utente.id);
+            this.caricaFeedbackRicevuti(utente.id!);
 
             // Verifica se l'utente visualizzato è tra i preferiti
             if (logged && logged.id !== utente.id) {
-              this.preferitiService.getPreferitiByUtente(logged.id).subscribe({
+              this.preferitiService.getPreferitiByUtente(logged.id!).subscribe({
                 next: (preferiti) => {
-                  this.preferitiService.getPreferitiItems(preferiti.id).subscribe({
+                  this.preferitiService.getPreferitiItems(preferiti.id!).subscribe({
                     next: (items) => {
                       this.isPreferito = items.some(item => item.id_utente_preferito === utente.id);
                     },
@@ -111,9 +111,9 @@ export class ProfiloComponent implements OnInit {
           this.utente = utente;
           this.isAdmin = utente?.ruolo === 'admin';
           if (utente) {
-            this.caricaCrediti(utente.id);
+            this.caricaCrediti(utente.id!);
             this.utenteEdit = { ...utente };
-            this.caricaFeedbackRicevuti(utente.id);
+            this.caricaFeedbackRicevuti(utente.id!);
           } else {
             this.crediti_valore_beni = 0;
             this.crediti_accumulati = 0;
@@ -128,9 +128,9 @@ export class ProfiloComponent implements OnInit {
   aggiungiAiPreferiti(): void {
     if (!this.utente || !this.utenteEdit.id || this.utente.id === this.utenteEdit.id) return;
     this.messaggioPreferiti = '';
-    this.preferitiService.getPreferitiByUtente(this.utente.id).subscribe({
+    this.preferitiService.getPreferitiByUtente(this.utente.id!).subscribe({
       next: (preferiti) => {
-        this.preferitiService.addUtentePreferito(preferiti.id, this.utenteEdit.id as number).subscribe({
+        this.preferitiService.addUtentePreferito(preferiti.id!, this.utenteEdit.id as number).subscribe({
           next: () => {
             this.messaggioPreferiti = 'Utente aggiunto ai preferiti!';
             this.isPreferito = true;
@@ -149,9 +149,9 @@ export class ProfiloComponent implements OnInit {
   rimuoviDaPreferiti(): void {
     if (!this.utente || !this.utenteEdit.id || this.utente.id === this.utenteEdit.id) return;
     this.messaggioPreferiti = '';
-    this.preferitiService.getPreferitiByUtente(this.utente.id).subscribe({
+    this.preferitiService.getPreferitiByUtente(this.utente.id!).subscribe({
       next: (preferiti) => {
-        this.preferitiService.removeUtentePreferito(preferiti.id, this.utenteEdit.id as number).subscribe({
+        this.preferitiService.removeUtentePreferito(preferiti.id!, this.utenteEdit.id as number).subscribe({
           next: () => {
             this.messaggioPreferiti = 'Utente rimosso dai preferiti!';
             this.isPreferito = false;

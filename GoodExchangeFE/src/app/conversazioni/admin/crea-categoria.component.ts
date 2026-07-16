@@ -40,8 +40,8 @@ export class CreaCategoriaComponent {
 				this.success = 'Categoria creata con successo!';
 				setTimeout(() => this.router.navigate(['/admin/categorie']), 1000);
 			},
-			error: () => {
-				this.error = 'Errore nella creazione della categoria.';
+			error: (err) => {
+				this.error = err.error?.detail || err.error?.errore || 'Errore nella creazione della categoria.';
 			}
 		});
 	}

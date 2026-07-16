@@ -35,6 +35,11 @@ export class UtenteService {
         return this.http.get<Utente>(`${this.apiUrl}/${id}`);
     }
 
+    // recupera un utente tramite username
+    getUtenteByUsername(username: string): Observable<Utente> {
+        return this.http.get<Utente>(`${this.apiUrl}/username/${username}`);
+    }
+
 
     // crea un nuovo utente -- CONTROLLATA
     createUtente(nuovoUtente: Utente): Observable<Utente> {

@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Preferiti, PreferitiItem } from '../modelli/preferiti.model';
 
-// OSS sono i service sia di preferiti che di 
+// OSS sono i service sia di preferiti che di preferitiItem
 
 
 @Injectable({
@@ -12,7 +12,7 @@ import { Preferiti, PreferitiItem } from '../modelli/preferiti.model';
 export class PreferitiService {
   private apiUrl = 'http://localhost:3000/api';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   // Ottieni la lista preferiti di un utente
   getPreferitiByUtente(id_utente: number): Observable<Preferiti> {

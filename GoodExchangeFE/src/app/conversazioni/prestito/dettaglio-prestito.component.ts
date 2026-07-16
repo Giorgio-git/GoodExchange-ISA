@@ -47,22 +47,27 @@ export class DettaglioPrestitoComponent implements OnInit {
 		this.sessionService.utenteLoggato$.subscribe((user: Utente | null) => {
 			this.loggedUser = user;
 		});
-			this.prestitoService.getPrestitoById(id).subscribe(prestito => {
-				this.prestito = prestito;
-				// Carica messaggi riferiti a questo prestito
-				this.messaggioService.getMessaggiByTipo('prestito', id).subscribe(messaggi => {
-					this.messaggi = messaggi;
-					// Popola la mappa utenti per i mittenti dei messaggi
-					const mittentiUnici = Array.from(new Set(messaggi.map(m => m.id_mittente)));
-					mittentiUnici.forEach(idMittente => {
-						if (!this.utenti[idMittente]) {
-							this.utenteService.getUtenteById(idMittente).subscribe(utente => {
-								this.utenti[idMittente] = utente;
-							});
-						}
+			this.prestitoService.getPrestitoById(id).subscribe({
+				next: prestito => {
+					this.prestito = prestito;
+					this.messaggioService.getMessaggiByTipo('prestito', id).subscribe(messaggi => {
+						this.messaggi = (messaggi || []).sort((a, b) => (a.id || 0) - (b.id || 0));
+						// Popola la mappa utenti per i mittenti dei messaggi
+						const mittentiUnici = Array.from(new Set((this.messaggi).map(m => m.id_mittente)));
+						mittentiUnici.forEach(idMittente => {
+							if (!this.utenti[idMittente]) {
+								this.utenteService.getUtenteById(idMittente).subscribe(utente => {
+									this.utenti[idMittente] = utente;
+								});
+							}
+						});
+						this.loading = false;
 					});
+				},
+				error: (err) => {
+					this.erroreStato = err.error?.detail || err.error?.errore || 'Errore nel caricamento del prestito.';
 					this.loading = false;
-				});
+				}
 			});
 	}
 
@@ -72,32 +77,30 @@ export class DettaglioPrestitoComponent implements OnInit {
 		return this.utenti[messaggio.id_mittente]?.username || `Utente #${messaggio.id_mittente}`;
 	}
 
-		// Cambia lo stato del prestito (accetta/rifiuta/completa) e reindirizza alla tabella prestiti
-			cambiaStatoPrestito(nuovoStato: 'accettato' | 'rifiutato' | 'completato') {
-				console.log('Bottone cliccato, valore passato:', nuovoStato);
-				if (!this.prestito) return;
-				this.erroreStato = '';
-				this.successoStato = '';
-				console.log('Invio al backend:', { id: this.prestito.id, stato: nuovoStato });
-				this.prestitoService.updateStatoPrestito(this.prestito.id, nuovoStato).subscribe({
-					next: res => {
-						console.log('Risposta backend:', res);
-						this.successoStato = `Prestito ${nuovoStato} con successo.`;
-						this.prestito = res.prestito;
-						// Reindirizza automaticamente alla tabella dei prestiti
-						this.router.navigate(['/prestiti']);
-					},
-					error: (err) => {
-						console.error('Errore backend:', err);
-						this.erroreStato = 'Errore nella modifica dello stato.';
-					}
-				});
-			}
+		// Cambia lo stato del prestito rispettando la FSM e reindirizza alla lista prestiti
+		cambiaStatoPrestito(nuovoStato: 'accettato' | 'rifiutato' | 'in_corso' | 'completato' | 'annullato') {
+			if (!this.prestito) return;
+			this.erroreStato = '';
+			this.successoStato = '';
+			this.prestitoService.updateStatoPrestito(this.prestito.id!, nuovoStato).subscribe({
+				next: res => {
+					this.prestito = res.prestito;
+					this.router.navigate(['/prestiti']);
+				},
+				error: (err) => {
+					this.erroreStato = err.error?.detail || err.error?.errore || 'Errore nella modifica dello stato.';
+				}
+			});
+		}
 
 		// Invio nuovo messaggio associato al prestito
 		inviaMessaggio(): void {
 		if (!this.loggedUser || !this.prestito) {
 			this.invioError = 'Utente o prestito non disponibili.';
+			return;
+		}
+		if (this.loggedUser.ruolo === 'admin') {
+			this.invioError = 'Gli amministratori non possono inviare messaggi in questa conversazione.';
 			return;
 		}
 		if (!this.titoloMessaggio || !this.contenutoMessaggio) {
@@ -124,11 +127,11 @@ export class DettaglioPrestitoComponent implements OnInit {
 				this.contenutoMessaggio = '';
 				// Ricarica la lista messaggi
 				this.messaggioService.getMessaggiByTipo('prestito', this.prestito!.id).subscribe(messaggi => {
-					this.messaggi = messaggi;
+					this.messaggi = (messaggi || []).sort((a, b) => (a.id || 0) - (b.id || 0));
 				});
 			},
-			error: () => {
-				this.invioError = 'Errore invio messaggio.';
+			error: (err) => {
+				this.invioError = err.error?.detail || err.error?.errore || 'Errore invio messaggio.';
 				this.invioSuccess = '';
 			}
 		});

@@ -45,7 +45,7 @@ export class SuggerimentoComponent {
       this.errore = 'Compila tutti i campi.';
       return;
     }
-    this.suggerimentoService.creaSuggerimento(utente.id).subscribe({
+    this.suggerimentoService.creaSuggerimento(utente.id!).subscribe({
       next: suggerimento => {
         const nuovoMessaggio: Partial<Messaggio> = {
           titolo: this.titolo,
@@ -65,13 +65,13 @@ export class SuggerimentoComponent {
               this.router.navigate(['/']);
             }, 500);
           },
-          error: () => {
-            this.errore = 'Errore invio messaggio.';
+          error: (err) => {
+            this.errore = err.error?.detail || err.error?.errore || 'Errore invio messaggio.';
           }
         });
       },
-      error: () => {
-        this.errore = 'Errore creazione suggerimento.';
+      error: (err) => {
+        this.errore = err.error?.detail || err.error?.errore || 'Errore creazione suggerimento.';
       }
     });
   }

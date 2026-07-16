@@ -28,7 +28,9 @@ export class ListaUtentiComponent implements OnInit {
       this.loggedUserId = user?.id ?? null;
       this.utenteService.getUtenti().subscribe({
         next: utenti => {
-          this.utenti = utenti.filter(u => u.id !== this.loggedUserId);
+          this.utenti = utenti
+            .filter(u => u.id !== this.loggedUserId)
+            .sort((a, b) => (a.id || 0) - (b.id || 0));
           this.loading = false;
         },
         error: () => {
@@ -44,7 +46,7 @@ export class ListaUtentiComponent implements OnInit {
 
   cambiaStatoUtente(utente: Utente) {
     const nuovoStato = utente.stato === 'attivo' ? 'disattivo' : 'attivo';
-    this.utenteService.changeStatoUtente(utente.id, nuovoStato).subscribe({
+    this.utenteService.changeStatoUtente(utente.id!, nuovoStato).subscribe({
       next: () => {
         utente.stato = nuovoStato;
       },
@@ -55,7 +57,7 @@ export class ListaUtentiComponent implements OnInit {
   }
 
   ritiraCauzione(utente: Utente) {
-    this.utenteService.ritiraCauzioneUtente(utente.id).subscribe({
+    this.utenteService.ritiraCauzioneUtente(utente.id!).subscribe({
       next: () => {
         utente.cauzione = 0;
       },

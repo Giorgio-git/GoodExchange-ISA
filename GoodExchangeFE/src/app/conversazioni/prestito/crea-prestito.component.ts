@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BeneService } from '../../servizi/bene.service';
 import { PrestitoService } from '../../servizi/prestito.service';
@@ -6,6 +6,7 @@ import { MessaggioService } from '../../servizi/messaggio.service';
 import { SessionService } from '../../servizi/session.service';
 import { Bene } from '../../modelli/bene.model';
 import { Utente } from '../../modelli/utente.model';
+import { Messaggio } from '../../modelli/messaggio.model';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -27,7 +28,7 @@ import { provideNativeDateAdapter } from '@angular/material/core';
 	templateUrl: './crea-prestito.component.html',
 	styleUrls: ['./crea-prestito.component.css']
 })
-export class CreaPrestitoComponent implements OnInit {
+export class CreaPrestitoComponent implements OnInit, OnDestroy {
 	// Per selezione intervallo
 	selezioneStep: 'inizio' | 'fine' = 'inizio';
 
@@ -103,18 +104,27 @@ export class CreaPrestitoComponent implements OnInit {
 			this.successo = '';
 			return;
 		}
-			const nuovoPrestito = {
-				id_bene: this.bene.id,
-				id_beneficiario: this.loggedUser.id,
-				id_proprietario: this.bene.id_proprietario,
-				data_inizio: this.dataInizio.toISOString().slice(0,10),
-				data_fine: this.dataFine.toISOString().slice(0,10),
-				stato: 'richiesto' as 'richiesto'
-			};
+		// Utility per formattare una data nativa JS nel formato YYYY-MM-DD locale (evitando lo slittamento fuso orario UTC di .toISOString())
+		const formatLocalYYYYMMDD = (d: Date): string => {
+			const year = d.getFullYear();
+			const month = String(d.getMonth() + 1).padStart(2, '0');
+			const day = String(d.getDate()).padStart(2, '0');
+			return `${year}-${month}-${day}`;
+		};
+
+		const nuovoPrestito = {
+			id_bene: this.bene.id,
+			id_beneficiario: this.loggedUser.id,
+			id_proprietario: this.bene.id_proprietario,
+			data_inizio: formatLocalYYYYMMDD(this.dataInizio),
+			data_fine: formatLocalYYYYMMDD(this.dataFine),
+			stato: 'richiesto' as 'richiesto'
+		};
+
 		this.prestitoService.createPrestito(nuovoPrestito).subscribe({
 			next: prestito => {
 				// Crea messaggio associato
-				const nuovoMessaggio = {
+				const nuovoMessaggio: Partial<Messaggio> = {
 					id_mittente: this.loggedUser!.id,
 					id_destinatario: this.bene!.id_proprietario,
 					titolo: this.titoloMessaggio,
@@ -130,16 +140,22 @@ export class CreaPrestitoComponent implements OnInit {
 							this.router.navigate(['/prestiti', prestito.id]);
 						}, 1200);
 					},
-					error: () => {
-						this.errore = 'Prestito creato, ma errore nell’invio del messaggio.';
+					error: (err) => {
+						this.errore = err.error?.detail || err.error?.errore || 'Prestito creato, ma errore nell’invio del messaggio.';
 						this.successo = '';
 					}
 				});
 			},
-			error: () => {
-				this.errore = 'Errore nella creazione del prestito.';
+			error: (err) => {
+				this.errore = err.error?.detail || err.error?.errore || 'Errore nella creazione del prestito.';
 				this.successo = '';
 			}
 		});
+	}
+
+	ngOnDestroy(): void {
+		if (this.urlImmagine) {
+			URL.revokeObjectURL(this.urlImmagine);
+		}
 	}
 }

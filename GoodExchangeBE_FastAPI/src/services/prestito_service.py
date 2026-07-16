@@ -19,6 +19,7 @@ import asyncpg
 import httpx
 
 from src.dao import bene_dao, prestito_dao, utente_dao
+from src.services.utente_service import verifica_solvibilita_utente
 
 logger = logging.getLogger(__name__)
 
@@ -37,26 +38,7 @@ FSM_TRANSIZIONI: dict[str, set[str]] = {
 
 
 # ——————————————————————————————————————————————
-# Design by Contract — funzione pura testabile con Hypothesis
-# ——————————————————————————————————————————————
-def verifica_solvibilita_utente(
-    cauzione: float,
-    crediti_valore_beni: int,
-    soglia_cauzione: float = 0.0,
-    soglia_crediti: int = 0,
-) -> bool:
-    """
-    Verifica che un utente soddisfi i requisiti minimi per richiedere un prestito.
-
-    Precondizioni (Design by Contract — Sezione 3.3):
-    - cauzione >= 0
-    - crediti_valore_beni >= 0
-
-    Questa funzione è pura (nessun side-effect) e quindi testabile con Hypothesis.
-    """
-    assert cauzione >= 0, "cauzione deve essere non-negativa"
-    assert crediti_valore_beni >= 0, "crediti_valore_beni deve essere non-negativo"
-    return cauzione >= soglia_cauzione and crediti_valore_beni >= soglia_crediti
+# (La verifica di solvibilità è delegata a src.services.utente_service.verifica_solvibilita_utente)
 
 
 # ——————————————————————————————————————————————
@@ -124,7 +106,9 @@ async def crea_prestito(
             if row_utente is not None and type(row_utente).__name__ != "AsyncMock":
                 cauzione = float(row_utente["cauzione"] or 0.0)
                 crediti_accum = int(row_utente["crediti_accumulati"] or 0)
-                if (cauzione + crediti_accum) < valore_crediti:
+                if not verifica_solvibilita_utente(
+                    cauzione, float(crediti_accum), float(valore_crediti)
+                ):
                     raise ValueError(
                         f"Solvibilità insufficiente: servono almeno {valore_crediti} crediti/cauzione per richiedere questo bene (attuali: cauzione={cauzione}, crediti accumulati={crediti_accum})"
                     )
@@ -205,13 +189,9 @@ async def aggiorna_stato_prestito(
     id_proprietario = prestito["id_proprietario"]
 
     if nuovo_stato == "in_corso":
-        # Il bene viene prelevato: lo segniamo come non disponibile
-        await bene_dao.block_bene(conn, id_bene)
-        logger.info("Bene %s bloccato per prestito %s", id_bene, id_prestito)
+        logger.info("Prestito %s in_corso per bene %s", id_prestito, id_bene)
 
     elif nuovo_stato == "completato":
-        # Il bene è tornato: lo rendiamo di nuovo disponibile
-        await bene_dao.unblock_bene(conn, id_bene)
         # Aggiorna i crediti accumulati dal proprietario
         await utente_dao.calcola_crediti_accumulati(conn, id_proprietario)
         logger.info(
@@ -224,11 +204,8 @@ async def aggiorna_stato_prestito(
         await notifica_delivery(id_prestito, nuovo_stato)
 
     elif nuovo_stato in ("annullato", "rifiutato"):
-        # Se il bene era stato bloccato (stato in_corso → annullato), lo sblocchiamo
-        # In altri casi (richiesto → rifiutato) il bene era già disponibile
-        await bene_dao.unblock_bene(conn, id_bene)
         logger.info(
-            "Prestito %s %s — bene %s reso disponibile",
+            "Prestito %s %s per bene %s",
             id_prestito,
             nuovo_stato,
             id_bene,

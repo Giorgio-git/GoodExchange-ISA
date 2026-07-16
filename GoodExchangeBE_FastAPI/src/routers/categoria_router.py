@@ -33,11 +33,16 @@ async def create_categoria(
     conn: asyncpg.Connection = Depends(get_connection),
 ):
     """Crea categoria. Porting di POST /categorie."""
-    async with conn.transaction():
-        result = await categoria_dao.create_categoria(conn, categoria.model_dump())
-        if not result:
-            raise HTTPException(status_code=400, detail="Creazione categoria fallita")
-        return result
+    try:
+        async with conn.transaction():
+            result = await categoria_dao.create_categoria(conn, categoria.model_dump())
+            if not result:
+                raise HTTPException(status_code=400, detail="Creazione categoria fallita")
+            return result
+    except asyncpg.exceptions.UniqueViolationError:
+        raise HTTPException(
+            status_code=409, detail="Esiste già una categoria con questo nome"
+        ) from None
 
 
 @router.put("/categorie/{id}")

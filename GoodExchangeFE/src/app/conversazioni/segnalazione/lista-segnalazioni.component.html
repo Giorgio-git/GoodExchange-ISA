@@ -2,41 +2,61 @@
   <h2>Segnalazioni utenti</h2>
   <div *ngIf="loading">Caricamento...</div>
   <div *ngIf="errore" class="error-msg">{{ errore }}</div>
-  <table *ngIf="!loading && segnalazioni.length > 0" class="segnalazioni-table">
-    <thead>
-      <tr>
-  <th>ID</th>
-  <th>Segnalante</th>
-  <th>Segnalato</th>
-  <th>Data</th>
-  <th>Messaggio</th>
-  <th>Stato</th>
-  <th>Azione</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let s of segnalazioni">
-        <td>{{ s.id }}</td>
-        <td>{{ s.id_segnalante }}</td>
-        <td>{{ s.id_segnalato }}</td>
-        <td>
-          <div *ngIf="s.id !== undefined && messaggi[s.id]">
-            <strong>{{ messaggi[s.id]?.titolo }}</strong><br>
-            <span>{{ messaggi[s.id]?.contenuto }}</span>
-          </div>
-          <div *ngIf="s.id === undefined || !messaggi[s.id]">-</div>
-        </td>
-        <td>{{ s.stato }}</td>
-        <td>
-          <select [(ngModel)]="s.stato" (change)="s.id !== undefined && aggiornaStato(s.id, s.stato)">
-            <option value="aperta">aperta</option>
-            <option value="in_gestione">in gestione</option>
-            <option value="risolta">risolta</option>
-            <option value="respinta">respinta</option>
-          </select>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <div class="table-wrapper" *ngIf="!loading && segnalazioni.length > 0">
+    <table class="segnalazioni-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Segnalante</th>
+          <th>Segnalato</th>
+          <th>Data</th>
+          <th>Messaggio</th>
+          <th>Stato</th>
+          <th>Azione</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let s of segnalazioni">
+          <td>{{ s.id }}</td>
+          <td>
+            <button class="btn-link" *ngIf="s.id_segnalante" (click)="vaiAProfilo(s.id_segnalante)">
+              {{ utentiMap[s.id_segnalante]?.username || ('Utente #' + s.id_segnalante) }}
+            </button>
+          </td>
+          <td>
+            <button class="btn-link" *ngIf="s.id_segnalato" (click)="vaiAProfilo(s.id_segnalato)">
+              {{ utentiMap[s.id_segnalato]?.username || ('Utente #' + s.id_segnalato) }}
+            </button>
+            <span *ngIf="!s.id_segnalato">-</span>
+          </td>
+          <td>{{ s.data ? (s.data | date:'dd-MM-yyyy') : '-' }}</td>
+          <td>
+            <div *ngIf="s.id !== undefined && messaggi[s.id]">
+              <strong>{{ messaggi[s.id]?.titolo }}</strong><br>
+              <span>{{ messaggi[s.id]?.contenuto }}</span>
+            </div>
+            <div *ngIf="s.id === undefined || !messaggi[s.id]">-</div>
+          </td>
+          <td>
+            <span class="stato-badge stato-{{ s.stato }}">{{ s.stato === 'in_gestione' ? 'in gestione' : s.stato }}</span>
+          </td>
+          <td>
+            <button *ngIf="s.stato === 'aperta'" class="btn-azione btn-gestione" (click)="s.id !== undefined && aggiornaStato(s.id, 'in_gestione')">
+              Prendi in gestione
+            </button>
+            <div *ngIf="s.stato === 'in_gestione'" class="azioni-group">
+              <button class="btn-azione btn-risolvi" (click)="s.id !== undefined && aggiornaStato(s.id, 'risolta')">
+                Risolvi
+              </button>
+              <button class="btn-azione btn-respingi" (click)="s.id !== undefined && aggiornaStato(s.id, 'respinta')">
+                Respingi
+              </button>
+            </div>
+            <span *ngIf="s.stato === 'risolta' || s.stato === 'respinta'" class="archiviata-txt">Archiviata</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
   <div *ngIf="!loading && segnalazioni.length === 0">Nessuna segnalazione presente.</div>
 </div>

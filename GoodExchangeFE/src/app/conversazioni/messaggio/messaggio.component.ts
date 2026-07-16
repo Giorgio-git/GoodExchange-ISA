@@ -1,8 +1,11 @@
 import { Component, Input } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { Messaggio } from '../../modelli/messaggio.model';
 
 @Component({
 	selector: 'app-messaggio',
+	standalone: true,
+	imports: [CommonModule],
 	templateUrl: './messaggio.component.html',
 	styleUrls: ['./messaggio.component.css']
 })

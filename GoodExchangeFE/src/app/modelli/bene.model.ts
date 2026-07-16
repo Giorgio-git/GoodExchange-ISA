@@ -10,8 +10,4 @@ export interface Bene {
   stato: boolean; // true = disponibile, false = occupato
   foto?: string;
   created_at?: string;
-  latitudine?: number;
-  longitudine?: number;
-  indirizzo_completo?: string;
-  distanza?: number; // campo calcolato per ricerche geografiche
 }

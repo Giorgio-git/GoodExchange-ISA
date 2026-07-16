@@ -44,23 +44,38 @@ async def test_prestito_fsm_e_side_effects_integration(
     )
     assert res_acc.status_code == 200
 
-    # 3. Transizione verso 'in_corso' (deve bloccare il bene -> stato = False)
+    # 3. Transizione verso 'in_corso' (lo stato del catalogo del bene rimane True, disponibilità gestita su intervallo date)
     res_in_corso = await async_client.put(
         f"/api/prestiti/{prestito_id}/stato", json={"stato": "in_corso"}
     )
     assert res_in_corso.status_code == 200
 
-    res_bene_bloccato = await async_client.get(f"/api/beni/{id_bene}")
-    assert res_bene_bloccato.json()["stato"] is False  # Bene bloccato (non disponibile)
+    res_bene_dopo_corso = await async_client.get(f"/api/beni/{id_bene}")
+    assert res_bene_dopo_corso.json()["stato"] is True  # Lo stato catalogo resta attivo
 
-    # 4. Transizione verso 'completato' (deve sbloccare il bene -> stato = True e aggiornare i crediti)
+    # Verifica sul calendario e disponibilità: un altro utente che chiede per le stesse date riceve 409 Conflict
+    res_conflitto = await async_client.post(
+        "/api/prestiti",
+        json={
+            "id_bene": id_bene,
+            "id_beneficiario": id_ben,
+            "id_proprietario": id_prop,
+            "data_inizio": "2026-08-02",
+            "data_fine": "2026-08-05",
+            "stato": "richiesto",
+        },
+    )
+    assert res_conflitto.status_code == 409
+    assert "non è disponibile" in res_conflitto.json()["detail"]
+
+    # 4. Transizione verso 'completato' (aggiorna i crediti accumulati del proprietario)
     res_compl = await async_client.put(
         f"/api/prestiti/{prestito_id}/stato", json={"stato": "completato"}
     )
     assert res_compl.status_code == 200
 
-    res_bene_sbloccato = await async_client.get(f"/api/beni/{id_bene}")
-    assert res_bene_sbloccato.json()["stato"] is True  # Bene tornato disponibile
+    res_bene_dopo_compl = await async_client.get(f"/api/beni/{id_bene}")
+    assert res_bene_dopo_compl.json()["stato"] is True
 
 
 @pytest.mark.asyncio

@@ -81,6 +81,36 @@
   transform: scale(1.02);
 }
 
+.btn-delete-foto {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background-color: rgba(239, 68, 68, 0.92);
+  color: #ffffff;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.35);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 10;
+}
+
+.btn-delete-foto svg {
+  width: 20px;
+  height: 20px;
+}
+
+.btn-delete-foto:hover {
+  background-color: #dc2626;
+  transform: scale(1.08);
+  box-shadow: 0 6px 16px rgba(239, 68, 68, 0.45);
+}
+
 .bene-foto-placeholder {
   display: flex;
   flex-direction: column;
@@ -100,16 +130,60 @@
   stroke: var(--color-slate-300);
 }
 
-.bene-foto-upload {
-  padding: 1.25rem;
-  background-color: var(--color-slate-50);
-  border: 1px dashed var(--color-slate-300);
-  border-radius: var(--radius-md);
+.bene-foto-upload-box {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  padding: 2rem 1.5rem;
+  text-align: center;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at center, #ffffff 0%, #f8fafc 100%);
+}
+
+.upload-box-icon {
+  width: 52px;
+  height: 52px;
+  stroke: var(--color-primary-600, #3b82f6);
+  background-color: var(--color-primary-50, #eff6ff);
+  padding: 10px;
+  border-radius: 50%;
+  margin-bottom: 0.25rem;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.12);
+}
+
+.upload-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--color-slate-800, #1e293b);
+}
+
+.upload-subtitle {
+  font-size: 0.88rem;
+  color: var(--color-slate-500, #64748b);
+  max-width: 320px;
+  line-height: 1.4;
+  margin-bottom: 0.5rem;
+}
+
+.btn-upload-inline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6rem 1.25rem;
   font-size: 0.9rem;
-  color: var(--color-slate-700);
+  font-weight: 600;
+  border-radius: var(--radius-md, 8px);
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(59, 130, 246, 0.25);
+  transition: all 0.2s ease;
+}
+
+.btn-upload-inline:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(59, 130, 246, 0.35);
 }
 
 /* --- Dettagli & Action Box a destra --- */

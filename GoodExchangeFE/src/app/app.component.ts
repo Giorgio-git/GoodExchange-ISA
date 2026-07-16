@@ -13,10 +13,7 @@ import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 
 import { Utente } from './modelli/utente.model';
-import { Bene } from './modelli/bene.model';
 import { SessionService } from './servizi/session.service';
-import { BeneService } from './servizi/bene.service';
-import { UtenteService } from './servizi/utente.service';
 
 @Component({
   selector: 'app-root',
@@ -33,20 +30,10 @@ export class AppComponent implements OnInit, OnDestroy {
   isAdmin: boolean = false;
   isClient: boolean = false;
 
-  // variabili per la barra di ricerca utenti
-  searchUtenti: string = '';
-
-  // risultati ricerca utenti
-  utentiTrovati: Utente[] = [];
-
   private userSubscription?: Subscription;
-  private beniSubscription?: Subscription;
-  private utentiSubscription?: Subscription;
 
   constructor(
     private sessionService: SessionService,
-    private beneService: BeneService,
-    private utenteService: UtenteService,
     private router: Router
   ) {}
 
@@ -60,19 +47,6 @@ export class AppComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.userSubscription?.unsubscribe();
-  }
-
-
-  cercaUtenti(): void {
-    if (this.searchUtenti.trim()) {
-      // Usa il servizio UtenteService per cercare utenti
-      this.utentiSubscription?.unsubscribe();
-      this.utentiSubscription = this.utenteService.getUtenti({ search: this.searchUtenti.trim() })
-        .subscribe(utenti => {
-          this.utentiTrovati = utenti;
-        });
-      this.searchUtenti = '';
-    }
   }
 
   logout(): void {

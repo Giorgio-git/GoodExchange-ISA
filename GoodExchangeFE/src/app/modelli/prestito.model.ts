@@ -1,5 +1,5 @@
 export interface Prestito {
-  id: number;
+  id?: number;
   id_bene: number;
   id_proprietario: number;
   id_beneficiario: number;
@@ -10,7 +10,7 @@ export interface Prestito {
   crediti_utilizzati?: number;
   note?: string;
   created_at?: string;
-  
+
   // Campi aggiuntivi dalle JOIN
   bene_nome?: string;
   beneficiario_username?: string;

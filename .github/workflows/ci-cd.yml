@@ -10,9 +10,9 @@ on:
   workflow_dispatch:  # Consente l'esecuzione manuale dal pannello di GitHub Actions
 
 jobs:
-  # =====================================================================
+
   # JOB 1: LINTING & BUILD VALIDATION (CI - Continuous Integration)
-  # =====================================================================
+  
   lint-and-validate:
     name: Qualità Codice & Compilazione (Frontend + Backend)
     runs-on: ubuntu-latest
@@ -57,9 +57,10 @@ jobs:
           cd GoodExchangeFE
           npm run build -- --configuration production
 
-  # =====================================================================
+
+
   # JOB 2: TEST SUITE & COPERTURA STRUTTURALE (CI - Verification)
-  # =====================================================================
+  
   test-and-coverage:
     name: Test di Unità e di Integrazione con Database Reale
     needs: lint-and-validate
@@ -119,9 +120,10 @@ jobs:
           name: coverage-report-html
           path: GoodExchangeBE_FastAPI/htmlcov/
 
-  # =====================================================================
+
+
   # JOB 3: CONTINUOUS DELIVERY (CD - Containerization & Docker Hub Push)
-  # =====================================================================
+
   docker-build-and-push:
     name: Build & Deploy Container su Docker Hub (CD)
     needs: test-and-coverage

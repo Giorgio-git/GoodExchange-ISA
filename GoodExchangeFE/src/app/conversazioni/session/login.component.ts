@@ -47,7 +47,7 @@ export class LoginComponent {
       },
       error: (err) => {
         // Mostra errore
-        this.errore = err.error?.errore || 'Username o password errati';
+        this.errore = err.error?.detail || err.error?.errore || 'Username o password errati';
       }
     });
   }

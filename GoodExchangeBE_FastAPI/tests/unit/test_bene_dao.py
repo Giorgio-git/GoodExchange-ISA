@@ -42,9 +42,9 @@ async def test_find_beni_ricerca_testuale():
     )  # passo il mock e un dizionario con la ricerca e il limite di risultati
     call_args = mock_conn.fetch.call_args[0]
     assert (
-        "nome LIKE $1 OR descrizione LIKE $2" in call_args[0]
+        "nome ILIKE $1" in call_args[0]
     )  # verifico la forma della query
     assert (
         call_args[1] == "%Harry Potter%"
     )  # verifico che l'argomento della query sia corretto
-    assert call_args[3] == 10  # verifico che il limite sia corretto
+    assert call_args[2] == 10  # verifico che il limite sia corretto

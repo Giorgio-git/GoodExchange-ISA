@@ -4,6 +4,6 @@ export interface Messaggio {
 	id_destinatario: number;
 	titolo: string;
 	contenuto: string;
-	tipo: string; // correzione: enum stringa come nel db
+	tipo: 'prestito' | 'recensione' | 'segnalazione' | 'feedback' | 'suggerimento';
 	id_riferito: number;
 }

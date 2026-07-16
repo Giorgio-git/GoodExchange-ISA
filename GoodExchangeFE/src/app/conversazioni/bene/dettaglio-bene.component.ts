@@ -8,7 +8,8 @@ import { Bene } from '../../modelli/bene.model';
 import { Utente } from '../../modelli/utente.model';
 import { BeneService } from '../../servizi/bene.service';
 import { PrestitoService } from '../../servizi/prestito.service';
-import { CategoriaService, Categoria } from '../../servizi/categoria.service';
+import { CategoriaService } from '../../servizi/categoria.service';
+import { Categoria } from '../../modelli/categoria.model';
 import { SessionService } from '../../servizi/session.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -17,7 +18,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatNativeDateModule } from '@angular/material/core';
 import { RouterModule } from '@angular/router';
 import { UtenteService } from '../../servizi/utente.service';
-import { error } from 'console';
 
 @Component({
     selector: 'app-dettaglio-bene',
@@ -83,9 +83,11 @@ export class DettaglioBeneComponent implements OnInit {
                 console.log('[DettaglioBene] getBeneById result:', bene);
                 if (!bene || !bene.id) {
                     this.notFound = true;
+                    this.loading = false;
                     return;
                 }
                 this.bene = bene;
+                this.loading = false;
                 // Verifica se l'utente loggato è il proprietario (uso i !! per covertire il valore in booleano)
                 this.isProprietario = !!this.loggedUser && bene.id_proprietario === this.loggedUser.id;
                 // Carica il proprietario del bene
@@ -197,10 +199,11 @@ export class DettaglioBeneComponent implements OnInit {
 
 
     // Gestisce la selezione di un file immagine per l'upload
-    onFileSelected(event: any) {
+    onFileSelected(event: Event) {
         if (!this.bene) return;
-        const file = event.target.files[0];
-        if (!file) return;
+        const input = event.target as HTMLInputElement;
+        if (!input.files || input.files.length === 0) return;
+        const file = input.files[0];
         this.beneService.uploadImmagineBene(this.bene.id!, file).subscribe({
             next: () => {
                 // Dopo l'upload, ricarica l'immagine aggiornata
@@ -236,6 +239,27 @@ export class DettaglioBeneComponent implements OnInit {
             }
         });
     }
+
+    // Elimina l'immagine associata al bene
+    eliminaImmagine(): void {
+        if (!this.bene || !this.bene.id) return;
+        if (confirm('Sei sicuro di voler eliminare l\'immagine associata a questo bene?')) {
+            this.beneService.deleteImmagineBene(this.bene.id).subscribe({
+                next: () => {
+                    if (this.lastObjectUrl) {
+                        URL.revokeObjectURL(this.lastObjectUrl);
+                        this.lastObjectUrl = null;
+                    }
+                    this.urlImmagine = null;
+                    this.imgError = true;
+                },
+                error: (err) => {
+                    console.error('Errore durante l\'eliminazione dell\'immagine:', err);
+                }
+            });
+        }
+    }
+
     ngOnDestroy(): void {
         // Rilascia l'eventuale URL immagine generato
         if (this.lastObjectUrl) {

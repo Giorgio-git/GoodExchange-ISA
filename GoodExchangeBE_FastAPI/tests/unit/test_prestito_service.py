@@ -23,27 +23,25 @@ from src.services import prestito_service
 
 
 @given(
-    st.floats(min_value=0.0, max_value=10000.0),
-    st.integers(min_value=0, max_value=1000),
-    st.floats(min_value=0.0, max_value=1000.0),
-    st.integers(min_value=0, max_value=100),
+    st.floats(min_value=0.0, max_value=100_000.0, allow_nan=False),
+    st.floats(min_value=0.0, max_value=100_000.0, allow_nan=False),
+    st.floats(min_value=0.01, max_value=100_000.0, allow_nan=False),
 )
-def test_pbt_verifica_solvibilita_proprietario(
-    cauzione, crediti, soglia_cauzione, soglia_crediti
+def test_pbt_verifica_solvibilita_utente(
+    cauzione, crediti_accumulati, valore_bene
 ):
     """
     Test basato su proprietà (Bonus Hypothesis):
     La funzione verifica_solvibilita_utente deve restituire True se e solo se
-    entrambe le soglie sono superate o eguagliate.
+    (cauzione + crediti_accumulati) >= valore_bene.
     Esplora migliaia di combinazioni numeriche automaticamente.
     """
     risultato = prestito_service.verifica_solvibilita_utente(
         cauzione=cauzione,
-        crediti_valore_beni=crediti,
-        soglia_cauzione=soglia_cauzione,
-        soglia_crediti=soglia_crediti,
+        crediti_accumulati=crediti_accumulati,
+        valore_bene=valore_bene,
     )
-    atteso = (cauzione >= soglia_cauzione) and (crediti >= soglia_crediti)
+    atteso = (cauzione + crediti_accumulati) >= valore_bene
     assert risultato == atteso
 
 
@@ -136,7 +134,7 @@ async def test_aggiorna_stato_transizione_illegale():
 
 @pytest.mark.asyncio
 async def test_aggiorna_stato_in_corso_side_effect():
-    """Strict 2PL + Side Effect: accertarsi che il passaggio a 'in_corso' blocchi il bene."""
+    """Side Effect: accertarsi che il passaggio a 'in_corso' avvenga senza toccare lo stato del bene."""
     mock_conn = AsyncMock()
     mock_conn.fetchrow.side_effect = [
         {
@@ -148,12 +146,8 @@ async def test_aggiorna_stato_in_corso_side_effect():
         {"id": 1, "stato": "in_corso", "id_bene": 10, "id_proprietario": 30},  # return
     ]
 
-    with patch("src.dao.bene_dao.block_bene", new_callable=AsyncMock) as mock_block:
-        mock_block.return_value = True
-        res = await prestito_service.aggiorna_stato_prestito(mock_conn, 1, "in_corso")
-
-        assert res["stato"] == "in_corso"
-        mock_block.assert_awaited_once_with(mock_conn, 10)
+    res = await prestito_service.aggiorna_stato_prestito(mock_conn, 1, "in_corso")
+    assert res["stato"] == "in_corso"
 
 
 # ——————————————————————————————————————————————
@@ -165,8 +159,9 @@ async def test_aggiorna_stato_in_corso_side_effect():
 async def test_aggiorna_stato_completato_side_effect():
     """
     FSM + Side Effect: il passaggio a 'completato' deve:
-    1. sbloccare il bene (unblock_bene)
-    2. aggiornare i crediti accumulati del proprietario (calcola_crediti_accumulati)
+    1. aggiornare i crediti accumulati del proprietario (calcola_crediti_accumulati)
+    2. inviare notifica delivery (dopo commit)
+    Senza modificare lo stato del catalogo del bene.
     SRS §FR-16, §9.2 — DbC: Post-condizione per stato 'completato'.
     """
     mock_conn = AsyncMock()
@@ -186,7 +181,6 @@ async def test_aggiorna_stato_completato_side_effect():
     ]
 
     with (
-        patch("src.dao.bene_dao.unblock_bene", new_callable=AsyncMock) as mock_unblock,
         patch(
             "src.dao.utente_dao.calcola_crediti_accumulati", new_callable=AsyncMock
         ) as mock_crediti,
@@ -194,14 +188,12 @@ async def test_aggiorna_stato_completato_side_effect():
             "src.services.prestito_service.notifica_delivery", new_callable=AsyncMock
         ) as mock_notifica,
     ):
-        mock_unblock.return_value = True
         mock_crediti.return_value = 200
         mock_notifica.return_value = None
 
         res = await prestito_service.aggiorna_stato_prestito(mock_conn, 5, "completato")
 
     assert res["stato"] == "completato"
-    mock_unblock.assert_awaited_once_with(mock_conn, 20)
     mock_crediti.assert_awaited_once_with(mock_conn, 10)
 
 
@@ -251,10 +243,10 @@ async def test_crea_prestito_successo():
 
 
 @pytest.mark.asyncio
-async def test_aggiorna_stato_annullato_sblocca_bene():
+async def test_aggiorna_stato_annullato_senza_side_effect():
     """
-    FSM + Side Effect: il passaggio a 'annullato' (o 'rifiutato') da uno stato dove il bene
-    era bloccato deve sbloccare il bene tramite unblock_bene (SRS §FR-16).
+    FSM + Side Effect: il passaggio a 'annullato' (o 'rifiutato') avviene aggiornando
+    lo stato del prestito senza alterare il campo bene.stato (gestito solo dal proprietario).
     """
     mock_conn = AsyncMock()
     mock_conn.fetchrow.side_effect = [
@@ -262,12 +254,8 @@ async def test_aggiorna_stato_annullato_sblocca_bene():
         {"id": 2, "stato": "annullato", "id_bene": 15, "id_proprietario": 30},
     ]
 
-    with patch("src.dao.bene_dao.unblock_bene", new_callable=AsyncMock) as mock_unblock:
-        mock_unblock.return_value = True
-        res = await prestito_service.aggiorna_stato_prestito(mock_conn, 2, "annullato")
-
+    res = await prestito_service.aggiorna_stato_prestito(mock_conn, 2, "annullato")
     assert res["stato"] == "annullato"
-    mock_unblock.assert_awaited_once_with(mock_conn, 15)
 
 
 @pytest.mark.asyncio

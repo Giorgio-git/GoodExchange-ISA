@@ -1,44 +1,193 @@
-/* Stile tabella segnalazioni per admin */
-.segnalazioni-table {
-	width: 100%;
-	border-collapse: collapse;
-	margin-top: 1.5rem;
-	background: #fff;
-	box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-	border-radius: 8px;
-	overflow: hidden;
+/* ==========================================================================
+   LISTA SEGNALAZIONI - STILE PROFESSIONALE E DINAMICO
+   ========================================================================== */
+
+.lista-segnalazioni-container {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  background: #ffffff;
+  border-radius: var(--radius-xl, 16px);
+  box-shadow: var(--shadow-md, 0 4px 6px -1px rgba(0, 0, 0, 0.1));
+  border: 1px solid var(--color-slate-200, #e2e8f0);
+  padding: 2rem 2.5rem;
+  box-sizing: border-box;
 }
 
-.segnalazioni-table th, .segnalazioni-table td {
-	padding: 0.75rem 1rem;
-	border-bottom: 1px solid #e0e0e0;
-	text-align: left;
+.lista-segnalazioni-container h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--color-slate-900, #0f172a);
+  margin: 0 0 1.5rem 0;
+  letter-spacing: -0.02em;
+}
+
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: var(--radius-lg, 12px);
+  border: 1px solid var(--color-slate-200, #e2e8f0);
+  background: #ffffff;
+}
+
+.segnalazioni-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+
+.segnalazioni-table th,
+.segnalazioni-table td {
+  padding: 1rem 0.85rem;
+  text-align: center;
+  border-bottom: 1px solid var(--color-slate-200, #e2e8f0);
 }
 
 .segnalazioni-table th {
-	background: #f5f5f5;
-	font-weight: 600;
-	color: #333;
-	letter-spacing: 0.5px;
+  background-color: var(--color-slate-50, #f8fafc);
+  color: var(--color-slate-700, #334155);
+  font-weight: 600;
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
-.segnalazioni-table tr:last-child td {
-	border-bottom: none;
+.segnalazioni-table tbody tr {
+  transition: background-color var(--transition-fast, 0.15s ease);
 }
 
-.segnalazioni-table tr:hover {
-	background: #f0f8ff;
-	transition: background 0.2s;
+.segnalazioni-table tbody tr:nth-child(even) {
+  background-color: var(--color-slate-50, #f8fafc);
+}
+
+.segnalazioni-table tbody tr:hover {
+  background-color: var(--color-primary-light, #eff6ff);
 }
 
 .segnalazioni-table select {
-	padding: 0.25rem 0.5rem;
-	border-radius: 4px;
-	border: 1px solid #bdbdbd;
-	background: #fafafa;
+  padding: 0.35rem 0.6rem;
+  border-radius: var(--radius-md, 8px);
+  border: 1px solid var(--color-slate-300, #cbd5e1);
+  background: #ffffff;
+  font-size: 0.85rem;
+  cursor: pointer;
+  text-align: center;
+}
+
+.btn-link {
+  background: none;
+  border: none;
+  color: var(--color-primary, #2563eb);
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 0.92rem;
+  font-weight: 500;
+  padding: 0.2rem 0.4rem;
+  transition: color var(--transition-fast, 0.15s ease);
+}
+
+.btn-link:hover {
+  color: var(--color-primary-hover, #1d4ed8);
+}
+
+/* === BADGE DI STATO === */
+.stato-badge {
+  font-weight: 600;
+  font-size: 0.82rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-full, 9999px);
+  display: inline-block;
+  text-transform: capitalize;
+}
+
+.stato-aperta {
+  background-color: var(--color-warning-bg, #fef3c7);
+  color: var(--color-warning-text, #92400e);
+}
+
+.stato-in_gestione {
+  background-color: var(--color-info-bg, #e0f2fe);
+  color: var(--color-info-text, #075985);
+}
+
+.stato-risolta {
+  background-color: var(--color-success-bg, #dcfce7);
+  color: var(--color-success-text, #166534);
+}
+
+.stato-respinta {
+  background-color: var(--color-danger-bg, #fee2e2);
+  color: var(--color-danger-text, #991b1b);
 }
 
 .error-msg {
-	color: #b71c1c;
-	margin-bottom: 1rem;
+  color: var(--color-danger, #dc2626);
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+
+/* === PULSANTI AZIONE E ARCHIVIATA === */
+.azioni-group {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  align-items: center;
+}
+
+.btn-azione {
+  border: none;
+  border-radius: var(--radius-md, 8px);
+  padding: 0.45rem 0.85rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast, 0.15s ease);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+}
+
+.btn-gestione {
+  background-color: #0ea5e9;
+  color: #ffffff;
+  box-shadow: 0 2px 4px rgba(14, 165, 233, 0.25);
+}
+
+.btn-gestione:hover {
+  background-color: #0284c7;
+  box-shadow: 0 4px 6px rgba(14, 165, 233, 0.35);
+  transform: translateY(-1px);
+}
+
+.btn-risolvi {
+  background-color: #10b981;
+  color: #ffffff;
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.25);
+}
+
+.btn-risolvi:hover {
+  background-color: #059669;
+  box-shadow: 0 4px 6px rgba(16, 185, 129, 0.35);
+  transform: translateY(-1px);
+}
+
+.btn-respingi {
+  background-color: #f43f5e;
+  color: #ffffff;
+  box-shadow: 0 2px 4px rgba(244, 63, 94, 0.25);
+}
+
+.btn-respingi:hover {
+  background-color: #e11d48;
+  box-shadow: 0 4px 6px rgba(244, 63, 94, 0.35);
+  transform: translateY(-1px);
+}
+
+.archiviata-txt {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-slate-400, #94a3b8);
+  font-style: italic;
 }

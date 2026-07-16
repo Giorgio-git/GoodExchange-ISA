@@ -1,11 +1,13 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { BeneService } from '../../servizi/bene.service';
 import { UtenteService } from '../../servizi/utente.service';
 import { Utente } from '../../modelli/utente.model';
 import { Bene } from '../../modelli/bene.model';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { CategoriaService, Categoria } from '../../servizi/categoria.service';
+import { CategoriaService } from '../../servizi/categoria.service';
+import { Categoria } from '../../modelli/categoria.model';
 import { SessionService } from '../../servizi/session.service';
 import { FormsModule } from '@angular/forms';
 
@@ -16,7 +18,7 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './ricerca-beni.component.html',
   styleUrls: ['./ricerca-beni.component.css']
 })
-export class RicercaBeniComponent implements OnDestroy {
+export class RicercaBeniComponent implements OnInit, OnDestroy {
   beni: Bene[] = [];
   utenti: { [id: number]: Utente } = {};
   categorie: Categoria[] = [];
@@ -26,6 +28,7 @@ export class RicercaBeniComponent implements OnDestroy {
   isClient: boolean = false;
   immaginiBeni: { [id: number]: string | null } = {};
   private objectUrls: Array<string> = [];
+  private userSub?: Subscription;
 
   // Campi per il template-driven form
   regione: string = '';
@@ -39,14 +42,16 @@ export class RicercaBeniComponent implements OnDestroy {
     private utenteService: UtenteService,
     private categoriaService: CategoriaService,
     private sessionService: SessionService
-  ) {
+  ) {}
+
+  ngOnInit(): void {
     // Carica le categorie per visualizzazione
     this.categoriaService.getCategorie().subscribe({
       next: cats => this.categorie = cats,
       error: () => this.categorie = []
     });
     // Recupera utente loggato e ruolo tramite SessionService
-    this.sessionService.utenteLoggato$.subscribe((user: Utente | null) => {
+    this.userSub = this.sessionService.utenteLoggato$.subscribe((user: Utente | null) => {
       this.loggedUser = user;
       this.isAdmin = user?.ruolo === 'admin';
       this.isClient = user?.ruolo === 'utente';
@@ -64,16 +69,15 @@ export class RicercaBeniComponent implements OnDestroy {
   }
 
   cercaBeni(event?: Event) {
-
     // Reset dell'errore
     this.error = null;
     // Costruisce l'oggetto filtri in base ai campi compilati
-    const filtri: any = {};
-    if (this.regione) filtri.regione = this.regione;
-    if (this.provincia) filtri.provincia = this.provincia;
-    if (this.citta) filtri.citta = this.citta;
-    if (this.via) filtri.via = this.via;
-    if (this.civico) filtri.civico = this.civico;
+    const filtri: { [key: string]: string } = {};
+    if (this.regione) filtri['regione'] = this.regione;
+    if (this.provincia) filtri['provincia'] = this.provincia;
+    if (this.citta) filtri['citta'] = this.citta;
+    if (this.via) filtri['via'] = this.via;
+    if (this.civico) filtri['civico'] = this.civico;
 
     // Richiede la lista dei beni filtrati dal BeneService
     this.beneService.getBeni(filtri).subscribe({
@@ -133,6 +137,7 @@ export class RicercaBeniComponent implements OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.userSub?.unsubscribe();
     this.objectUrls.forEach((url: string) => URL.revokeObjectURL(url));
     this.objectUrls = [];
   }

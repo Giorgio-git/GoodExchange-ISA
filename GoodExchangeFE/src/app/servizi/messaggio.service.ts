@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Messaggio } from '../modelli/messaggio.model';
 
 @Injectable({ providedIn: 'root' })
@@ -10,11 +11,15 @@ export class MessaggioService {
 	constructor(private http: HttpClient) {}
 
 	getMessaggiByDestinatario(id_destinatario: number): Observable<Messaggio[]> {
-		return this.http.get<Messaggio[]>(`${this.apiUrl}/destinatario/${id_destinatario}`);
+		return this.http.get<Messaggio[]>(`${this.apiUrl}/destinatario/${id_destinatario}`).pipe(
+			map(messaggi => (messaggi || []).sort((a, b) => (a.id || 0) - (b.id || 0)))
+		);
 	}
 
 	getMessaggiByMittente(id_mittente: number): Observable<Messaggio[]> {
-		return this.http.get<Messaggio[]>(`${this.apiUrl}/mittente/${id_mittente}`);
+		return this.http.get<Messaggio[]>(`${this.apiUrl}/mittente/${id_mittente}`).pipe(
+			map(messaggi => (messaggi || []).sort((a, b) => (a.id || 0) - (b.id || 0)))
+		);
 	}
 
 	getMessaggiByTipo(tipo: string, id_riferito?: number): Observable<Messaggio[]> {
@@ -22,7 +27,9 @@ export class MessaggioService {
 		if (id_riferito !== undefined) {
 			url += `?id_riferito=${id_riferito}`;
 		}
-		return this.http.get<Messaggio[]>(url);
+		return this.http.get<Messaggio[]>(url).pipe(
+			map(messaggi => (messaggi || []).sort((a, b) => (a.id || 0) - (b.id || 0)))
+		);
 	}
 
 	getMessaggioById(id: number): Observable<Messaggio> {

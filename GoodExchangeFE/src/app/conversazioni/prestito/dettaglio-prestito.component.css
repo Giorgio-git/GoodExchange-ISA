@@ -155,6 +155,26 @@
   background-color: var(--color-primary-hover);
 }
 
+.btn-in-corso {
+  background-color: #f59e0b;
+  color: white;
+  box-shadow: 0 4px 6px -1px rgba(245, 158, 11, 0.2);
+}
+
+.btn-in-corso:hover {
+  background-color: #d97706;
+}
+
+.btn-annulla {
+  background-color: #64748b;
+  color: white;
+  box-shadow: 0 4px 6px -1px rgba(100, 116, 139, 0.2);
+}
+
+.btn-annulla:hover {
+  background-color: #475569;
+}
+
 /* === MESSAGGI SECTION === */
 .section-title {
   font-size: 1.3rem;

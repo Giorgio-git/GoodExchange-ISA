@@ -26,11 +26,6 @@ export class FeedbackService {
         return this.http.post<Feedback>(this.apiUrl, feedback);
     }
 
-    // Aggiorna un feedback
-    aggiornaFeedback(id: number, feedback: Partial<Feedback>): Observable<any> {
-        return this.http.put(`${this.apiUrl}/${id}`, feedback);
-    }
-
     // Elimina un feedback
     eliminaFeedback(id: number): Observable<any> {
         return this.http.delete(`${this.apiUrl}/${id}`);

@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { Prestito } from '../../modelli/prestito.model';
 import { Utente } from '../../modelli/utente.model';
 import { PrestitoService } from '../../servizi/prestito.service';
@@ -17,7 +18,7 @@ import { RouterModule } from '@angular/router';
 	templateUrl: './lista-prestiti.component.html',
 	styleUrls: ['./lista-prestiti.component.css']
 })
-export class ListaPrestitiComponent implements OnInit {
+export class ListaPrestitiComponent implements OnInit, OnDestroy {
 	prestitiRichiesti: Prestito[] = [];
 	prestitiConcessi: Prestito[] = [];
 	utenteLoggato: Utente | null = null;
@@ -31,6 +32,7 @@ export class ListaPrestitiComponent implements OnInit {
 	tuttiIPrestiti: Prestito[] = [];
 	erroreStato: string = '';
 	successoStato: string = '';
+	private userSub?: Subscription;
 
 	// Per feedback modal
 	showFeedbackModal: boolean = false;
@@ -45,50 +47,70 @@ export class ListaPrestitiComponent implements OnInit {
 			private prestitoService: PrestitoService,
 			private beneService: BeneService,
 			private sessionService: SessionService,
-			private router: Router
+			private router: Router,
+			private cdr: ChangeDetectorRef
 		) {}
 
 		ngOnInit(): void {
-			this.utenteLoggato = this.sessionService.getLoggedUser();
-			this.isAdmin = this.utenteLoggato?.ruolo === 'admin';
-			if (!this.utenteLoggato) return;
-			if (this.isAdmin) {
-				this.prestitoService.getPrestiti().subscribe(prestiti => {
-					this.tuttiIPrestiti = prestiti;
+			this.userSub = this.sessionService.utenteLoggato$.subscribe((user: Utente | null) => {
+				this.utenteLoggato = user;
+				this.isAdmin = user?.ruolo === 'admin';
+				if (!user) {
 					this.loading = false;
-				});
-			} else {
-				this.prestitoService.getPrestiti({
-					id_beneficiario: this.utenteLoggato.id
-				}).subscribe(prestitiRichiesti => {
-					this.prestitiRichiesti = prestitiRichiesti;
-					this.prestitoService.getPrestiti({
-						id_proprietario: this.utenteLoggato!.id
-					}).subscribe(prestitiConcessi => {
-						this.prestitiConcessi = prestitiConcessi;
-						this.loading = false;
+					return;
+				}
+				if (this.isAdmin) {
+					this.prestitoService.getPrestiti().subscribe({
+						next: prestiti => {
+							this.tuttiIPrestiti = prestiti.sort((a, b) => (a.id || 0) - (b.id || 0));
+							this.loading = false;
+						},
+						error: () => this.loading = false
 					});
-				});
-			}
-		}
-
-	// Cambia lo stato di un prestito dalla tabella admin
-		cambiaStatoPrestitoAdmin(prestito: Prestito, nuovoStato: string) {
-			this.erroreStato = '';
-			this.successoStato = '';
-			this.prestitoService.updateStatoPrestito(prestito.id, nuovoStato).subscribe({
-				next: res => {
-					prestito.stato = res.prestito.stato;
-					this.successoStato = `Stato del prestito #${prestito.id} aggiornato a ${res.prestito.stato}`;
-					// Aggiorna stato bene: in_corso -> occupato (false), altro -> disponibile (true)
-					const nuovoStatoBene = (res.prestito.stato === 'in_corso') ? false : true;
-					this.beneService.updateBene(prestito.id_bene, { stato: nuovoStatoBene }).subscribe();
-				},
-				error: (err) => {
-					this.erroreStato = `Errore aggiornamento stato prestito #${prestito.id}`;
+				} else {
+					this.prestitoService.getPrestiti({
+						id_beneficiario: user.id
+					}).subscribe({
+						next: prestitiRichiesti => {
+							this.prestitiRichiesti = prestitiRichiesti;
+							this.prestitoService.getPrestiti({
+								id_proprietario: user.id
+							}).subscribe({
+								next: prestitiConcessi => {
+									this.prestitiConcessi = prestitiConcessi;
+									this.loading = false;
+								},
+								error: () => this.loading = false
+							});
+						},
+						error: () => this.loading = false
+					});
 				}
 			});
 		}
+
+	// Cambia lo stato di un prestito dalla tabella admin con aggiornamento immutabile istantaneo della vista
+	cambiaStatoPrestitoAdmin(prestito: Prestito, nuovoStato: string) {
+		this.erroreStato = '';
+		this.successoStato = '';
+		this.prestitoService.updateStatoPrestito(prestito.id!, nuovoStato).subscribe({
+			next: res => {
+				prestito.stato = res.prestito.stato;
+				// Aggiorna la reference dell'array così che Angular noti la modifica
+				this.tuttiIPrestiti = this.tuttiIPrestiti.map(item => item.id === prestito.id ? { ...item, stato: res.prestito.stato } : item);
+				this.successoStato = `Stato del prestito #${prestito.id} aggiornato a "${res.prestito.stato}".`;
+				// Aggiorna stato bene: in_corso -> occupato (false), altro -> disponibile (true)
+				const nuovoStatoBene = (res.prestito.stato === 'in_corso') ? false : true;
+				this.beneService.updateBene(prestito.id_bene, { stato: nuovoStatoBene }).subscribe();
+				this.cdr.detectChanges();
+			},
+			error: err => {
+				this.erroreStato = err.error?.detail || err.error?.errore || 'Errore nell\'aggiornamento dello stato del prestito.';
+				this.cdr.detectChanges();
+			}
+		});
+	}
+
 
 	getPrestitiRichiestiFiltrati(): Prestito[] {
 		let filtrati = this.prestitiRichiesti;
@@ -120,6 +142,12 @@ export class ListaPrestitiComponent implements OnInit {
 		this.router.navigate(['/prestiti', id]);
 	}
 
+	vaiAProfilo(id?: number) {
+		if (id) {
+			this.router.navigate(['/conversazioni/utente', id]);
+		}
+	}
+
 	// Mostra il modal feedback
 	apriFeedback(prestito: Prestito, destinatarioId: number) {
 		this.feedbackPrestito = prestito;
@@ -131,5 +159,9 @@ export class ListaPrestitiComponent implements OnInit {
 		this.showFeedbackModal = false;
 		this.feedbackPrestito = null;
 		this.feedbackDestinatarioId = null;
+	}
+
+	ngOnDestroy(): void {
+		this.userSub?.unsubscribe();
 	}
 }

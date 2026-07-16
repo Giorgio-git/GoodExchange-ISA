@@ -55,6 +55,20 @@ class UtenteLogin(BaseModel):
     password: str
 
 
+class UtenteUpdate(BaseModel):
+    """Payload per l'aggiornamento dinamico di un utente (PUT /api/utenti/:id)."""
+
+    nome: Optional[str] = None
+    cognome: Optional[str] = None
+    password: Optional[str] = None
+    regione: Optional[str] = None
+    provincia: Optional[str] = None
+    citta: Optional[str] = None
+    via: Optional[str] = None
+    civico: Optional[str] = None
+    ruolo: Optional[Literal["admin", "utente"]] = None
+
+
 class StatoUpdate(BaseModel):
     """Payload per l'aggiornamento dello stato utente."""
 

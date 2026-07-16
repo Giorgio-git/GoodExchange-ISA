@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Suggerimento } from '../modelli/suggerimento.model';
 
@@ -9,8 +9,16 @@ export class SuggerimentoService {
 
   constructor(private http: HttpClient) {}
 
-  getAll(): Observable<Suggerimento[]> {
-    return this.http.get<Suggerimento[]>(this.apiUrl);
+  getAll(filtri?: any): Observable<Suggerimento[]> {
+    let params = new HttpParams();
+    if (filtri) {
+      Object.keys(filtri).forEach(k => {
+        if (filtri[k] !== undefined && filtri[k] !== null && filtri[k] !== '') {
+          params = params.set(k, filtri[k]);
+        }
+      });
+    }
+    return this.http.get<Suggerimento[]>(this.apiUrl, { params });
   }
 
   getByUtente(id_mittente: number): Observable<Suggerimento[]> {

@@ -85,3 +85,30 @@ button[type="submit"]:hover {
 	margin-bottom: 12px;
 	font-weight: 500;
 }
+.feedback-message {
+	margin: 12px 0 16px 0;
+	padding: 12px 16px;
+	border-radius: 8px;
+	font-size: 0.95rem;
+	font-weight: 500;
+	line-height: 1.4;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+.feedback-errore {
+	color: #991b1b;
+	background-color: #fef2f2;
+	border: 1px solid #fecaca;
+}
+.feedback-errore::before {
+	content: '⚠️ ';
+	margin-right: 4px;
+}
+.feedback-successo {
+	color: #166534;
+	background-color: #f0fdf4;
+	border: 1px solid #bbf7d0;
+}
+.feedback-successo::before {
+	content: '✅ ';
+	margin-right: 4px;
+}

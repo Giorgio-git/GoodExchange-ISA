@@ -92,7 +92,7 @@ export class SignupComponent {
         this.router.navigate(['/login']);
       },
       error: (err) => {
-        this.errore = err.error?.errore || 'Errore durante la registrazione';
+        this.errore = err.error?.detail || err.error?.errore || 'Errore durante la registrazione';
       }
     });
   }

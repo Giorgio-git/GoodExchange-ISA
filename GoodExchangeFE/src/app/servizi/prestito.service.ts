@@ -12,9 +12,10 @@ export class PrestitoService {
 
   constructor(private http: HttpClient) {}
 
-  // recupera tutti i prestiti, eventualmente filtrati
+  // recupera tutti i prestiti, eventualmente filtrati (usa /filtri se sono presenti date o parametri specifici)
   getPrestiti(filtri?: any): Observable<Prestito[]> {
     let params = new HttpParams();
+    let url = this.apiUrl;
     
     if (filtri) {
       Object.keys(filtri).forEach(key => {
@@ -22,8 +23,12 @@ export class PrestitoService {
           params = params.set(key, filtri[key]);
         }
       });
+      // Se sono presenti filtri per intervallo di date, usiamo l'endpoint dedicato /prestiti/filtri
+      if (filtri.data_da || filtri.data_a) {
+        url = `${this.apiUrl}/filtri`;
+      }
     }
-    return this.http.get<Prestito[]>(this.apiUrl, { params });
+    return this.http.get<Prestito[]>(url, { params });
   }
 
   // recupera un prestito tramite id
@@ -79,9 +84,17 @@ export class PrestitoService {
     return giorni;
   }
 
+  // Helper per formattare una data nativa JS nel formato YYYY-MM-DD locale (evitando lo slittamento UTC)
+  private formatLocalYYYYMMDD(d: Date): string {
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
   // verifica se un giorno è occupato basandosi sui prestiti
   isGiornoOccupato(data: Date, prestiti: Prestito[]): boolean {
-    const dataString = data.toISOString().split('T')[0];
+    const dataString = this.formatLocalYYYYMMDD(data);
     
     return prestiti.some(prestito => {
       return dataString >= prestito.data_inizio && dataString <= prestito.data_fine;
@@ -90,8 +103,9 @@ export class PrestitoService {
 
   // formatta data per l'input HTML
   formatDateForInput(date: Date): string {
-    return date.toISOString().split('T')[0];
+    return this.formatLocalYYYYMMDD(date);
   }
+
 
   // valida le date del prestito
   validateDates(dataInizio: string, dataFine: string): { valid: boolean; error?: string } {

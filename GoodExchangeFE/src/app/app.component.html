@@ -7,18 +7,6 @@
       </a>
     </div>
 
-    <!-- Barra di ricerca utenti (solo admin) -->
-    <div class="header-actions" *ngIf="isAdmin">
-      <form (ngSubmit)="cercaUtenti()" class="search-form">
-        <input 
-          type="text" 
-          [(ngModel)]="searchUtenti" 
-          name="searchUtenti"
-          placeholder="Cerca utenti per nome o ID..."
-          class="form-control search-input">
-        <button type="submit" class="btn btn-secondary search-btn">Cerca</button>
-      </form>
-    </div>
   </header>
 
   <!-- BODY CONTENITORE: SIDEBAR + MAIN CONTENT -->

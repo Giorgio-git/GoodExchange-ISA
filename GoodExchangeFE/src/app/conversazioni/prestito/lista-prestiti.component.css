@@ -4,9 +4,11 @@
 
 .lista-prestiti-container,
 .admin-prestiti-container {
-  max-width: 1050px;
+  width: 100%;
+  max-width: 100%;
   margin: 3.5rem auto;
-  padding: 0 1rem;
+  padding: 0 1.5rem;
+  box-sizing: border-box;
 }
 
 .prestiti-card {
@@ -113,7 +115,7 @@
 .prestiti-table {
   width: 100%;
   border-collapse: collapse;
-  text-align: left;
+  text-align: center;
 }
 
 .prestiti-table th {
@@ -125,6 +127,7 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
   border-bottom: 1px solid var(--color-slate-200);
+  text-align: center;
 }
 
 .prestiti-table td {
@@ -132,6 +135,7 @@
   font-size: 0.95rem;
   color: var(--color-slate-800);
   border-bottom: 1px solid var(--color-slate-100);
+  text-align: center;
 }
 
 .prestiti-table tr:last-child td {
@@ -205,6 +209,25 @@
   background-color: #bbf7d0;
 }
 
+.btn-segnala {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.btn-segnala:hover {
+  background-color: #fecaca;
+}
+
+.btn-annulla-admin {
+  background-color: #ef4444;
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.btn-annulla-admin:hover {
+  background-color: #dc2626;
+}
+
 .empty-message {
   text-align: center;
   padding: 3rem 1.5rem;
@@ -227,4 +250,24 @@
     width: 100%;
     justify-content: center;
   }
+}
+
+.btn-link {
+  background: none;
+  border: none;
+  color: var(--color-primary, #2563eb);
+  cursor: pointer;
+  padding: 0;
+  font-size: inherit;
+  font-family: inherit;
+  text-decoration: underline;
+  transition: opacity 0.2s;
+}
+
+.btn-link:hover {
+  opacity: 0.8;
+}
+
+.font-bold {
+  font-weight: 700;
 }
