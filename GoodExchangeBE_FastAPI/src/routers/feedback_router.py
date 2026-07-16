@@ -3,9 +3,9 @@ Router FastAPI per Feedback.
 Porting 1:1 di feedbackRouter.js.
 ORDINE: /username/:username PRIMA di /:id per evitare conflitti.
 
-ARCHITETTURA (SRS §NFR-03 — Three-Tier):
+ARCHITETTURA (Three-Tier):
   La creazione di un feedback delega al service layer per aggiornare
-  atomicamente la reputazione del destinatario (SRS §FR-19).
+  atomicamente la reputazione del destinatario.
 """
 
 import asyncpg
@@ -56,8 +56,7 @@ async def create_feedback(
     Crea feedback e aggiorna la reputazione media del destinatario.
 
     Delega al service layer (feedback_service) per incapsulare la logica
-    di business: creazione feedback + ricalcolo reputazione atomico
-    (SRS §FR-19, §9.4, §NFR-03).
+    di business: creazione feedback + ricalcolo reputazione atomico.
     """
     async with conn.transaction():
         result = await feedback_service.crea_feedback_e_aggiorna_reputazione(

@@ -11,14 +11,14 @@ from pydantic import BaseModel, field_validator, model_validator
 class FeedbackCreate(BaseModel):
     id_utente: int
     id_destinatario: int
-    voto: int  # 1–5 (CHECK nel DB — BK-05)
+    voto: int  # 1–5 (CHECK nel DB)
     data: Optional[datetime] = None
 
     @field_validator("voto")
     @classmethod
     def check_voto_valido(cls, v: int) -> int:
         """
-        Pre-condizione DbC (SRS §9.4, BK-05):
+        Pre-condizione DbC:
         il voto deve essere un intero nel range [1, 5].
         """
         if v < 1 or v > 5:
@@ -28,7 +28,7 @@ class FeedbackCreate(BaseModel):
     @model_validator(mode="after")
     def check_utenti_diversi(self) -> "FeedbackCreate":
         """
-        Pre-condizione DbC (SRS §9.4):
+        Pre-condizione DbC:
         l'utente non può lasciare un feedback a se stesso.
         """
         if self.id_utente == self.id_destinatario:

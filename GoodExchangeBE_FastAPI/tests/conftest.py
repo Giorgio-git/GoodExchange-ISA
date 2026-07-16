@@ -1,7 +1,7 @@
 """
 Configurazione fixtures pytest condivise per tutti i test.
 
-Architettura test (SRS §NFR-02):
+Architettura test:
 - Unit test: usano AsyncMock per isolare DAO e service (nessun DB reale)
 - Integration test: usano un DB PostgreSQL reale (goodexchange_test)
   con un client ASGI httpx che bypassa il network layer

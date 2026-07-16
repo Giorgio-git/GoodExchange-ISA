@@ -230,7 +230,7 @@ async def calcola_crediti_valore_beni(conn: asyncpg.Connection, id_utente: int) 
         sql_aggregata = """
             SELECT COALESCE(SUM(c.crediti), 0) as totale
             FROM bene b JOIN categoria c ON b.id_categoria = c.id
-            WHERE b.id_proprietario = $1
+            WHERE b.id_proprietario = $1 AND b.stato = TRUE
         """
         totale = await conn.fetchval(sql_aggregata, id_utente)
         await conn.execute(

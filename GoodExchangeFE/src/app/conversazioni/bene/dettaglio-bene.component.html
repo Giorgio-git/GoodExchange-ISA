@@ -56,7 +56,7 @@
         
         <span class="status-badge" [class.status-available]="bene.stato" [class.status-busy]="!bene.stato">
           <span class="status-dot"></span>
-          {{ bene.stato ? 'Disponibile per il prestito' : 'Attualmente occupato' }}
+          {{ bene.stato ? 'Disponibile per il prestito' : 'Attualmente ritirato' }}
         </span>
       </div>
 
@@ -96,7 +96,20 @@
         </button>
 
         <button *ngIf="isProprietario" class="btn btn-secondary btn-block" (click)="toggleEditForm()">
-          Modifica informazioni o stato
+          Modifica informazioni
+        </button>
+
+        <!-- Pulsante Cambio Stato Dinamico (Solo per il Proprietario) -->
+        <button
+          *ngIf="isProprietario"
+          class="btn btn-block"
+          [class.btn-success]="!bene.stato"
+          [class.btn-secondary]="bene.stato"
+          [disabled]="statoLoading"
+          (click)="toggleDisponibilita()"
+          style="margin-top: 0.75rem;"
+        >
+          {{ statoLoading ? 'Aggiornamento...' : (bene.stato ? 'Rendi non disponibile' : 'Rendi disponibile') }}
         </button>
       </div>
 

@@ -25,9 +25,7 @@ async def test_creazione_e_lettura_utente_integration(async_client: AsyncClient)
     assert res_create.status_code == 201
     data_create = res_create.json()
     assert data_create["username"] == unique_username
-    assert (
-        "password" not in data_create
-    )  # Sicurezza: la password non deve mai tornare! (SRS §NFR-05)
+    assert "password" not in data_create  # Sicurezza: la password non deve mai tornare!
 
     id_generato = data_create.get("id") or data_create.get("id_utente")
 

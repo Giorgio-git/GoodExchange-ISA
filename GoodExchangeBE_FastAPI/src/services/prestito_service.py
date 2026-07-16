@@ -90,7 +90,7 @@ async def crea_prestito(
     if data_fine <= data_inizio:
         raise ValueError("data_fine deve essere successiva a data_inizio")
 
-    # Verifica solvibilità (Pre4 DbC — §9.1 SRS e BK-01)
+    # Verifica solvibilità (Pre4 DbC)
     sql_bene = """
         SELECT b.id, COALESCE(c.crediti, 0) AS crediti_richiesti
         FROM bene b

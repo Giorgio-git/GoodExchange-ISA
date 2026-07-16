@@ -5,11 +5,10 @@ Incapsula la logica di business relativa ai Beni che va
 oltre la semplice persistenza (DAO). In particolare:
 
 - La creazione di un bene deve aggiornare atomicamente i crediti_valore_beni
-  del proprietario (Design by Contract — SRS §FR-08).
-- L'eliminazione di un bene deve ricalcolare atomicamente i crediti_valore_beni
-  (SRS §FR-04).
+  del proprietario (Design by Contract).
+- L'eliminazione di un bene deve ricalcolare atomicamente i crediti_valore_beni.
 
-Architettura Three-Tier (SRS §NFR-03):
+Architettura Three-Tier:
   bene_router.py → bene_service.py → bene_dao.py + utente_dao.py
 
 Il service non gestisce le transazioni: responsabilità del router
@@ -35,7 +34,7 @@ async def crea_bene_con_crediti(
     Crea un nuovo bene e aggiorna atomicamente i crediti_valore_beni
     del proprietario.
 
-    Design by Contract (SRS §9):
+    Design by Contract:
         Pre:  bene_data contiene id_proprietario, id_categoria, nome
         Pre:  id_proprietario esiste in T_Utenti
         Pre:  id_categoria esiste in T_Categorie
@@ -82,7 +81,7 @@ async def elimina_bene_con_crediti(
     Elimina un bene e ricalcola atomicamente i crediti_valore_beni
     del proprietario.
 
-    Design by Contract (SRS §9):
+    Design by Contract:
         Pre:  id_bene esiste in T_Beni con id_proprietario dato
         Post: bene rimosso da T_Beni
         Post: crediti_valore_beni(proprietario) ricalcolato
@@ -116,3 +115,60 @@ async def elimina_bene_con_crediti(
         id_proprietario,
     )
     return True
+
+
+async def blocca_bene_con_crediti(
+    conn: asyncpg.Connection,
+    id_bene: int,
+) -> bool:
+    """
+    Blocca un bene (imposta stato=False) e ricalcola atomicamente
+    i crediti_valore_beni del proprietario (poiché i beni bloccati
+    non generano crediti di cauzione a disposizione).
+    """
+    bene = await bene_dao.find_bene_by_id(conn, id_bene)
+    if not bene:
+        return False
+    success = await bene_dao.block_bene(conn, id_bene)
+    if success:
+        await utente_dao.calcola_crediti_valore_beni(conn, bene["id_proprietario"])
+        logger.info("Bene %s bloccato. Crediti proprietario %s ricalcolati.", id_bene, bene["id_proprietario"])
+    return success
+
+
+async def sblocca_bene_con_crediti(
+    conn: asyncpg.Connection,
+    id_bene: int,
+) -> bool:
+    """
+    Sblocca un bene (imposta stato=True) e ricalcola atomicamente
+    i crediti_valore_beni del proprietario (il bene torna a generare
+    crediti di cauzione a disposizione).
+    """
+    bene = await bene_dao.find_bene_by_id(conn, id_bene)
+    if not bene:
+        return False
+    success = await bene_dao.unblock_bene(conn, id_bene)
+    if success:
+        await utente_dao.calcola_crediti_valore_beni(conn, bene["id_proprietario"])
+        logger.info("Bene %s sbloccato. Crediti proprietario %s ricalcolati.", id_bene, bene["id_proprietario"])
+    return success
+
+
+async def aggiorna_bene_con_crediti(
+    conn: asyncpg.Connection,
+    id_bene: int,
+    aggiornamenti: dict,
+) -> bool:
+    """
+    Aggiorna un bene e, se la modifica coinvolge la categoria o lo stato,
+    ricalcola atomicamente i crediti_valore_beni del proprietario.
+    """
+    bene = await bene_dao.find_bene_by_id(conn, id_bene)
+    if not bene:
+        return False
+    success = await bene_dao.update_bene(conn, id_bene, aggiornamenti)
+    if success and ("id_categoria" in aggiornamenti or "stato" in aggiornamenti):
+        await utente_dao.calcola_crediti_valore_beni(conn, bene["id_proprietario"])
+        logger.info("Bene %s aggiornato. Crediti proprietario %s ricalcolati.", id_bene, bene["id_proprietario"])
+    return success

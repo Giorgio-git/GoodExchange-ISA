@@ -42,7 +42,7 @@ asyncio_mode = "auto"
 testpaths = ["tests"]
 
 [tool.coverage.run]
-# Branch coverage abilitata (C1 — SRS §NFR-02)
+# Branch coverage abilitata (C1)
 branch = true
 source = ["src"]
 omit = [
@@ -55,7 +55,7 @@ show_missing = true
 # Soglia corrente: 40% (il service layer critico ha coverage >90%).
 # I DAO hanno coverage bassa per design: testati tramite integration test con DB reale.
 # Aumentare progressivamente: 40% → 55% → 70% man mano che i test crescono.
-# SRS §NFR-02: target finale >= 70% (per valutazione del corso).
+# Target finale >= 70% (per valutazione del corso).
 fail_under = 40
 exclude_lines = [
     "pragma: no cover",

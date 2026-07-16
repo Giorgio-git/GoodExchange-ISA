@@ -52,7 +52,7 @@ async def delete_bene_immagine(conn: asyncpg.Connection, id_bene: int) -> None:
 
 
 async def find_beni_by_proprietari(
-    conn: asyncpg.Connection, id_proprietari: list[int]
+    conn: asyncpg.Connection, id_proprietari: list[int], stato: Optional[bool] = None
 ) -> list[dict]:
     """
     Restituisce i beni appartenenti a una lista di proprietari (ricerca per zona).
@@ -62,13 +62,22 @@ async def find_beni_by_proprietari(
     try:
         if not id_proprietari:
             return []
-        sql = """
-            SELECT id, id_proprietario, id_categoria, nome, descrizione, peso, stato
-            FROM bene
-            WHERE id_proprietario = ANY($1)
-            ORDER BY id DESC
-        """
-        rows = await conn.fetch(sql, id_proprietari)
+        if stato is not None:
+            sql = """
+                SELECT id, id_proprietario, id_categoria, nome, descrizione, peso, stato
+                FROM bene
+                WHERE id_proprietario = ANY($1) AND stato = $2
+                ORDER BY id DESC
+            """
+            rows = await conn.fetch(sql, id_proprietari, stato)
+        else:
+            sql = """
+                SELECT id, id_proprietario, id_categoria, nome, descrizione, peso, stato
+                FROM bene
+                WHERE id_proprietario = ANY($1)
+                ORDER BY id DESC
+            """
+            rows = await conn.fetch(sql, id_proprietari)
         return [dict(r) for r in rows]
     except Exception as err:
         logger.error("Errore in find_beni_by_proprietari: %s", err)
@@ -156,7 +165,7 @@ async def create_bene_raw(conn: asyncpg.Connection, bene: dict) -> Optional[dict
 
     Questa funzione è chiamata da bene_service.crea_bene_con_crediti(),
     che si occupa di aggiornare i crediti_valore_beni del proprietario
-    nel service layer (Architettura Three-Tier — SRS §NFR-03).
+    nel service layer (Architettura Three-Tier).
 
     Args:
         conn: Connessione asyncpg.

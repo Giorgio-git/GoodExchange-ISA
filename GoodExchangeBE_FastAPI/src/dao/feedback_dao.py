@@ -96,7 +96,7 @@ async def calcola_reputazione_media(
     di tutti i feedback ricevuti.
 
     Questa funzione è chiamata da feedback_service dopo ogni nuovo feedback
-    per aggiornare atomicamente la reputazione (SRS §FR-19, §9.4).
+    per aggiornare atomicamente la reputazione.
 
     Args:
         conn: Connessione asyncpg.

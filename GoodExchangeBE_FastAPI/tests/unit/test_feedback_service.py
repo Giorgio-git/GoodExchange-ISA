@@ -3,7 +3,7 @@ Test unitari per feedback_service.py
 
 Struttura:
 1. PBT con Hypothesis su calcola_reputazione_media_locale() (funzione pura)
-   — SRS §FR-19, §9.4, INV-05: reputazione IN [1.0, 5.0]
+   — reputazione IN [1.0, 5.0]
 2. Unit test con AsyncMock su crea_feedback_e_aggiorna_reputazione()
 
 Riferimenti griglia di valutazione:
@@ -21,7 +21,7 @@ from src.services import feedback_service
 
 # ——————————————————————————————————————————————
 # 1. PBT con Hypothesis — calcola_reputazione_media_locale (funzione pura)
-# SRS §9.4, INV-05: reputazione IN [1.0, 5.0]
+# reputazione IN [1.0, 5.0]
 # ——————————————————————————————————————————————
 
 # definiamo una strategia hypothesis per generare voti e liste di voti validi
@@ -37,7 +37,7 @@ lista_voti = st.lists(
 )  # imposta il numero massimo di esempi che hypothesis deve generare
 def test_pbt_reputazione_sempre_in_range(voti):
     """
-    Invariante INV-05 (SRS §10):
+    Invariante DbC:
     Per qualsiasi lista di voti validi, la reputazione media è sempre in [1.0, 5.0].
     """
     media = feedback_service.calcola_reputazione_media_locale(voti)
@@ -100,7 +100,7 @@ def test_reputazione_tutti_minimi():
 async def test_crea_feedback_aggiorna_reputazione():
     """
     Test base: crea un feedback e verifica che la reputazione venga aggiornata.
-    Design by Contract (SRS §9.4):
+    Design by Contract:
         Post: feedback creato in T_Feedback
         Post: utente[id_destinatario].reputazione = AVG(voti ricevuti)
     """

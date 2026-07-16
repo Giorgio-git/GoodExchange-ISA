@@ -162,7 +162,7 @@ async def test_aggiorna_stato_completato_side_effect():
     1. aggiornare i crediti accumulati del proprietario (calcola_crediti_accumulati)
     2. inviare notifica delivery (dopo commit)
     Senza modificare lo stato del catalogo del bene.
-    SRS §FR-16, §9.2 — DbC: Post-condizione per stato 'completato'.
+    DbC: Post-condizione per stato 'completato'.
     """
     mock_conn = AsyncMock()
     mock_conn.fetchrow.side_effect = [
@@ -200,7 +200,7 @@ async def test_aggiorna_stato_completato_side_effect():
 @pytest.mark.asyncio
 async def test_aggiorna_stato_prestito_non_trovato():
     """
-    Pre-condizione DbC (SRS §9.2):
+    Pre-condizione DbC:
     Se il prestito non esiste nel DB, solleva ValueError.
     """
     mock_conn = AsyncMock()
@@ -214,7 +214,7 @@ async def test_aggiorna_stato_prestito_non_trovato():
 async def test_crea_prestito_successo():
     """
     Test percorso felice: crea_prestito() con dati validi e bene disponibile.
-    Post-condizione DbC (SRS §9.1): il prestito deve essere in stato 'richiesto'.
+    Post-condizione DbC: il prestito deve essere in stato 'richiesto'.
     """
     mock_conn = AsyncMock()
     d1 = date(2026, 8, 1)

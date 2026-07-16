@@ -46,13 +46,15 @@
   display: grid;
   grid-template-columns: 1.1fr 1fr;
   gap: 3rem;
-  align-items: start;
+  align-items: center;
 }
 
 /* --- Visual / Foto a sinistra --- */
 .bene-visual-col {
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  height: 100%;
   gap: 1rem;
 }
 

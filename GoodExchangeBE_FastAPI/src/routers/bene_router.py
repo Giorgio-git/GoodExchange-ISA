@@ -64,16 +64,19 @@ async def get_beni(
             if not utenti:
                 return []
             id_proprietari = [u["id"] for u in utenti]
-            return await bene_dao.find_beni_by_proprietari(conn, id_proprietari)
+            stato_filtro = stato if id_proprietario is not None else (True if stato is None else stato)
+            return await bene_dao.find_beni_by_proprietari(conn, id_proprietari, stato=stato_filtro)
 
         # Filtro standard
         filters: dict = {}
+        if id_proprietario is None and stato is None:
+            filters["stato"] = True
+        elif stato is not None:
+            filters["stato"] = stato
         if id_proprietario is not None:
             filters["id_proprietario"] = id_proprietario
         if id_categoria is not None:
             filters["id_categoria"] = id_categoria
-        if stato is not None:
-            filters["stato"] = stato
         if search:
             filters["search"] = search
         if sort:
@@ -93,7 +96,7 @@ async def create_bene(
     """
     Crea un nuovo bene e aggiorna i crediti_valore_beni del proprietario.
     Delega al bene_service per la logica di aggiornamento crediti
-    (SRS §FR-08, §NFR-03 — Architettura Three-Tier).
+    (Architettura Three-Tier).
     """
     async with conn.transaction():
         result = await bene_service.crea_bene_con_crediti(conn, bene.model_dump())
@@ -157,9 +160,9 @@ async def blocca_bene(
     id: int,
     conn: asyncpg.Connection = Depends(get_connection),
 ):
-    """Blocca un bene (stato=False). Porting di PUT /beni/:id/blocca in beneRouter.js."""
+    """Blocca un bene (stato=False) e ricalcola i crediti. Porting di PUT /beni/:id/blocca."""
     async with conn.transaction():
-        result = await bene_dao.block_bene(conn, id)
+        result = await bene_service.blocca_bene_con_crediti(conn, id)
         if not result:
             raise HTTPException(status_code=404, detail="Bene non trovato")
         return {"messaggio": "Bene bloccato con successo"}
@@ -171,9 +174,9 @@ async def sblocca_bene(
     id: int,
     conn: asyncpg.Connection = Depends(get_connection),
 ):
-    """Sblocca un bene (stato=True). Porting di PUT /beni/:id/sblocca in beneRouter.js."""
+    """Sblocca un bene (stato=True) e ricalcola i crediti. Porting di PUT /beni/:id/sblocca."""
     async with conn.transaction():
-        result = await bene_dao.unblock_bene(conn, id)
+        result = await bene_service.sblocca_bene_con_crediti(conn, id)
         if not result:
             raise HTTPException(status_code=404, detail="Bene non trovato")
         return {"messaggio": "Bene sbloccato con successo"}
@@ -210,7 +213,7 @@ async def update_bene(
     async with conn.transaction():
         # Filtra i campi None
         data = {k: v for k, v in aggiornamenti.model_dump().items() if v is not None}
-        result = await bene_dao.update_bene(conn, id, data)
+        result = await bene_service.aggiorna_bene_con_crediti(conn, id, data)
         if not result:
             raise HTTPException(
                 status_code=404, detail="Bene non trovato o non aggiornato"
@@ -228,7 +231,7 @@ async def delete_bene(
     """
     Elimina un bene e ricalcola i crediti_valore_beni del proprietario.
     Delega al bene_service per la logica di ricalcolo crediti
-    (SRS §FR-04, §NFR-03 — Architettura Three-Tier).
+    (Architettura Three-Tier).
     """
     async with conn.transaction():
         result = await bene_service.elimina_bene_con_crediti(conn, id, id_proprietario)

@@ -140,7 +140,7 @@ async def test_system_scenario_1_ciclo_prestito_feedback_crediti(async_client: A
     res_mario_post = await async_client.get(f"/api/utenti/{id_mario}")
     assert res_mario_post.json()["crediti_accumulati"] == 20
 
-    # 5. RILASCIO FEEDBACK E CALCOLO REPUTAZIONE (FR-19 / INV-05)
+    # 5. RILASCIO FEEDBACK E CALCOLO REPUTAZIONE
     res_fb = await async_client.post("/api/feedback", json={
         "id_utente": id_luigi,
         "id_destinatario": id_mario,

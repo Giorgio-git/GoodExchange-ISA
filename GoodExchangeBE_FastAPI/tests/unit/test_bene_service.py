@@ -6,8 +6,6 @@ Struttura:
    — verifica che il service chiami create_bene_raw + calcola_crediti_valore_beni
 2. Unit test con AsyncMock su elimina_bene_con_crediti()
    — verifica che il service chiami delete_bene + calcola_crediti_valore_beni
-
-Riferimenti SRS: §FR-08, §FR-04, §9.1 (DbC crea_bene), §NFR-03 (Three-Tier)
 """
 
 from unittest.mock import AsyncMock, patch
@@ -28,7 +26,7 @@ from src.services import bene_service
 @pytest.mark.asyncio
 async def test_crea_bene_aggiorna_crediti():
     """
-    Post-condizione DbC (SRS §FR-08):
+    Post-condizione DbC:
     Dopo la creazione del bene, calcola_crediti_valore_beni deve essere
     chiamato esattamente una volta per il proprietario.
     """
@@ -135,7 +133,7 @@ async def test_crea_bene_chiama_create_con_dati_corretti():
 @pytest.mark.asyncio
 async def test_elimina_bene_aggiorna_crediti():
     """
-    Post-condizione DbC (SRS §FR-04):
+    Post-condizione DbC:
     Dopo l'eliminazione del bene, i crediti_valore_beni del proprietario
     devono essere ricalcolati (il bene è già rimosso dal DB).
     """
@@ -181,3 +179,60 @@ async def test_elimina_bene_non_trovato():
 
     assert result is False
     mock_crediti.assert_not_awaited()  # la funzione che aggiorna i crediti non deve essere chiamata neanche una volta
+
+
+@pytest.mark.asyncio
+async def test_blocca_bene_aggiorna_crediti():
+    """Testa che il blocco di un bene ricalcoli i crediti del proprietario."""
+    mock_conn = AsyncMock()
+    with (
+        patch("src.dao.bene_dao.find_bene_by_id", new_callable=AsyncMock) as mock_find,
+        patch("src.dao.bene_dao.block_bene", new_callable=AsyncMock) as mock_block,
+        patch("src.dao.utente_dao.calcola_crediti_valore_beni", new_callable=AsyncMock) as mock_crediti,
+    ):
+        mock_find.return_value = {"id": 10, "id_proprietario": 5}
+        mock_block.return_value = True
+
+        result = await bene_service.blocca_bene_con_crediti(mock_conn, id_bene=10)
+
+    assert result is True
+    mock_block.assert_awaited_once_with(mock_conn, 10)
+    mock_crediti.assert_awaited_once_with(mock_conn, 5)
+
+
+@pytest.mark.asyncio
+async def test_sblocca_bene_aggiorna_crediti():
+    """Testa che lo sblocco di un bene ricalcoli i crediti del proprietario."""
+    mock_conn = AsyncMock()
+    with (
+        patch("src.dao.bene_dao.find_bene_by_id", new_callable=AsyncMock) as mock_find,
+        patch("src.dao.bene_dao.unblock_bene", new_callable=AsyncMock) as mock_unblock,
+        patch("src.dao.utente_dao.calcola_crediti_valore_beni", new_callable=AsyncMock) as mock_crediti,
+    ):
+        mock_find.return_value = {"id": 10, "id_proprietario": 5}
+        mock_unblock.return_value = True
+
+        result = await bene_service.sblocca_bene_con_crediti(mock_conn, id_bene=10)
+
+    assert result is True
+    mock_unblock.assert_awaited_once_with(mock_conn, 10)
+    mock_crediti.assert_awaited_once_with(mock_conn, 5)
+
+
+@pytest.mark.asyncio
+async def test_aggiorna_bene_aggiorna_crediti_quando_stato_o_categoria_cambia():
+    """Testa che l'aggiornamento con cambio stato o categoria ricalcoli i crediti."""
+    mock_conn = AsyncMock()
+    with (
+        patch("src.dao.bene_dao.find_bene_by_id", new_callable=AsyncMock) as mock_find,
+        patch("src.dao.bene_dao.update_bene", new_callable=AsyncMock) as mock_update,
+        patch("src.dao.utente_dao.calcola_crediti_valore_beni", new_callable=AsyncMock) as mock_crediti,
+    ):
+        mock_find.return_value = {"id": 10, "id_proprietario": 5}
+        mock_update.return_value = True
+
+        result = await bene_service.aggiorna_bene_con_crediti(mock_conn, id_bene=10, aggiornamenti={"stato": False})
+
+    assert result is True
+    mock_update.assert_awaited_once_with(mock_conn, 10, {"stato": False})
+    mock_crediti.assert_awaited_once_with(mock_conn, 5)

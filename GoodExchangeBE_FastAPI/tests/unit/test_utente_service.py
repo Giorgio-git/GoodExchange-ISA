@@ -3,7 +3,6 @@ Test unitari per utente_service.py
 
 Struttura:
 1. PBT con Hypothesis su verifica_solvibilita_utente() (funzione pura)
-   — SRS §9.3, BK-01
 2. Unit test classici con AsyncMock su registra_utente()
 
 Riferimenti griglia di valutazione:
@@ -21,7 +20,7 @@ from src.services import utente_service
 
 # ——————————————————————————————————————————————
 # 1. PBT con Hypothesis — verifica_solvibilita_utente (funzione pura)
-# SRS §9.3, BK-01: cauzione + crediti_accumulati >= valore_bene
+# cauzione + crediti_accumulati >= valore_bene
 # ——————————————————————————————————————————————
 
 
@@ -35,7 +34,7 @@ def test_pbt_verifica_solvibilita_correttezza(
     cauzione, crediti_accumulati, valore_bene
 ):
     """
-    PBT — Proprietà matematica (SRS §9.3):
+    PBT — Proprietà matematica:
     Per qualsiasi combinazione valida di input, la funzione deve restituire
     esattamente (cauzione + crediti_accumulati) >= valore_bene.
     """
@@ -68,7 +67,7 @@ def test_pbt_solvibilita_monotona(cauzione, crediti_accumulati, valore_bene):
 
 def test_pbt_solvibilita_edge_case_uguaglianza():
     """
-    Edge case DbC: cauzione + crediti == valore_bene deve essere True (BK-01 usa >=).
+    Edge case DbC: cauzione + crediti == valore_bene deve essere True.
     """
     assert utente_service.verifica_solvibilita_utente(50.0, 50.0, 100.0) is True
 
@@ -143,7 +142,7 @@ async def test_registra_utente_successo():
         }
         result = await utente_service.registra_utente(mock_conn, dict(utente_data))
 
-    # Post-condizione: la password NON deve essere nella risposta (SRS §NFR-05)
+    # Post-condizione: la password NON deve essere nella risposta
     assert "password" not in result
     assert result["id"] == 42
     assert result["username"] == "testuser"

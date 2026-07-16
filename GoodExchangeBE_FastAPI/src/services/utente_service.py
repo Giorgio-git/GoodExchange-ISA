@@ -4,17 +4,17 @@ Service Layer per l'entità Utente.
 Incapsula la logica di business relativa agli utenti che va oltre
 la semplice persistenza (DAO). In particolare:
 
-- La verifica di solvibilità (Business Rule BK-01 — SRS §6) è una funzione
+- La verifica di solvibilità è una funzione
   pura testabile indipendentemente dal database.
 - La registrazione utente centralizza le regole di business sul ruolo
   e sui valori iniziali dei crediti.
 
-Design by Contract (SRS §9.3):
+Design by Contract:
     verifica_solvibilita_utente:
         Pre:  cauzione >= 0 AND crediti_accumulati >= 0 AND valore_bene > 0
         Post: return == (cauzione + crediti_accumulati) >= valore_bene
 
-Architettura Three-Tier (SRS §NFR-03):
+Architettura Three-Tier:
   utente_router.py → utente_service.py → utente_dao.py
 """
 
@@ -35,10 +35,10 @@ def verifica_solvibilita_utente(
 ) -> bool:
     """
     Verifica se un utente ha capacità di credito sufficiente per richiedere
-    un bene (Business Rule BK-01 — SRS §6).
+    un bene.
 
     Funzione pura: nessun accesso al database, nessun side-effect.
-    Testabile con Property-Based Testing (Hypothesis — SRS §9.3).
+    Testabile con Property-Based Testing (Hypothesis).
 
     Design by Contract:
         Pre:  cauzione >= 0

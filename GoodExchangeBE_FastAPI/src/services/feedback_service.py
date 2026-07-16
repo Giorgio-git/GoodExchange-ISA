@@ -3,16 +3,16 @@ Service Layer per l'entità Feedback.
 
 Incapsula la logica di business del feedback che va oltre la semplice
 persistenza: al momento della creazione di un feedback, la reputazione
-media del destinatario deve essere aggiornata atomicamente (SRS §FR-19).
+media del destinatario deve essere aggiornata atomicamente.
 
-Design by Contract (SRS §9.4):
+Design by Contract:
     Pre:  voto IN {1,2,3,4,5}
     Pre:  id_utente != id_destinatario
     Post: feedback creato in T_Feedback
     Post: utente[id_destinatario].reputazione = AVG(tutti i voti ricevuti)
     Invariante: reputazione IN [1.0, 5.0]
 
-Architettura Three-Tier (SRS §NFR-03):
+Architettura Three-Tier:
   feedback_router.py → feedback_service.py → feedback_dao.py + utente_dao.py
 """
 
@@ -34,7 +34,7 @@ async def crea_feedback_e_aggiorna_reputazione(
     Crea un feedback e aggiorna atomicamente la reputazione media
     del destinatario come media aritmetica di tutti i voti ricevuti.
 
-    Design by Contract (SRS §9.4):
+    Design by Contract:
         Pre:  feedback_data['voto'] IN {1, 2, 3, 4, 5}
         Pre:  feedback_data['id_utente'] != feedback_data['id_destinatario']
         Post: feedback inserito in T_Feedback
@@ -87,7 +87,7 @@ def calcola_reputazione_media_locale(voti: list[int]) -> float:
     Calcola la media aritmetica di una lista di voti.
 
     Funzione pura (nessun side-effect) testabile con Property-Based Testing
-    (Hypothesis — SRS §9.3).
+    (Hypothesis).
 
     Design by Contract:
         Pre:  len(voti) > 0

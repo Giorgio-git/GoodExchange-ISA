@@ -47,6 +47,7 @@ export class DettaglioBeneComponent implements OnInit {
     occupiedDates: Date[] = [];
     editError: string = '';
     editSuccess: string = '';
+    statoLoading: boolean = false;
 
     constructor(
         private route: ActivatedRoute,
@@ -313,6 +314,29 @@ export class DettaglioBeneComponent implements OnInit {
             error: () => {
                 this.editError = 'Errore nel salvataggio. Riprova.';
                 this.editSuccess = '';
+            }
+        });
+    }
+
+    // Metodo per cambiare lo stato di disponibilità del bene (ritiro dal catalogo / rimessa in catalogo)
+    toggleDisponibilita(): void {
+        if (!this.bene || !this.bene.id) return;
+        this.statoLoading = true;
+
+        const operazione$ = this.bene.stato 
+            ? this.beneService.blockBene(this.bene.id)
+            : this.beneService.unblockBene(this.bene.id);
+
+        operazione$.subscribe({
+            next: () => {
+                if (this.bene) {
+                    this.bene.stato = !this.bene.stato;
+                }
+                this.statoLoading = false;
+            },
+            error: (err) => {
+                console.error('Errore durante il cambio di stato del bene:', err);
+                this.statoLoading = false;
             }
         });
     }
