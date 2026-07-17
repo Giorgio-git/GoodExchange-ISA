@@ -1,6 +1,5 @@
 """
 Router FastAPI per Feedback.
-Porting 1:1 di feedbackRouter.js.
 ORDINE: /username/:username PRIMA di /:id per evitare conflitti.
 
 ARCHITETTURA (Three-Tier):
@@ -24,7 +23,7 @@ router = APIRouter(tags=["Feedback"])
 async def get_feedback_by_username(
     username: str, conn: asyncpg.Connection = Depends(get_connection)
 ):
-    """Feedback per username. Porting di GET /feedback/username/:username."""
+    """Feedback per username."""
     async with conn.transaction():
         feedback = await feedback_dao.find_feedback_by_username(conn, username)
         if not feedback:
@@ -38,7 +37,7 @@ async def get_feedback_by_username(
 async def get_feedback_by_user_id(
     id: int, conn: asyncpg.Connection = Depends(get_connection)
 ):
-    """Feedback per ID utente. Porting di GET /feedback/:id."""
+    """Feedback per ID utente."""
     async with conn.transaction():
         feedback = await feedback_dao.find_feedback_by_user_id(conn, id)
         if not feedback:
@@ -69,7 +68,7 @@ async def create_feedback(
 
 @router.delete("/feedback/{id}")
 async def delete_feedback(id: int, conn: asyncpg.Connection = Depends(get_connection)):
-    """Elimina feedback (solo admin). Porting di DELETE /feedback/:id."""
+    """Elimina feedback (solo admin)."""
     async with conn.transaction():
         result = await feedback_dao.delete_feedback(conn, id)
         if not result:

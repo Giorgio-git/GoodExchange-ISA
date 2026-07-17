@@ -1,6 +1,5 @@
 """
 DAO per l'entità Categoria.
-Porting 1:1 di GoodExchangeBE/dao/categoriaDao.js in Python/asyncpg.
 """
 
 import logging
@@ -38,7 +37,7 @@ async def find_categoria_by_id(
 
 
 async def create_categoria(conn: asyncpg.Connection, categoria: dict) -> Optional[dict]:
-    """Crea una nuova categoria. Porting di createCategoria() in categoriaDao.js."""
+    """Crea una nuova categoria."""
     try:
         sql = """
             INSERT INTO categoria (nome, crediti, descrizione)

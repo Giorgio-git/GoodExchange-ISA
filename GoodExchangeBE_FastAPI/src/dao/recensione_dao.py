@@ -1,6 +1,5 @@
 """
 DAO per l'entità Recensione.
-Porting 1:1 di GoodExchangeBE/dao/recensioneDao.js in Python/asyncpg.
 """
 
 import logging

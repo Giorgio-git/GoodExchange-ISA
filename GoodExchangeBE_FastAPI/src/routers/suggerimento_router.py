@@ -1,6 +1,5 @@
 """
 Router FastAPI per Suggerimento.
-Porting 1:1 di suggerimentoRouter.js.
 ORDINE: /utente/:id PRIMA di /:id e PUT /:id/stato.
 """
 
@@ -23,7 +22,7 @@ async def update_stato_suggerimento(
     body: StatoSuggerimentoUpdate,
     conn: asyncpg.Connection = Depends(get_connection),
 ):
-    """Aggiorna stato suggerimento. Porting di PUT /suggerimenti/:id/stato."""
+    """Aggiorna stato suggerimento."""
     async with conn.transaction():
         ok = await suggerimento_dao.update_suggerimento_stato(conn, id, body.stato)
         if not ok:
@@ -37,7 +36,7 @@ async def get_suggerimenti(
     id_mittente: Optional[int] = Query(None),
     stato: Optional[str] = Query(None),
 ):
-    """Elenco suggerimenti con filtri. Porting di GET /suggerimenti."""
+    """Elenco suggerimenti con filtri."""
     filtri: dict = {}
     if id_mittente is not None:
         filtri["id_mittente"] = id_mittente
@@ -51,7 +50,7 @@ async def create_suggerimento(
     body: SuggerimentoCreate,
     conn: asyncpg.Connection = Depends(get_connection),
 ):
-    """Crea suggerimento. Porting di POST /suggerimenti."""
+    """Crea suggerimento."""
     async with conn.transaction():
         if not body.id_mittente:
             raise HTTPException(status_code=400, detail="id_mittente richiesto")
@@ -64,5 +63,5 @@ async def create_suggerimento(
 async def get_suggerimenti_utente(
     id: int, conn: asyncpg.Connection = Depends(get_connection)
 ):
-    """Suggerimenti per utente. Porting di GET /suggerimenti/utente/:id."""
+    """Suggerimenti per utente."""
     return await suggerimento_dao.find_suggerimenti(conn, {"id_mittente": id})

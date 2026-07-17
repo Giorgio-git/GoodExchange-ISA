@@ -1,6 +1,5 @@
 """
 DAO per l'entità Feedback.
-Porting 1:1 di GoodExchangeBE/dao/feedbackDao.js in Python/asyncpg.
 """
 
 import logging
@@ -31,9 +30,6 @@ async def find_feedback_by_username(
 ) -> list[dict]:
     """
     Restituisce i feedback per un utente identificato per username.
-    Porting di findFeedbackByUsername() in feedbackDao.js.
-    Nota: il codice JS originale aveva un bug (controllava rowsUtente.length
-    invece di rowsUtente.rows.length); qui viene implementato correttamente.
     """
     try:
         sql_utente = "SELECT id FROM utente WHERE username=$1"

@@ -1,6 +1,5 @@
 """
 DAO per l'entità Utente.
-Porting 1:1 di GoodExchangeBE/dao/utenteDao.js in Python/asyncpg.
 
 Note sulla traduzione:
 - connection.query(sql, params) → conn.fetch/fetchrow/fetchval/execute(sql, *params)
@@ -41,7 +40,6 @@ async def find_utenti(conn: asyncpg.Connection, filtri: dict) -> list[dict]:
     """
     Restituisce una lista filtrata di utenti.
     La clausola WHERE viene costruita dinamicamente dai filtri forniti.
-    Porting di findUtenti() in utenteDao.js.
     """
     try:
         sql = "SELECT * FROM utente"
@@ -138,7 +136,6 @@ async def find_utente_by_username(
 async def create_utente(conn: asyncpg.Connection, utente: dict) -> Optional[dict]:
     """
     Inserisce un nuovo utente nel database.
-    Porting di createUtente() in utenteDao.js.
     Restituisce il dict utente con l'id generato o None se fallisce.
     """
     try:
@@ -181,7 +178,6 @@ async def update_utente(
 ) -> list:
     """
     Aggiornamento dinamico dei campi di un utente.
-    Porting di updateUtente() in utenteDao.js.
     """
     try:
         parts: list[str] = []
@@ -224,7 +220,6 @@ async def calcola_crediti_valore_beni(conn: asyncpg.Connection, id_utente: int) 
     """
     Calcola la somma dei crediti delle categorie dei beni messi a disposizione dall'utente
     e aggiorna il campo crediti_valore_beni.
-    Porting di calcolaCreditiValoreBeni() in utenteDao.js.
     """
     try:
         sql_aggregata = """
@@ -248,7 +243,6 @@ async def calcola_crediti_accumulati(conn: asyncpg.Connection, id_utente: int) -
     """
     Calcola la somma dei crediti guadagnati tramite prestiti completati.
     Aggiorna il campo crediti_accumulati dell'utente.
-    Porting di calcolaCreditiAccumulati() in utenteDao.js.
     """
     try:
         sql_aggregata = """

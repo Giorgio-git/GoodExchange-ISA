@@ -78,13 +78,12 @@ async def crea_prestito(
     """
     Crea un prestito nello stato 'richiesto'.
 
-    Logica (Strict 2PL + Design by Contract):
+    Logica:
     1. Verifica che data_fine > data_inizio (precondizione)
     2. Verifica disponibilità del bene nel periodo richiesto
     3. Inserisce il prestito in stato 'richiesto'
 
     La transazione esterna (in prestito_router.py) garantisce l'atomicità.
-    Porting della logica in prestitoRouter.js (POST /prestiti).
     """
     # Precondizione: date valide
     if data_fine <= data_inizio:
@@ -147,17 +146,10 @@ async def aggiorna_stato_prestito(
     """
     Aggiorna lo stato di un prestito rispettando la FSM.
 
-    Implementa Strict 2PL (Sezione 4.4 del contesto):
-    - SELECT ... FOR UPDATE acquisisce il lock esclusivo sulla riga prestito
-      impedendo aggiornamenti concorrenti (prevenzione Lost Update)
-    - Il lock è rilasciato automaticamente al COMMIT/ROLLBACK della transazione
-
-    Side-effects al cambio di stato:
-    - 'in_corso': blocca il bene (stato=False)
-    - 'completato': sblocca il bene, aggiorna crediti proprietario, chiama notifica_delivery
-    - 'annullato'/'rifiutato': sblocca il bene se era bloccato
-
-    Porting di updateStatoPrestito() in PrestitoDao.js.
+    Controlli e side-effects al cambio di stato:
+    - 'accettato': esegue il controllo anti-Double Booking verificando nuovamente la disponibilità del bene nelle date richieste (`verifica_disponibilita`).
+    - 'in_corso': transizione di stato verso il periodo attivo di prestito.
+    - 'completato': ricalcola e aggiorna i crediti accumulati (`crediti_accumulati`) dell'utente proprietario ed esegue la notifica asincrona di delivery (`notifica_delivery`).
     """
     # ——— Strict 2PL: acquisizione lock esclusivo ———
     sql_lock = "SELECT * FROM prestito WHERE id=$1 FOR UPDATE"

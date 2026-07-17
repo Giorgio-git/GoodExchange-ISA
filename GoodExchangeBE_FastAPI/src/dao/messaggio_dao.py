@@ -1,6 +1,5 @@
 """
 DAO per l'entità Messaggio.
-Porting 1:1 di GoodExchangeBE/dao/messaggioDao.js in Python/asyncpg.
 """
 
 import logging

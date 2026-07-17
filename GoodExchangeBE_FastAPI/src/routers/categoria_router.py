@@ -1,4 +1,4 @@
-"""Router FastAPI per Categoria. Porting 1:1 di categoriaRouter.js."""
+"""Router FastAPI per Categoria."""
 
 import asyncpg
 from fastapi import APIRouter, Depends, HTTPException
@@ -12,14 +12,14 @@ router = APIRouter(tags=["Categorie"])
 
 @router.get("/categorie")
 async def get_categorie(conn: asyncpg.Connection = Depends(get_connection)):
-    """Elenco categorie. Porting di GET /categorie."""
+    """Elenco categorie."""
     async with conn.transaction():
         return await categoria_dao.find_categorie(conn)
 
 
 @router.get("/categorie/{id}")
 async def get_categoria(id: int, conn: asyncpg.Connection = Depends(get_connection)):
-    """Dettaglio categoria. Porting di GET /categorie/:id."""
+    """Dettaglio categoria."""
     async with conn.transaction():
         cat = await categoria_dao.find_categoria_by_id(conn, id)
         if not cat:
@@ -32,7 +32,7 @@ async def create_categoria(
     categoria: CategoriaCreate,
     conn: asyncpg.Connection = Depends(get_connection),
 ):
-    """Crea categoria. Porting di POST /categorie."""
+    """Crea categoria."""
     try:
         async with conn.transaction():
             result = await categoria_dao.create_categoria(conn, categoria.model_dump())
@@ -53,7 +53,7 @@ async def update_categoria(
     aggiornamenti: CategoriaUpdate,
     conn: asyncpg.Connection = Depends(get_connection),
 ):
-    """Aggiorna categoria. Porting di PUT /categorie/:id."""
+    """Aggiorna categoria."""
     async with conn.transaction():
         data = {k: v for k, v in aggiornamenti.model_dump().items() if v is not None}
         result = await categoria_dao.update_categoria(conn, id, data)
@@ -66,7 +66,7 @@ async def update_categoria(
 
 @router.delete("/categorie/{id}")
 async def delete_categoria(id: int, conn: asyncpg.Connection = Depends(get_connection)):
-    """Elimina categoria. Porting di DELETE /categorie/:id."""
+    """Elimina categoria."""
     async with conn.transaction():
         result = await categoria_dao.delete_categoria(conn, id)
         if not result:

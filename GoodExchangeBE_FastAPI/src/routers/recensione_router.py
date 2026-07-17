@@ -1,4 +1,4 @@
-"""Router FastAPI per Recensione. Porting 1:1 di recensioneRouter.js."""
+"""Router FastAPI per Recensione."""
 
 from typing import Optional
 
@@ -18,7 +18,7 @@ async def get_recensioni(
     id_bene: Optional[int] = Query(None),
     id_beneficiario: Optional[int] = Query(None),
 ):
-    """Elenco recensioni con filtri. Porting di GET /recensioni."""
+    """Elenco recensioni con filtri."""
     async with conn.transaction():
         filtri: dict = {}
         if id_bene is not None:
@@ -30,7 +30,7 @@ async def get_recensioni(
 
 @router.get("/recensioni/{id}")
 async def get_recensione(id: int, conn: asyncpg.Connection = Depends(get_connection)):
-    """Dettaglio recensione. Porting di GET /recensioni/:id."""
+    """Dettaglio recensione."""
     async with conn.transaction():
         rec = await recensione_dao.find_recensione_by_id(conn, id)
         if not rec or not rec.get("id"):
@@ -43,7 +43,7 @@ async def create_recensione(
     recensione: RecensioneCreate,
     conn: asyncpg.Connection = Depends(get_connection),
 ):
-    """Crea recensione. Porting di POST /recensioni."""
+    """Crea recensione."""
     async with conn.transaction():
         result = await recensione_dao.create_recensione(conn, recensione.model_dump())
         if not result:
@@ -57,7 +57,7 @@ async def update_recensione(
     body: dict,
     conn: asyncpg.Connection = Depends(get_connection),
 ):
-    """Aggiorna recensione. Porting di PUT /recensioni/:id."""
+    """Aggiorna recensione."""
     async with conn.transaction():
         result = await recensione_dao.update_recensione(conn, id, body)
         if not result:
@@ -71,7 +71,7 @@ async def update_recensione(
 async def delete_recensione(
     id: int, conn: asyncpg.Connection = Depends(get_connection)
 ):
-    """Elimina recensione. Porting di DELETE /recensioni/:id."""
+    """Elimina recensione."""
     async with conn.transaction():
         result = await recensione_dao.delete_recensione(conn, id)
         if not result:

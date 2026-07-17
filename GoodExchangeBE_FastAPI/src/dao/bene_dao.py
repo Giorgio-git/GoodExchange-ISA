@@ -1,6 +1,5 @@
 """
 DAO per l'entità Bene.
-Porting 1:1 di GoodExchangeBE/dao/beneDao.js in Python/asyncpg.
 
 Gestione BYTEA: asyncpg restituisce i campi BYTEA come oggetti bytes.
 Il campo 'immagine' è escluso dalle query standard e gestito da endpoint dedicati.
@@ -57,7 +56,6 @@ async def find_beni_by_proprietari(
     """
     Restituisce i beni appartenenti a una lista di proprietari (ricerca per zona).
     Usa ANY($1) di asyncpg per la clausola IN efficiente.
-    Porting di findBeniByProprietari() in beneDao.js.
     """
     try:
         if not id_proprietari:
@@ -88,7 +86,6 @@ async def find_beni(conn: asyncpg.Connection, filters: dict) -> list[dict]:
     """
     Restituisce una lista filtrata di beni (senza immagine).
     Supporta: filtri esatti su campi validi, ricerca testuale 'search', sort, limit.
-    Porting di findBeni() in beneDao.js.
     """
     try:
         sql = "SELECT id, id_proprietario, id_categoria, nome, descrizione, peso, stato FROM bene"
@@ -148,7 +145,6 @@ async def find_beni(conn: asyncpg.Connection, filters: dict) -> list[dict]:
 async def find_bene_by_id(conn: asyncpg.Connection, id_bene: int) -> Optional[dict]:
     """
     Recupera un bene per ID (senza il campo immagine per evitare dati binari in JSON).
-    Porting di findBeneById() in beneDao.js.
     """
     try:
         sql = "SELECT id, id_proprietario, id_categoria, nome, descrizione, peso, stato FROM bene WHERE id=$1"
@@ -203,7 +199,6 @@ async def update_bene(
 ) -> bool:
     """
     Aggiornamento dinamico dei campi validi di un bene.
-    Porting di updateBene() in beneDao.js.
     """
     try:
         valid_bene_fields = {
@@ -239,7 +234,7 @@ async def update_bene(
 
 
 async def block_bene(conn: asyncpg.Connection, id_bene: int) -> bool:
-    """Imposta lo stato del bene a False (occupato). Porting di blockBene()."""
+    """Imposta lo stato del bene a False (occupato)."""
     try:
         sql = "UPDATE bene SET stato=$1 WHERE id=$2"
         status = await conn.execute(sql, False, id_bene)
@@ -250,7 +245,7 @@ async def block_bene(conn: asyncpg.Connection, id_bene: int) -> bool:
 
 
 async def unblock_bene(conn: asyncpg.Connection, id_bene: int) -> bool:
-    """Imposta lo stato del bene a True (disponibile). Porting di unblockBene()."""
+    """Imposta lo stato del bene a True (disponibile)."""
     try:
         sql = "UPDATE bene SET stato=$1 WHERE id=$2"
         status = await conn.execute(sql, True, id_bene)

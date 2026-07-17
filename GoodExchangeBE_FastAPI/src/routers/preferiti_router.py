@@ -1,4 +1,4 @@
-"""Router FastAPI per Preferiti. Porting 1:1 di preferitiRouter.js."""
+"""Router FastAPI per Preferiti."""
 
 import asyncpg
 from fastapi import APIRouter, Depends, HTTPException
@@ -13,7 +13,7 @@ router = APIRouter(tags=["Preferiti"])
 async def get_preferiti(
     id_utente: int, conn: asyncpg.Connection = Depends(get_connection)
 ):
-    """Lista preferiti utente. Porting di GET /preferiti/:id_utente."""
+    """Lista preferiti utente."""
     async with conn.transaction():
         pref = await preferiti_dao.find_preferiti_by_utente(conn, id_utente)
         if not pref:
@@ -34,7 +34,7 @@ async def create_preferiti(
     body: dict,
     conn: asyncpg.Connection = Depends(get_connection),
 ):
-    """Crea lista preferiti. Porting di POST /preferiti/:id_utente."""
+    """Crea lista preferiti."""
     async with conn.transaction():
         result = await preferiti_dao.create_preferiti(
             conn, id_utente, body.get("id_preferiti")
@@ -50,7 +50,7 @@ async def create_preferiti(
 async def delete_preferiti(
     id_utente: int, conn: asyncpg.Connection = Depends(get_connection)
 ):
-    """Elimina lista preferiti. Porting di DELETE /preferiti/:id_utente."""
+    """Elimina lista preferiti."""
     async with conn.transaction():
         result = await preferiti_dao.delete_preferiti(conn, id_utente)
         if not result:

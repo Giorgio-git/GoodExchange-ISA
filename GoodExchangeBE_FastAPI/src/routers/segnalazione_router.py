@@ -1,4 +1,4 @@
-"""Router FastAPI per Segnalazione. Porting 1:1 di segnalazioneRouter.js."""
+"""Router FastAPI per Segnalazione."""
 
 from typing import Optional
 
@@ -17,7 +17,7 @@ async def create_segnalazione(
     segnalazione: SegnalazioneCreate,
     conn: asyncpg.Connection = Depends(get_connection),
 ):
-    """Crea segnalazione. Porting di POST /segnalazioni."""
+    """Crea segnalazione."""
     async with conn.transaction():
         result = await segnalazione_dao.create_segnalazione(
             conn, segnalazione.model_dump()
@@ -35,7 +35,7 @@ async def get_segnalazioni(
     stato: Optional[str] = Query(None),
     id_segnalante: Optional[int] = Query(None),
 ):
-    """Elenco segnalazioni con filtri. Porting di GET /segnalazioni."""
+    """Elenco segnalazioni con filtri."""
     async with conn.transaction():
         filtri: dict = {}
         if stato:
@@ -52,7 +52,7 @@ async def update_stato_segnalazione(
     body: StatoSegnalazioneUpdate,
     conn: asyncpg.Connection = Depends(get_connection),
 ):
-    """Aggiorna stato segnalazione. Porting di PUT /segnalazioni/:id/stato."""
+    """Aggiorna stato segnalazione."""
     async with conn.transaction():
         result = await segnalazione_dao.update_segnalazione_stato(conn, id, body.stato)
         if not result:
@@ -65,7 +65,7 @@ async def update_stato_segnalazione(
 
 @router.get("/segnalazioni/{id}")
 async def get_segnalazione(id: int, conn: asyncpg.Connection = Depends(get_connection)):
-    """Dettaglio segnalazione. Porting di GET /segnalazioni/:id."""
+    """Dettaglio segnalazione."""
     async with conn.transaction():
         seg = await segnalazione_dao.find_segnalazione_by_id(conn, id)
         if not seg or not seg.get("id"):

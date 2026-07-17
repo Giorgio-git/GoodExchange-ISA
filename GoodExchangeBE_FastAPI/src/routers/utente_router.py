@@ -1,6 +1,5 @@
 """
 Router FastAPI per l'entità Utente.
-Porting 1:1 di GoodExchangeBE/routes/utenteRouter.js in Python/FastAPI.
 
 NOTA ORDINE ROUTE: Le route statiche (/login, /username/:username, /crediti)
 devono essere registrate PRIMA delle route con parametri dinamici (/{id})
@@ -35,7 +34,6 @@ async def login(
 ):
     """
     Autenticazione utente con username e password (in chiaro — da bcrypt in future iterazioni).
-    Porting di POST /utenti/login in utenteRouter.js.
     """
     async with conn.transaction():
         utente = await utente_dao.find_utente_by_username(
@@ -61,7 +59,6 @@ async def get_utenti(
 ):
     """
     Elenco utenti con filtri opzionali.
-    Porting di GET /utenti in utenteRouter.js.
     """
     async with conn.transaction():
         filtri = {
@@ -87,7 +84,6 @@ async def get_utente_by_username(
 ):
     """
     Recupera un utente per username.
-    Porting di GET /utenti/username/:username in utenteRouter.js.
     """
     async with conn.transaction():
         utente = await utente_dao.find_utente_by_username(conn, username)
@@ -104,7 +100,6 @@ async def get_utente(
 ):
     """
     Recupera un utente per ID.
-    Porting di GET /utenti/:id in utenteRouter.js.
     """
     async with conn.transaction():
         utente = await utente_dao.find_utente_by_id(conn, id)
@@ -121,7 +116,6 @@ async def get_crediti_utente(
 ):
     """
     Calcola e restituisce i crediti aggiornati di un utente.
-    Porting di GET /utenti/:id/crediti in utenteRouter.js.
     """
     async with conn.transaction():
         crediti_valore = await utente_dao.calcola_crediti_valore_beni(conn, id)
@@ -140,7 +134,6 @@ async def create_utente(
 ):
     """
     Crea un nuovo utente tramite service layer (registra_utente).
-    Porting di POST /utenti in utenteRouter.js.
     """
     try:
         async with conn.transaction():
@@ -163,7 +156,6 @@ async def update_stato_utente(
 ):
     """
     Aggiorna lo stato (attivo/disattivo) di un utente.
-    Porting di PUT /utenti/:id/stato in utenteRouter.js.
     """
     async with conn.transaction():
         result = await utente_dao.update_utente_stato(conn, id, body.stato)
@@ -181,7 +173,6 @@ async def update_cauzione_utente(
 ):
     """
     Aggiorna la cauzione di un utente.
-    Porting di PUT /utenti/:id/cauzione in utenteRouter.js.
     """
     async with conn.transaction():
         result = await utente_dao.update_utente_cauzione(conn, id, body.cauzione)
@@ -199,7 +190,6 @@ async def update_utente(
 ):
     """
     Aggiornamento dinamico di un utente.
-    Porting di PUT /utenti/:id in utenteRouter.js.
     """
     async with conn.transaction():
         esistente = await utente_dao.find_utente_by_id(conn, id)

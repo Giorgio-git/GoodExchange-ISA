@@ -1,6 +1,5 @@
 """
 Router FastAPI per Messaggio.
-Porting 1:1 di messaggioRouter.js.
 ORDINE: /destinatario/:id, /mittente/:id, /tipo/:tipo PRIMA di /:id.
 """
 
@@ -21,7 +20,7 @@ async def create_messaggio(
     messaggio: MessaggioCreate,
     conn: asyncpg.Connection = Depends(get_connection),
 ):
-    """Crea messaggio. Porting di POST /messaggi."""
+    """Crea messaggio."""
     new_id = await messaggio_dao.create_messaggio(conn, messaggio.model_dump())
     return {"id": new_id}
 
@@ -31,7 +30,7 @@ async def create_messaggio(
 async def get_messaggi_by_destinatario(
     id: int, conn: asyncpg.Connection = Depends(get_connection)
 ):
-    """Messaggi per destinatario. Porting di GET /messaggi/destinatario/:id."""
+    """Messaggi per destinatario."""
     return await messaggio_dao.find_messaggi_by_destinatario(conn, id)
 
 
@@ -40,7 +39,7 @@ async def get_messaggi_by_destinatario(
 async def get_messaggi_by_mittente(
     id: int, conn: asyncpg.Connection = Depends(get_connection)
 ):
-    """Messaggi per mittente. Porting di GET /messaggi/mittente/:id."""
+    """Messaggi per mittente."""
     return await messaggio_dao.find_messaggi_by_mittente(conn, id)
 
 
@@ -51,7 +50,7 @@ async def get_messaggi_by_tipo(
     conn: asyncpg.Connection = Depends(get_connection),
     id_riferito: Optional[int] = Query(None),
 ):
-    """Messaggi per tipo (e opzionalmente id_riferito). Porting di GET /messaggi/tipo/:tipo."""
+    """Messaggi per tipo (e opzionalmente id_riferito)."""
     if id_riferito is not None:
         return await messaggio_dao.find_messaggi_by_tipo_and_riferito(
             conn, tipo, id_riferito
@@ -61,7 +60,7 @@ async def get_messaggi_by_tipo(
 
 @router.get("/messaggi/{id}")
 async def get_messaggio(id: int, conn: asyncpg.Connection = Depends(get_connection)):
-    """Messaggio per ID. Porting di GET /messaggi/:id."""
+    """Messaggio per ID."""
     msg = await messaggio_dao.find_messaggio_by_id(conn, id)
     if not msg:
         raise HTTPException(status_code=404, detail="Messaggio non trovato")
@@ -74,13 +73,13 @@ async def update_messaggio(
     body: dict,
     conn: asyncpg.Connection = Depends(get_connection),
 ):
-    """Aggiorna messaggio. Porting di PUT /messaggi/:id."""
+    """Aggiorna messaggio."""
     await messaggio_dao.update_messaggio(conn, id, body)
     return {"success": True}
 
 
 @router.delete("/messaggi/{id}")
 async def delete_messaggio(id: int, conn: asyncpg.Connection = Depends(get_connection)):
-    """Elimina messaggio. Porting di DELETE /messaggi/:id."""
+    """Elimina messaggio."""
     await messaggio_dao.delete_messaggio(conn, id)
     return {"success": True}

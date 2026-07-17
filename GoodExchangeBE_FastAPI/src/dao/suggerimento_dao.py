@@ -1,6 +1,5 @@
 """
 DAO per Suggerimento.
-Porting 1:1 di GoodExchangeBE/dao/suggerimentoDao.js in Python/asyncpg.
 """
 
 import logging
@@ -40,7 +39,7 @@ async def find_suggerimenti(conn: asyncpg.Connection, filtri: dict) -> list[dict
 async def create_suggerimento(
     conn: asyncpg.Connection, suggerimento: dict
 ) -> Optional[dict]:
-    """Crea un nuovo suggerimento. Porting di createSuggerimento() in suggerimentoDao.js."""
+    """Crea un nuovo suggerimento."""
     try:
         sql = """
             INSERT INTO suggerimento (id_mittente, data, stato)

@@ -1,11 +1,6 @@
 """
 Test di Sistema (System Testing / E2E Scenarios) per GoodExchange.
 
-Riferimento Appunti del Corso (Lezione 7 — Test di Sistema):
-- "Si concentra sulle interazioni fra componenti"
-- "Test di scenari completi di utilizzo (end-to-end): ad esempio, in un'applicazione a strati, un'azione che li coinvolga tutti"
-- "Tecnica dello scaffolding e verifica del comportamento complessivo"
-
 A differenza dei test di integrazione che verificano le singole transazioni API<->DB o i singoli metodi CRUD,
 questi test simulano macro-scenari orizzontali di business multi-attore (Proprietario, Richiedente, Amministratore)
 interagendo con il sistema esattamente come farebbero i servizi del Frontend Angular attraverso le chiamate REST HTTP.

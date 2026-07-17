@@ -1,6 +1,5 @@
 """
 Router FastAPI per l'entità Prestito.
-Porting 1:1 di GoodExchangeBE/routes/prestitoRouter.js in Python/FastAPI.
 
 ORDINE CRITICO DELLE ROUTE:
 FastAPI fa matching in ordine di registrazione. Le route statiche
@@ -40,7 +39,6 @@ async def get_prestiti_filtrati(
 ):
     """
     Elenco prestiti con filtri avanzati.
-    Porting di GET /prestiti/filtri in prestitoRouter.js.
     """
     async with conn.transaction():
         filtri: dict = {}
@@ -71,7 +69,6 @@ async def get_prestiti(
 ):
     """
     Elenco prestiti base.
-    Porting di GET /prestiti in prestitoRouter.js.
     """
     async with conn.transaction():
         filtri: dict = {}
@@ -97,7 +94,6 @@ async def verifica_disponibilita(
 ):
     """
     Verifica disponibilità di un bene in un periodo.
-    Porting di GET /prestiti/disponibilita/:beneId in prestitoRouter.js.
     """
     async with conn.transaction():
         disponibile = await prestito_dao.verifica_disponibilita(
@@ -116,7 +112,6 @@ async def get_calendario(
 ):
     """
     Calendario dei prestiti per un bene in un mese specifico.
-    Porting di GET /prestiti/calendario/:beneId in prestitoRouter.js.
     """
     async with conn.transaction():
         return await prestito_dao.get_calendario_bene(conn, bene_id, anno, mese)
@@ -130,7 +125,6 @@ async def get_prestito(
 ):
     """
     Recupera un prestito per ID.
-    Porting di GET /prestiti/:id in prestitoRouter.js.
     """
     async with conn.transaction():
         prestito = await prestito_dao.find_prestito_by_id(conn, id)
@@ -147,7 +141,6 @@ async def create_prestito(
 ):
     """
     Crea un nuovo prestito dopo verifica disponibilità.
-    Porting di POST /prestiti in prestitoRouter.js.
     Delega al service layer per la logica transazionale.
     """
     try:
@@ -175,7 +168,6 @@ async def update_stato_prestito(
     """
     Aggiorna lo stato di un prestito rispettando la FSM.
     Implementa Strict 2PL tramite SELECT ... FOR UPDATE nel service layer.
-    Porting di PUT /prestiti/:id/stato in prestitoRouter.js.
     """
     try:
         async with conn.transaction():
@@ -195,7 +187,6 @@ async def delete_prestito(
 ):
     """
     Elimina un prestito per ID.
-    Porting di DELETE /prestiti/:id in prestitoRouter.js.
     """
     async with conn.transaction():
         result = await prestito_dao.delete_prestito(conn, id)

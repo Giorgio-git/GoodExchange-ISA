@@ -1,6 +1,5 @@
 """
 DAO per l'entità Prestito.
-Porting 1:1 di GoodExchangeBE/dao/PrestitoDao.js in Python/asyncpg.
 
 NOTA ARCHITETTURALE: Le funzioni create_prestito e update_stato_prestito
 sono state spostate in src/services/prestito_service.py perché contengono
@@ -22,7 +21,6 @@ logger = logging.getLogger(__name__)
 async def find_prestiti(conn: asyncpg.Connection, filters: dict) -> list[dict]:
     """
     Restituisce una lista filtrata di prestiti con dati JOIN su bene e utenti.
-    Porting di findPrestiti() in PrestitoDao.js.
     """
     try:
         sql = """
@@ -72,7 +70,6 @@ async def find_prestito_by_id(
 ) -> Optional[dict]:
     """
     Recupera un prestito per ID con dati JOIN su bene e utenti.
-    Porting di findPrestitoById() in PrestitoDao.js.
     """
     try:
         sql = """
@@ -102,7 +99,6 @@ async def verifica_disponibilita(
     """
     Verifica che non esistano prestiti in stato 'accettato' o 'in_corso'
     che si sovrappongono al periodo richiesto (intersezione intervalli).
-    Porting di verificaDisponibilita() in PrestitoDao.js.
 
     Restituisce True se il bene è disponibile, False altrimenti.
     """
@@ -139,7 +135,6 @@ async def get_calendario_bene(
 ) -> list[dict]:
     """
     Restituisce i prestiti attivi per un bene in un mese specifico.
-    Porting di getCalendarioBene() in PrestitoDao.js.
     """
     try:
         import calendar
@@ -171,7 +166,7 @@ async def get_calendario_bene(
 
 
 async def delete_prestito(conn: asyncpg.Connection, id_prestito: int) -> bool:
-    """Elimina un prestito per ID. Porting di deletePrestito() in PrestitoDao.js."""
+    """Elimina un prestito per ID."""
     try:
         sql = "DELETE FROM prestito WHERE id = $1"
         status = await conn.execute(sql, id_prestito)

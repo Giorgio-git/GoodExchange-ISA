@@ -1,6 +1,5 @@
 """
 DAO per Preferiti.
-Porting 1:1 di GoodExchangeBE/dao/preferitiDao.js in Python/asyncpg.
 """
 
 import logging
@@ -29,7 +28,7 @@ async def find_preferiti_by_utente(
 async def create_preferiti(
     conn: asyncpg.Connection, id_utente: int, id_preferiti: Optional[int]
 ) -> bool:
-    """Crea una lista preferiti per un utente. Porting di createPreferiti() in preferitiDao.js."""
+    """Crea una lista preferiti per un utente."""
     try:
         sql = "INSERT INTO preferiti (id_utente) VALUES ($1) RETURNING id"
         row = await conn.fetchrow(sql, id_utente)

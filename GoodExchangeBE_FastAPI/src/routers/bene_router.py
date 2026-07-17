@@ -1,6 +1,5 @@
 """
 Router FastAPI per l'entità Bene.
-Porting 1:1 di GoodExchangeBE/routes/beneRouter.js in Python/FastAPI.
 
 Gestione BYTEA:
 - POST /beni/:id/immagine: riceve un UploadFile e salva i bytes
@@ -43,7 +42,6 @@ async def get_beni(
     """
     Elenco beni con filtri dinamici.
     Se filtrati per citta/regione/provincia/via/civico, esegue prima la ricerca degli utenti della zona.
-    Porting di GET /beni in beneRouter.js.
     """
     async with conn.transaction():
         # Filtro per zona: prima trova gli utenti, poi i loro beni
@@ -120,7 +118,6 @@ async def upload_immagine(
 ):
     """
     Upload immagine bene come BYTEA nel database.
-    Porting di POST /beni/:id/immagine con multer in beneRouter.js.
     """
     async with conn.transaction():
         file_bytes = await file.read()
@@ -136,7 +133,6 @@ async def get_immagine(
 ):
     """
     Restituisce l'immagine del bene come bytes con media_type image/jpeg.
-    Porting di GET /beni/:id/immagine in beneRouter.js.
     """
     async with conn.transaction():
         img = await bene_dao.get_bene_immagine(conn, id)
@@ -153,7 +149,6 @@ async def delete_immagine(
 ):
     """
     Elimina (azzera) l'immagine di un bene.
-    Porting di DELETE /beni/:id/immagine in beneRouter.js.
     """
     async with conn.transaction():
         await bene_dao.delete_bene_immagine(conn, id)
@@ -166,7 +161,7 @@ async def blocca_bene(
     id: int,
     conn: asyncpg.Connection = Depends(get_connection),
 ):
-    """Blocca un bene (stato=False) e ricalcola i crediti. Porting di PUT /beni/:id/blocca."""
+    """Blocca un bene (stato=False) e ricalcola i crediti."""
     async with conn.transaction():
         result = await bene_service.blocca_bene_con_crediti(conn, id)
         if not result:
@@ -180,7 +175,7 @@ async def sblocca_bene(
     id: int,
     conn: asyncpg.Connection = Depends(get_connection),
 ):
-    """Sblocca un bene (stato=True) e ricalcola i crediti. Porting di PUT /beni/:id/sblocca."""
+    """Sblocca un bene (stato=True) e ricalcola i crediti."""
     async with conn.transaction():
         result = await bene_service.sblocca_bene_con_crediti(conn, id)
         if not result:
@@ -196,7 +191,6 @@ async def get_bene(
 ):
     """
     Recupera un bene per ID.
-    Porting di GET /beni/:id in beneRouter.js.
     """
     async with conn.transaction():
         bene = await bene_dao.find_bene_by_id(conn, id)
@@ -214,7 +208,6 @@ async def update_bene(
 ):
     """
     Aggiorna un bene.
-    Porting di PUT /beni/:id in beneRouter.js.
     """
     async with conn.transaction():
         # Filtra i campi None

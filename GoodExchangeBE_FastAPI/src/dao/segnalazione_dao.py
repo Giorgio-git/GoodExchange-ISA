@@ -1,6 +1,5 @@
 """
 DAO per Segnalazione.
-Porting 1:1 di GoodExchangeBE/dao/segnalazioneDao.js in Python/asyncpg.
 """
 
 import logging
