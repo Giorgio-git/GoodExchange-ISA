@@ -98,7 +98,7 @@ jobs:
 
       - name: Inizializzazione Schema Database di Test
         run: |
-          PGPASSWORD=postgres psql -h localhost -U postgres -d goodexchange_test -f GoodExchangeBE_FastAPI/schema.sql
+          PGPASSWORD=postgres psql -h localhost -U postgres -d goodexchange_test -f schema.sql
 
       - name: Esecuzione Misurazione Copertura Combinata (Unit + Integration Tests)
         run: |
